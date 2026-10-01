@@ -3,112 +3,306 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Centre de Formation Bureautique Express</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Générateur de Présentations & Cours Office Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:wght@700&family=Poppins:wght@400;600&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
-        body { background-color: #f4f7f6; color: #2c3e50; padding: 30px 15px; }
+        body { display: flex; flex-direction: column; min-height: 100vh; background-color: #f4f6f9; color: #333; transition: background-color 0.3s, color 0.3s; }
+        
+        .app-container { display: flex; flex: 1; height: calc(100vh - 60px); }
 
-        .container { max-width: 1000px; margin: 0 auto; }
-
-        header { text-align: center; margin-bottom: 30px; }
-        header h1 { font-size: 2.2rem; color: #1a252f; margin-bottom: 8px; }
-        header p { color: #7f8c8d; font-size: 1rem; }
-
-        /* Navigation par logiciel */
-        .tabs { display: flex; gap: 15px; justify-content: center; margin-bottom: 25px; flex-wrap: wrap; }
-        .tab-btn {
-            padding: 12px 24px; border: none; border-radius: 8px; font-weight: 600;
-            cursor: pointer; transition: all 0.3s ease; font-size: 1rem; color: white; opacity: 0.7;
-        }
-        .tab-btn.active { opacity: 1; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        /* Sidebar & Navigation */
+        .sidebar { width: 300px; background: #fff; border-right: 1px solid #ddd; display: flex; flex-direction: column; padding: 15px; transition: background 0.3s; }
+        .sidebar h2 { font-size: 1.2rem; margin-bottom: 10px; color: #2c3e50; }
+        .slide-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
+        .slide-thumb { padding: 10px; border: 2px solid #e0e0e0; border-radius: 6px; cursor: pointer; background: #fafafa; position: relative; transition: all 0.2s; }
+        .slide-thumb.active { border-color: #3498db; background: #ebf5fb; }
+        .slide-thumb .controls { position: absolute; right: 5px; top: 5px; display: flex; gap: 4px; }
+        .slide-thumb button { background: none; border: none; cursor: pointer; font-size: 0.8rem; opacity: 0.6; }
+        
+        /* Contenu principal & Barre d'outils */
+        .main-content { flex: 1; display: flex; flex-direction: column; }
+        .toolbar { background: #fff; border-bottom: 1px solid #ddd; padding: 10px 20px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; transition: background 0.3s; }
+        .toolbar select, .toolbar button, .toolbar input { padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px; background: #fff; cursor: pointer; font-size: 0.85rem; }
+        .toolbar button.primary { background: #3498db; color: white; border: none; }
+        .toolbar button.success { background: #2ecc71; color: white; border: none; }
+        .toolbar button.danger { background: #e74c3c; color: white; border: none; }
+        
+        .editor-area { flex: 1; padding: 30px; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow-y: auto; position: relative; }
+        .slide-card { width: 100%; max-width: 800px; aspect-ratio: 16/9; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-radius: 8px; padding: 40px; display: flex; flex-direction: column; justify-content: center; gap: 15px; position: relative; transition: all 0.3s ease-in-out; text-align: left; overflow: hidden; }
+        
+        .slide-card input, .slide-card textarea { width: 100%; border: 1px dashed transparent; padding: 6px; background: transparent; color: inherit; font-family: inherit; }
+        .slide-card input:focus, .slide-card textarea:focus { border-color: #3498db; outline: none; }
+        .slide-card input.title-input { font-size: 2rem; font-weight: bold; }
+        .slide-card textarea.body-input { font-size: 1.1rem; resize: none; height: 100px; }
+        .slide-card img.preview-img { max-height: 160px; object-fit: contain; border-radius: 4px; margin: 0 auto; }
+        
+        /* Section des cours Office */
+        .course-section { background: #fff; padding: 40px 20px; border-top: 2px solid #e2e8f0; }
+        .course-container { max-width: 1000px; margin: 0 auto; }
+        .course-section h2 { text-align: center; margin-bottom: 20px; color: #1a252f; }
+        .tabs { display: flex; gap: 15px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
+        .tab-btn { padding: 10px 20px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; color: white; opacity: 0.7; }
+        .tab-btn.active { opacity: 1; transform: translateY(-2px); }
         .btn-word { background-color: #2b579a; }
         .btn-excel { background-color: #217346; }
         .btn-ppt { background-color: #d24726; }
-
-        /* Barre de recherche */
-        .search-box { margin-bottom: 25px; text-align: center; }
-        .search-box input {
-            width: 100%; max-width: 500px; padding: 12px 20px; border: 2px solid #ddd;
-            border-radius: 25px; font-size: 0.95rem; outline: none; transition: border-color 0.3s;
-        }
-        .search-box input:focus { border-color: #3498db; }
-
-        /* Grille des modules */
-        .course-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-
-        /* Cartes d'astuces */
-        .card {
-            background: white; border-radius: 12px; padding: 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-top: 5px solid #ccc;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .card:hover { transform: translateY(-4px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
-        
+        .search-box { margin-bottom: 20px; text-align: center; }
+        .search-box input { width: 100%; max-width: 500px; padding: 10px 15px; border: 2px solid #ddd; border-radius: 20px; outline: none; }
+        .course-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; }
+        .card { background: #f8fafc; border-radius: 8px; padding: 15px; border-top: 4px solid #ccc; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .card.word { border-top-color: #2b579a; }
         .card.excel { border-top-color: #217346; }
         .card.ppt { border-top-color: #d24726; }
+        .card h3 { font-size: 1.1rem; margin-bottom: 8px; }
+        .card p { font-size: 0.85rem; color: #555; margin-bottom: 10px; }
+        .shortcut-badge { background: #e2e8f0; padding: 4px 8px; border-radius: 4px; font-family: monospace; font-size: 0.8rem; font-weight: bold; }
+        .copy-btn { float: right; background: none; border: none; color: #3498db; cursor: pointer; font-size: 0.8rem; font-weight: 600; }
 
-        .card h3 { font-size: 1.2rem; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
-        .card p { font-size: 0.9rem; color: #555; line-height: 1.5; margin-bottom: 15px; }
+        /* Mode Sombre */
+        body.dark-mode { background-color: #1e1e2e; color: #f8f9fa; }
+        body.dark-mode .sidebar, body.dark-mode .toolbar, body.dark-mode .course-section { background-color: #2b2b3d; border-color: #444; color: #fff; }
+        body.dark-mode .slide-thumb { background: #3b3b4f; border-color: #555; color: #fff; }
+        body.dark-mode .card { background: #3b3b4f; color: #fff; }
+        body.dark-mode .shortcut-badge { background: #4a4a6a; color: #fff; }
+        body.dark-mode .course-section h2 { color: #fff; }
 
-        /* Code / Raccourcis */
-        .shortcut-badge {
-            background: #f0f3f6; padding: 6px 12px; border-radius: 6px; font-family: monospace;
-            font-weight: bold; color: #2c3e50; font-size: 0.85rem; display: inline-block;
+        /* Style pour l'impression / export PDF */
+        @media print {
+            .sidebar, .toolbar, .course-section { display: none !important; }
+            body { background: white !important; color: black !important; }
+            .editor-area { padding: 0 !important; display: block !important; }
+            .slide-card { box-shadow: none !important; width: 100% !important; height: 100vh !important; border-radius: 0 !important; page-break-after: always; display: flex !important; justify-content: center !important; }
         }
-
-        .copy-btn {
-            float: right; background: none; border: none; color: #3498db;
-            cursor: pointer; font-size: 0.85rem; font-weight: 600;
-        }
-        .copy-btn:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <header>
-            <h1>🎓 Cours Express Office Pro</h1>
-            <p>Maîtrisez les fonctionnalités et astuces essentielles pour Word, Excel et PowerPoint</p>
-        </header>
-
-        <!-- Sélecteur de logiciel -->
-        <div class="tabs">
-            <button class="tab-btn btn-word active" onclick="filterSoftware('word')">📄 Word</button>
-            <button class="tab-btn btn-excel" onclick="filterSoftware('excel')">📊 Excel</button>
-            <button class="tab-btn btn-ppt" onclick="filterSoftware('ppt')">📙 PowerPoint</button>
+    <div class="app-container">
+        <!-- Barre latérale : Liste des diapositives -->
+        <div class="sidebar">
+            <h2>Mes Diapos</h2>
+            <div class="slide-list" id="slideList"></div>
+            <button class="primary" onclick="addSlide()">+ Diapo</button>
         </div>
 
-        <!-- Barre de recherche -->
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="🔎 Rechercher une astuce, une formule, un raccourci..." onkeyup="searchCourse()">
-        </div>
+        <!-- Zone principale de travail -->
+        <div class="main-content">
+            <div class="toolbar">
+                <button class="primary" onclick="addSlide()">+ Nouvelle Diapo</button>
+                
+                <!-- Gestion des images -->
+                <input type="file" id="imageInput" accept="image/*" style="display:none;" onchange="uploadImage(event)">
+                <button onclick="document.getElementById('imageInput').click()">🖼️ Ajouter Image</button>
+                <button class="danger" onclick="removeImage()">🗑️ Supprimer Image</button>
 
-        <!-- Zone d'affichage des cours -->
-        <div class="course-grid" id="courseGrid"></div>
+                <!-- Filtres et outils -->
+                <label>Filtre Image:</label>
+                <select onchange="applyImageFilter(this.value)">
+                    <option value="none">Normal</option>
+                    <option value="grayscale(100%)">Noir & Blanc</option>
+                    <option value="sepia(100%)">Sépia / Vintage</option>
+                    <option value="brightness(130%)">Luminosité</option>
+                </select>
+
+                <label>Angles:</label>
+                <input type="range" min="0" max="40" value="8" onchange="changeRadius(this.value)">
+
+                <!-- Effets et Outils -->
+                <button onclick="toggleGlassEffect()">✨ Effet Verre</button>
+                <button onclick="toggleLaser()">🎯 Pointer Laser</button>
+                <button onclick="toggleBlankScreen('black')">⬛ Écran Noir</button>
+                <button onclick="toggleBlankScreen('white')">⬜ Écran Blanc</button>
+                <button onclick="toggleTheme()">🎨 Mode Sombre/Clair</button>
+                
+                <!-- Imprimer et Mode Présentation -->
+                <button class="success" onclick="window.print()">🖨 Imprimer / PDF</button>
+                <button class="primary" onclick="toggleFullscreen()">▶️ Présentation</button>
+            </div>
+
+            <div class="editor-area">
+                <div class="slide-card" id="slideCard">
+                    <input type="text" class="title-input" id="slideTitle" placeholder="Titre de la diapositive..." oninput="updateCurrentSlide()">
+                    <textarea class="body-input" id="slideBody" placeholder="Contenu texte..." oninput="updateCurrentSlide()"></textarea>
+                    <img id="slideImg" class="preview-img" style="display:none;" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Cours Office Express intégrée sous le générateur -->
+    <div class="course-section">
+        <div class="course-container">
+            <h2>🎓 Cours Express Office Pro</h2>
+            
+            <div class="tabs">
+                <button class="tab-btn btn-word active" onclick="filterSoftware('word')">📄 Word</button>
+                <button class="tab-btn btn-excel" onclick="filterSoftware('excel')">📊 Excel</button>
+                <button class="tab-btn btn-ppt" onclick="filterSoftware('ppt')">📙 PowerPoint</button>
+            </div>
+
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔎 Rechercher une astuce, une formule..." onkeyup="searchCourse()">
+            </div>
+
+            <div class="course-grid" id="courseGrid"></div>
+        </div>
     </div>
 
     <script>
-        // Base de données du cours
+        /* --- GESTION DU GÉNÉRATEUR DE DIAPOSITIVES --- */
+        let slides = JSON.parse(localStorage.getItem('presentation_slides')) || [
+            { title: "Bienvenue", body: "Modifiez ce texte...", image: "", imgFilter: "none", borderRadius: "8" }
+        ];
+        let currentIndex = 0;
+
+        function saveToStorage() {
+            localStorage.setItem('presentation_slides', JSON.stringify(slides));
+        }
+
+        function renderSlideList() {
+            const list = document.getElementById('slideList');
+            list.innerHTML = '';
+            slides.forEach((slide, index) => {
+                const thumb = document.createElement('div');
+                thumb.className = `slide-thumb ${index === currentIndex ? 'active' : ''}`;
+                thumb.onclick = () => selectSlide(index);
+                thumb.innerHTML = `
+                    <strong>Diapo ${index + 1}</strong>: ${slide.title.substring(0, 12) || 'Sans titre'}
+                    <div class="controls">
+                        <button onclick="event.stopPropagation(); deleteSlide(${index})">🗑️</button>
+                    </div>
+                `;
+                list.appendChild(thumb);
+            });
+        }
+
+        function selectSlide(index) {
+            currentIndex = index;
+            loadCurrentSlide();
+            renderSlideList();
+        }
+
+        function loadCurrentSlide() {
+            const current = slides[currentIndex];
+            document.getElementById('slideTitle').value = current.title || '';
+            document.getElementById('slideBody').value = current.body || '';
+            
+            const imgEl = document.getElementById('slideImg');
+            if (current.image) {
+                imgEl.src = current.image;
+                imgEl.style.display = 'block';
+                imgEl.style.filter = current.imgFilter || 'none';
+            } else {
+                imgEl.style.display = 'none';
+            }
+
+            document.getElementById('slideCard').style.borderRadius = (current.borderRadius || 8) + 'px';
+        }
+
+        function updateCurrentSlide() {
+            slides[currentIndex].title = document.getElementById('slideTitle').value;
+            slides[currentIndex].body = document.getElementById('slideBody').value;
+            saveToStorage();
+            renderSlideList();
+        }
+
+        function addSlide() {
+            slides.push({ title: "Nouvelle Diapositive", body: "", image: "", imgFilter: "none", borderRadius: "8" });
+            currentIndex = slides.length - 1;
+            loadCurrentSlide();
+            renderSlideList();
+            saveToStorage();
+        }
+
+        function deleteSlide(index) {
+            if (slides.length <= 1) return;
+            slides.splice(index, 1);
+            if (currentIndex >= slides.length) currentIndex = slides.length - 1;
+            loadCurrentSlide();
+            renderSlideList();
+            saveToStorage();
+        }
+
+        function uploadImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    slides[currentIndex].image = e.target.result;
+                    loadCurrentSlide();
+                    saveToStorage();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeImage() {
+            slides[currentIndex].image = "";
+            loadCurrentSlide();
+            saveToStorage();
+        }
+
+        function applyImageFilter(filter) {
+            slides[currentIndex].imgFilter = filter;
+            document.getElementById('slideImg').style.filter = filter;
+            saveToStorage();
+        }
+
+        function changeRadius(val) {
+            document.getElementById('slideCard').style.borderRadius = val + 'px';
+            slides[currentIndex].borderRadius = val;
+            saveToStorage();
+        }
+
+        function toggleGlassEffect() {
+            let card = document.getElementById('slideCard');
+            card.style.backdropFilter = card.style.backdropFilter ? "" : "blur(10px)";
+            card.style.background = card.style.backdropFilter ? "rgba(255, 255, 255, 0.4)" : "#ffffff";
+        }
+
+        let laserActive = false;
+        function toggleLaser() {
+            laserActive = !laserActive;
+            document.body.style.cursor = laserActive ? "crosshair" : "default";
+        }
+
+        function toggleBlankScreen(color) {
+            let overlay = document.getElementById('blankOverlay');
+            if (!overlay) {
+                overlay = document.createElement('div');
+                overlay.id = 'blankOverlay';
+                overlay.style.position = 'fixed';
+                overlay.style.inset = '0';
+                overlay.style.zIndex = '9999';
+                overlay.onclick = () => overlay.style.display = 'none';
+                document.body.appendChild(overlay);
+            }
+            overlay.style.backgroundColor = color;
+            overlay.style.display = overlay.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function toggleTheme() { document.body.classList.toggle('dark-mode'); }
+
+        function toggleFullscreen() {
+            const elem = document.getElementById('slideCard');
+            if (elem.requestFullscreen) elem.requestFullscreen();
+        }
+
+        /* --- GESTION DU MODULE DE COURS OFFICE --- */
         const courses = [
-            // WORD
-            { id: 1, software: 'word', title: '1. Les Styles Automatiques', desc: 'Définissez la hiérarchie de vos titres (Titre 1, Titre 2) pour uniformiser le document et créer une table des matières en un clic.', code: 'Accueil > Styles > Clic droit > Modifier' },
-            { id: 2, software: 'word', title: '2. Table des Matières Automatique', desc: 'Générez un sommaire interactif qui se met à jour automatiquement avec les numéros de page.', code: 'Références > Table des matières' },
-            { id: 3, software: 'word', title: '3. Publipostage (Mailing)', desc: 'Générez des dizaines de lettres ou de fiches personnalisées automatiquement depuis une liste Excel.', code: 'Publipostage > Démarrer la fusion' },
-            { id: 4, software: 'word', title: '4. Copier la mise en forme', desc: 'Raccourci rapide pour reproduire le style exact d\'un texte sur un autre paragraphe.', code: 'Ctrl + Maj + C (Copier) / Ctrl + Maj + V (Coller)' },
-
-            // EXCEL
-            { id: 5, software: 'excel', title: '1. Tableau Structuré', desc: 'Transformez vos plages de données en tableau dynamique avec filtres et formules automatiques.', code: 'Ctrl + L (ou Ctrl + T)' },
-            { id: 6, software: 'excel', title: '2. Tableau Croisé Dynamique (TCD)', desc: 'Analysez et résumez des milliers de lignes sans écrire une seule formule.', code: 'Insérer > Tableau croisé dynamique' },
-            { id: 7, software: 'excel', title: '3. Formule RECHERCHEX', desc: 'Recherchez une valeur dans une colonne et renvoyez le résultat d\'une autre colonne simplement.', code: '=RECHERCHEX(valeur; recherche; retour)' },
-            { id: 8, software: 'excel', title: '4. Somme Automatique', desc: 'Calculez instantanément la somme d\'une colonne ou d\'une ligne sans taper la formule.', code: 'Alt + =' },
-
-            // POWERPOINT
-            { id: 9, software: 'ppt', title: '1. Masque de Diapositives', desc: 'Personnalisez le design, les logos et la police de tout le diaporama en une seule modification.', code: 'Affichage > Masque de diapositives' },
-            { id: 10, software: 'ppt', title: '2. Transition Métamorphose (Morph)', desc: 'Créez des animations fluides et ultra-professionnelles entre deux diapositives.', code: 'Transitions > Métamorphose' },
-            { id: 11, software: 'ppt', title: '3. Convertir en SmartArt', desc: 'Transformez vos listes à puces ennuyeuses en schémas visuels modernes.', code: 'Clic droit sur le texte > Convertir en SmartArt' },
-            { id: 12, software: 'ppt', title: '4. Dupliquer un élément', desc: 'Dupliquez instantanément une forme, une image ou une diapositive.', code: 'Ctrl + D' }
+            { id: 1, software: 'word', title: '1. Les Styles Automatiques', desc: 'Définissez la hiérarchie de vos titres pour créer une table des matières automatique.', code: 'Accueil > Styles > Modifier' },
+            { id: 2, software: 'word', title: '2. Table des Matières', desc: 'Générez un sommaire interactif mis à jour automatiquement.', code: 'Références > Table des matières' },
+            { id: 3, software: 'word', title: '3. Publipostage', desc: 'Générez des fiches personnalisées depuis une liste Excel.', code: 'Publipostage > Démarrer la fusion' },
+            { id: 4, software: 'word', title: '4. Copier la mise en forme', desc: 'Reproduisez le style exact d\'un texte rapidement.', code: 'Ctrl + Maj + C / Ctrl + Maj + V' },
+            { id: 5, software: 'excel', title: '1. Tableau Structuré', desc: 'Transformez vos plages de données en tableau dynamique.', code: 'Ctrl + L (ou Ctrl + T)' },
+            { id: 6, software: 'excel', title: '2. Tableau Croisé Dynamique', desc: 'Analysez des milliers de lignes sans formule.', code: 'Insérer > TCD' },
+            { id: 7, software: 'excel', title: '3. Formule RECHERCHEX', desc: 'Recherchez une valeur simplement dans vos colonnes.', code: '=RECHERCHEX(valeur; recherche; retour)' },
+            { id: 8, software: 'excel', title: '4. Somme Automatique', desc: 'Calculez instantanément la somme d\'une colonne.', code: 'Alt + =' },
+            { id: 9, software: 'ppt', title: '1. Masque de Diapositives', desc: 'Personnalisez le design de tout le diaporama d\'un coup.', code: 'Affichage > Masque de diapositives' },
+            { id: 10, software: 'ppt', title: '2. Transition Métamorphose', desc: 'Créez des animations fluides entre deux diapos.', code: 'Transitions > Métamorphose' },
+            { id: 11, software: 'ppt', title: '3. Convertir en SmartArt', desc: 'Transformez des puces en schémas modernes.', code: 'Clic droit > Convertir en SmartArt' },
+            { id: 12, software: 'ppt', title: '4. Dupliquer un élément', desc: 'Dupliquez instantanément une forme ou diapo.', code: 'Ctrl + D' }
         ];
 
         let currentFilter = 'word';
@@ -123,11 +317,6 @@
                 const matchesSearch = item.title.toLowerCase().includes(searchText) || item.desc.toLowerCase().includes(searchText) || item.code.toLowerCase().includes(searchText);
                 return matchesTab && matchesSearch;
             });
-
-            if (filtered.length === 0) {
-                grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #888;">Aucune astuce trouvée.</p>';
-                return;
-            }
 
             filtered.forEach(item => {
                 const card = document.createElement('div');
@@ -151,16 +340,16 @@
             renderCourses();
         }
 
-        function searchCourse() {
-            renderCourses();
-        }
+        function searchCourse() { renderCourses(); }
 
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text);
             alert('Copié dans le presse-papier : ' + text);
         }
 
-        // Chargement initial
+        // Initialisation globale
+        renderSlideList();
+        loadCurrentSlide();
         renderCourses();
     </script>
 </body>
