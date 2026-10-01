@@ -1,36 +1,245 @@
-<!-- أضف هذه الخيارات داخل شريط الأدوات (toolbar) -->
-<label>انحناء الزوايا:</label>
-<input type="range" min="0" max="40" value="8" onchange="changeRadius(this.value)">
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur de Présentations Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:wght@700&family=Poppins:wght@400;600&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+        body { display: flex; height: 100vh; background-color: #f4f6f9; color: #333; transition: background-color 0.3s, color 0.3s; }
+        
+        .sidebar { width: 300px; background: #fff; border-right: 1px solid #ddd; display: flex; flex-direction: column; padding: 15px; transition: background 0.3s; }
+        .sidebar h2 { font-size: 1.2rem; margin-bottom: 10px; color: #2c3e50; }
+        .slide-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
+        .slide-thumb { padding: 10px; border: 2px solid #e0e0e0; border-radius: 6px; cursor: pointer; background: #fafafa; position: relative; transition: all 0.2s; }
+        .slide-thumb.active { border-color: #3498db; background: #ebf5fb; }
+        .slide-thumb .controls { position: absolute; right: 5px; top: 5px; display: flex; gap: 4px; }
+        .slide-thumb button { background: none; border: none; cursor: pointer; font-size: 0.8rem; opacity: 0.6; }
+        
+        .main-content { flex: 1; display: flex; flex-direction: column; }
+        .toolbar { background: #fff; border-bottom: 1px solid #ddd; padding: 10px 20px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; transition: background 0.3s; }
+        .toolbar select, .toolbar button, .toolbar input { padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px; background: #fff; cursor: pointer; font-size: 0.85rem; }
+        .toolbar button.primary { background: #3498db; color: white; border: none; }
+        .toolbar button.success { background: #2ecc71; color: white; border: none; }
+        .toolbar button.danger { background: #e74c3c; color: white; border: none; }
+        
+        .editor-area { flex: 1; padding: 30px; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow-y: auto; position: relative; }
+        .slide-card { width: 100%; max-width: 800px; aspect-ratio: 16/9; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-radius: 8px; padding: 40px; display: flex; flex-direction: column; justify-content: center; gap: 15px; position: relative; transition: all 0.3s ease-in-out; text-align: left; overflow: hidden; }
+        
+        .slide-card input, .slide-card textarea { width: 100%; border: 1px dashed transparent; padding: 6px; background: transparent; color: inherit; font-family: inherit; }
+        .slide-card input:focus, .slide-card textarea:focus { border-color: #3498db; outline: none; }
+        .slide-card input.title-input { font-size: 2rem; font-weight: bold; }
+        .slide-card textarea.body-input { font-size: 1.1rem; resize: none; height: 100px; }
+        .slide-card img.preview-img { max-height: 160px; object-fit: contain; border-radius: 4px; margin: 0 auto; }
+        
+        body.dark-mode { background-color: #1e1e2e; color: #f8f9fa; }
+        body.dark-mode .sidebar, body.dark-mode .toolbar { background-color: #2b2b3d; border-color: #444; color: #fff; }
+        body.dark-mode .slide-thumb { background: #3b3b4f; border-color: #555; color: #fff; }
+        body.dark-mode .toolbar select, body.dark-mode .toolbar button, body.dark-mode .toolbar input { background-color: #3b3b4f; color: #fff; border-color: #555; }
 
-<label>فلتر الصورة:</label>
-<select onchange="applyImageFilter(this.value)">
-    <option value="none">عادي</option>
-    <option value="grayscale(100%)">أبيض وأسود</option>
-    <option value="sepia(100%)">دافئ / Vintage</option>
-    <option value="brightness(130%)">سطوع قوي</option>
-</select>
+        /* Style pour l'impression / export PDF */
+        @media print {
+            .sidebar, .toolbar { display: none !important; }
+            body { background: white !important; color: black !important; }
+            .editor-area { padding: 0 !important; display: block !important; }
+            .slide-card { box-shadow: none !important; width: 100% !important; height: 100vh !important; border-radius: 0 !important; page-break-after: always; display: flex !important; justify-content: center !important; }
+        }
+    </style>
+</head>
+<body>
 
-<button onclick="toggleGlassEffect()">✨ تأثير زجاجي</button>
+    <div class="sidebar">
+        <h2>Mes Diapos</h2>
+        <div class="slide-list" id="slideList"></div>
+        <button class="primary" onclick="addSlide()">+ Diapo</button>
+    </div>
 
-<script>
-    /* 5. تأثير الزجاج الضبابي */
-    function toggleGlassEffect() {
-        let card = document.getElementById('slideCard');
-        card.style.backdropFilter = card.style.backdropFilter ? "" : "blur(10px)";
-        card.style.background = card.style.backdropFilter ? "rgba(255, 255, 255, 0.4)" : "#ffffff";
-    }
+    <div class="main-content">
+        <div class="toolbar">
+            <button class="primary" onclick="addSlide()">+ Nouvelle Diapo</button>
+            
+            <!-- Gestion des images -->
+            <input type="file" id="imageInput" accept="image/*" style="display:none;" onchange="uploadImage(event)">
+            <button onclick="document.getElementById('imageInput').click()">🖼️ Ajouter Image</button>
+            <button class="danger" onclick="removeImage()">🗑️ Supprimer Image</button>
 
-    /* 6. تحكم انحناء الزوايا */
-    function changeRadius(val) {
-        document.getElementById('slideCard').style.borderRadius = val + 'px';
-        slides[currentIndex].borderRadius = val;
-        saveToStorage();
-    }
+            <!-- Thèmes et filtres d'image -->
+            <label>Filtre Image:</label>
+            <select onchange="applyImageFilter(this.value)">
+                <option value="none">Normal</option>
+                <option value="grayscale(100%)">Noir & Blanc</option>
+                <option value="sepia(100%)">Sépia / Vintage</option>
+                <option value="brightness(130%)">Luminosité</option>
+            </select>
 
-    /* 7. فلاتر الصور */
-    function applyImageFilter(filter) {
-        document.getElementById('slideImg').style.filter = filter;
-        slides[currentIndex].imgFilter = filter;
-        saveToStorage();
-    }
-</script>
+            <label>Angles:</label>
+            <input type="range" min="0" max="40" value="8" onchange="changeRadius(this.value)">
+
+            <!-- Effets et Outils -->
+            <button onclick="toggleGlassEffect()">✨ Effet Verre</button>
+            <button onclick="toggleLaser()">🎯 Pointer Laser</button>
+            <button onclick="toggleBlankScreen('black')">⬛ Écran Noir</button>
+            <button onclick="toggleBlankScreen('white')">⬜ Écran Blanc</button>
+            <button onclick="toggleTheme()">🎨 Mode Sombre/Clair</button>
+            
+            <!-- Imprimer et Mode Présentation -->
+            <button class="success" onclick="window.print()">🖨 Imprimer / PDF</button>
+            <button class="primary" onclick="toggleFullscreen()">▶️ Présentation</button>
+        </div>
+
+        <div class="editor-area">
+            <div class="slide-card" id="slideCard">
+                <input type="text" class="title-input" id="slideTitle" placeholder="Titre de la diapositive..." oninput="updateCurrentSlide()">
+                <textarea class="body-input" id="slideBody" placeholder="Contenu texte..." oninput="updateCurrentSlide()"></textarea>
+                <img id="slideImg" class="preview-img" style="display:none;" />
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let slides = JSON.parse(localStorage.getItem('presentation_slides')) || [
+            { title: "Bienvenue", body: "Modifiez ce texte...", image: "", imgFilter: "none", borderRadius: "8" }
+        ];
+        let currentIndex = 0;
+
+        function saveToStorage() {
+            localStorage.setItem('presentation_slides', JSON.stringify(slides));
+        }
+
+        function renderSlideList() {
+            const list = document.getElementById('slideList');
+            list.innerHTML = '';
+            slides.forEach((slide, index) => {
+                const thumb = document.createElement('div');
+                thumb.className = `slide-thumb ${index === currentIndex ? 'active' : ''}`;
+                thumb.onclick = () => selectSlide(index);
+                thumb.innerHTML = `
+                    <strong>Diapo ${index + 1}</strong>: ${slide.title.substring(0, 12) || 'Sans titre'}
+                    <div class="controls">
+                        <button onclick="event.stopPropagation(); deleteSlide(${index})">🗑️</button>
+                    </div>
+                `;
+                list.appendChild(thumb);
+            });
+        }
+
+        function selectSlide(index) {
+            currentIndex = index;
+            loadCurrentSlide();
+            renderSlideList();
+        }
+
+        function loadCurrentSlide() {
+            const current = slides[currentIndex];
+            document.getElementById('slideTitle').value = current.title || '';
+            document.getElementById('slideBody').value = current.body || '';
+            
+            const imgEl = document.getElementById('slideImg');
+            if (current.image) {
+                imgEl.src = current.image;
+                imgEl.style.display = 'block';
+                imgEl.style.filter = current.imgFilter || 'none';
+            } else {
+                imgEl.style.display = 'none';
+            }
+
+            document.getElementById('slideCard').style.borderRadius = (current.borderRadius || 8) + 'px';
+        }
+
+        function updateCurrentSlide() {
+            slides[currentIndex].title = document.getElementById('slideTitle').value;
+            slides[currentIndex].body = document.getElementById('slideBody').value;
+            saveToStorage();
+            renderSlideList();
+        }
+
+        function addSlide() {
+            slides.push({ title: "Nouvelle Diapositive", body: "", image: "", imgFilter: "none", borderRadius: "8" });
+            currentIndex = slides.length - 1;
+            loadCurrentSlide();
+            renderSlideList();
+            saveToStorage();
+        }
+
+        function deleteSlide(index) {
+            if (slides.length <= 1) return;
+            slides.splice(index, 1);
+            if (currentIndex >= slides.length) currentIndex = slides.length - 1;
+            loadCurrentSlide();
+            renderSlideList();
+            saveToStorage();
+        }
+
+        /* Fonctionnalités des Images */
+        function uploadImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    slides[currentIndex].image = e.target.result;
+                    loadCurrentSlide();
+                    saveToStorage();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeImage() {
+            slides[currentIndex].image = "";
+            loadCurrentSlide();
+            saveToStorage();
+        }
+
+        function applyImageFilter(filter) {
+            slides[currentIndex].imgFilter = filter;
+            document.getElementById('slideImg').style.filter = filter;
+            saveToStorage();
+        }
+
+        /* Autres Outils */
+        function changeRadius(val) {
+            document.getElementById('slideCard').style.borderRadius = val + 'px';
+            slides[currentIndex].borderRadius = val;
+            saveToStorage();
+        }
+
+        function toggleGlassEffect() {
+            let card = document.getElementById('slideCard');
+            card.style.backdropFilter = card.style.backdropFilter ? "" : "blur(10px)";
+            card.style.background = card.style.backdropFilter ? "rgba(255, 255, 255, 0.4)" : "#ffffff";
+        }
+
+        let laserActive = false;
+        function toggleLaser() {
+            laserActive = !laserActive;
+            document.body.style.cursor = laserActive ? "crosshair" : "default";
+        }
+
+        function toggleBlankScreen(color) {
+            let overlay = document.getElementById('blankOverlay');
+            if (!overlay) {
+                overlay = document.createElement('div');
+                overlay.id = 'blankOverlay';
+                overlay.style.position = 'fixed';
+                overlay.style.inset = '0';
+                overlay.style.zIndex = '9999';
+                overlay.onclick = () => overlay.style.display = 'none';
+                document.body.appendChild(overlay);
+            }
+            overlay.style.backgroundColor = color;
+            overlay.style.display = overlay.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function toggleTheme() { document.body.classList.toggle('dark-mode'); }
+
+        function toggleFullscreen() {
+            const elem = document.getElementById('slideCard');
+            if (elem.requestFullscreen) elem.requestFullscreen();
+        }
+
+        renderSlideList();
+        loadCurrentSlide();
+    </script>
+</body>
+</html>
