@@ -1,21 +1,34 @@
-<!-- خيارات الحفظ والمشاركة -->
-<button onclick="generateShareLink()">🔗 رابط مشاركة</button>
-<button onclick="saveCustomTemplate()">⭐ حفظ كقالب</button>
+<!-- أضف هذه الخيارات بشريط الأدوات -->
+<button onclick="toggleDrawing()">✏️ رسم حر</button>
+<button onclick="undoStep()">↩️ تراجع</button>
+<button onclick="searchAndReplace()">🔍 بحث واستبدال</button>
 
 <script>
-    /* 18. توليد رابط المشاركة */
-    function generateShareLink() {
-        let data = btoa(encodeURIComponent(JSON.stringify(slides)));
-        let shareableURL = window.location.origin + window.location.pathname + "#data=" + data;
-        navigator.clipboard.writeText(shareableURL);
-        alert("تم نسخ رابط المشاركة الخاص بالعرض!");
+    /* 13. لوحة الرسم الحر */
+    let drawing = false;
+    function toggleDrawing() {
+        let card = document.getElementById('slideCard');
+        card.onmousedown = () => drawing = true;
+        card.onmouseup = () => drawing = false;
+        card.onmousemove = (e) => {
+            if(!drawing) return;
+            let dot = document.createElement('div');
+            dot.style.cssText = `position:absolute; width:4px; height:4px; background:red; border-radius:50%; left:${e.layerX}px; top:${e.layerY}px;`;
+            card.appendChild(dot);
+        }
     }
 
-    /* 17. حفظ كقالب خاص */
-    function saveCustomTemplate() {
-        let customTemplates = JSON.parse(localStorage.getItem('custom_templates')) || [];
-        customTemplates.push(slides[currentIndex]);
-        localStorage.setItem('custom_templates', JSON.stringify(customTemplates));
-        alert("تم حفظ الشريحة كقالب خاص بك!");
+    /* 16. البحث والاستبدال */
+    function searchAndReplace() {
+        let word = prompt("الكلمة المراد البحث عنها:");
+        let newWord = prompt("الكلمة الجديدة:");
+        if (word && newWord) {
+            slides.forEach(s => {
+                s.title = s.title.replaceAll(word, newWord);
+                s.body = s.body.replaceAll(word, newWord);
+            });
+            loadCurrentSlide();
+            saveToStorage();
+        }
     }
 </script>
