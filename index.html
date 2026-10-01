@@ -1,34 +1,36 @@
-<!-- أضف هذه الخيارات بشريط الأدوات -->
-<button onclick="toggleDrawing()">✏️ رسم حر</button>
-<button onclick="undoStep()">↩️ تراجع</button>
-<button onclick="searchAndReplace()">🔍 بحث واستبدال</button>
+<!-- أضف هذه الخيارات داخل شريط الأدوات (toolbar) -->
+<label>انحناء الزوايا:</label>
+<input type="range" min="0" max="40" value="8" onchange="changeRadius(this.value)">
+
+<label>فلتر الصورة:</label>
+<select onchange="applyImageFilter(this.value)">
+    <option value="none">عادي</option>
+    <option value="grayscale(100%)">أبيض وأسود</option>
+    <option value="sepia(100%)">دافئ / Vintage</option>
+    <option value="brightness(130%)">سطوع قوي</option>
+</select>
+
+<button onclick="toggleGlassEffect()">✨ تأثير زجاجي</button>
 
 <script>
-    /* 13. لوحة الرسم الحر */
-    let drawing = false;
-    function toggleDrawing() {
+    /* 5. تأثير الزجاج الضبابي */
+    function toggleGlassEffect() {
         let card = document.getElementById('slideCard');
-        card.onmousedown = () => drawing = true;
-        card.onmouseup = () => drawing = false;
-        card.onmousemove = (e) => {
-            if(!drawing) return;
-            let dot = document.createElement('div');
-            dot.style.cssText = `position:absolute; width:4px; height:4px; background:red; border-radius:50%; left:${e.layerX}px; top:${e.layerY}px;`;
-            card.appendChild(dot);
-        }
+        card.style.backdropFilter = card.style.backdropFilter ? "" : "blur(10px)";
+        card.style.background = card.style.backdropFilter ? "rgba(255, 255, 255, 0.4)" : "#ffffff";
     }
 
-    /* 16. البحث والاستبدال */
-    function searchAndReplace() {
-        let word = prompt("الكلمة المراد البحث عنها:");
-        let newWord = prompt("الكلمة الجديدة:");
-        if (word && newWord) {
-            slides.forEach(s => {
-                s.title = s.title.replaceAll(word, newWord);
-                s.body = s.body.replaceAll(word, newWord);
-            });
-            loadCurrentSlide();
-            saveToStorage();
-        }
+    /* 6. تحكم انحناء الزوايا */
+    function changeRadius(val) {
+        document.getElementById('slideCard').style.borderRadius = val + 'px';
+        slides[currentIndex].borderRadius = val;
+        saveToStorage();
+    }
+
+    /* 7. فلاتر الصور */
+    function applyImageFilter(filter) {
+        document.getElementById('slideImg').style.filter = filter;
+        slides[currentIndex].imgFilter = filter;
+        saveToStorage();
     }
 </script>
