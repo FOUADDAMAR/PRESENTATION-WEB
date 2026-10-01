@@ -1,48 +1,21 @@
-<!-- أضف هذا الجزء في خيارات شريط الأدوات (toolbar) -->
-<button onclick="toggleLaser()">🎯 مؤشر الليزر</button>
-<button onclick="toggleBlankScreen('black')">⬛ شاشة سوداء</button>
-<button onclick="toggleBlankScreen('white')">⬜ شاشة بيضاء</button>
-<span id="timerDisplay" style="margin-left: 10px; font-weight: bold; color: #e74c3c;">⏱️ 00:00</span>
-<button onclick="toggleLockSlide()" id="lockBtn">🔓 غير مقفلة</button>
+<!-- خيارات الحفظ والمشاركة -->
+<button onclick="generateShareLink()">🔗 رابط مشاركة</button>
+<button onclick="saveCustomTemplate()">⭐ حفظ كقالب</button>
 
 <script>
-    /* 1. مؤشر الليزر */
-    let laserActive = false;
-    function toggleLaser() {
-        laserActive = !laserActive;
-        document.body.style.cursor = laserActive ? "crosshair" : "default";
+    /* 18. توليد رابط المشاركة */
+    function generateShareLink() {
+        let data = btoa(encodeURIComponent(JSON.stringify(slides)));
+        let shareableURL = window.location.origin + window.location.pathname + "#data=" + data;
+        navigator.clipboard.writeText(shareableURL);
+        alert("تم نسخ رابط المشاركة الخاص بالعرض!");
     }
 
-    /* 2. الشاشة البيضاء/السوداء */
-    function toggleBlankScreen(color) {
-        let overlay = document.getElementById('blankOverlay');
-        if (!overlay) {
-            overlay = document.createElement('div');
-            overlay.id = 'blankOverlay';
-            overlay.style.position = 'fixed';
-            overlay.style.inset = '0';
-            overlay.style.zIndex = '9999';
-            overlay.onclick = () => overlay.style.display = 'none';
-            document.body.appendChild(overlay);
-        }
-        overlay.style.backgroundColor = color;
-        overlay.style.display = overlay.style.display === 'block' ? 'none' : 'block';
-    }
-
-    /* 3. المؤقت الزمني */
-    let seconds = 0;
-    setInterval(() => {
-        seconds++;
-        let mins = Math.floor(seconds / 60).toString().padStart(2, '0');
-        let secs = (seconds % 60).toString().padStart(2, '0');
-        document.getElementById('timerDisplay').innerText = `⏱️ ${mins}:${secs}`;
-    }, 1000);
-
-    /* 4. قفل الشريحة */
-    function toggleLockSlide() {
-        let isLocked = slides[currentIndex].locked = !slides[currentIndex].locked;
-        document.getElementById('slideTitle').disabled = isLocked;
-        document.getElementById('slideBody').disabled = isLocked;
-        document.getElementById('lockBtn').innerText = isLocked ? "🔒 مقفلة" : "🔓 غير مقفلة";
+    /* 17. حفظ كقالب خاص */
+    function saveCustomTemplate() {
+        let customTemplates = JSON.parse(localStorage.getItem('custom_templates')) || [];
+        customTemplates.push(slides[currentIndex]);
+        localStorage.setItem('custom_templates', JSON.stringify(customTemplates));
+        alert("تم حفظ الشريحة كقالب خاص بك!");
     }
 </script>
