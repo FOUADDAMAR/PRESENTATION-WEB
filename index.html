@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Générateur de Présentations Pro & Modèles Wajdin</title>
+    <title>Générateur de Présentations Pro - Design & Formes</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
@@ -29,29 +29,37 @@
 
         /* Zone Principale & Toolbar */
         .main-content { flex: 1; display: flex; flex-direction: column; }
-        .toolbar { background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 12px 24px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .toolbar { background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 12px 24px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
         .toolbar select, .toolbar button, .toolbar input[type="range"] { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; cursor: pointer; font-size: 0.85rem; font-weight: 500; transition: all 0.2s; }
         .toolbar button:hover { background-color: #f8fafc; }
         .toolbar button.primary { background: #3b82f6; color: white; border: none; }
         .toolbar button.primary:hover { background: #2563eb; }
         .toolbar button.success { background: #10b981; color: white; border: none; }
-        .toolbar button.success:hover { background: #059669; }
         .toolbar button.danger { background: #ef4444; color: white; border: none; }
         .toolbar button.active-tool { background: #8b5cf6; color: white; border: none; }
-        .toolbar button.preset-btn { background: #8b5cf6; color: white; border: none; font-weight: 600; }
 
         /* Éditeur & Carte Diapositives */
         .editor-area { flex: 1; padding: 40px; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow-y: auto; position: relative; }
         
         .slide-card-wrapper { position: relative; width: 100%; max-width: 850px; aspect-ratio: 16/9; }
         
-        .slide-card { width: 100%; height: 100%; background: white; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.01); border: 1px solid #f1f5f9; border-radius: 12px; padding: 40px; display: flex; flex-direction: column; justify-content: center; gap: 15px; position: relative; transition: all 0.3s ease; text-align: left; overflow: hidden; }
+        .slide-card { width: 100%; height: 100%; background: white; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; border-radius: 12px; padding: 40px; display: flex; flex-direction: column; justify-content: center; gap: 15px; position: relative; transition: all 0.3s ease; text-align: left; overflow: hidden; }
         
+        /* Styles des arrière-plans (Designs Wajdin) */
+        .bg-gradient-blue { background: linear-gradient(135deg, #e0f2fe 0%, #3b82f6 100%) !important; color: white !important; }
+        .bg-gradient-purple { background: linear-gradient(135deg, #f3e8ff 0%, #a855f7 100%) !important; color: white !important; }
+        .bg-gradient-dark { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important; color: white !important; }
+        .bg-pattern-grid { background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 15px 15px; }
+
         .slide-card input, .slide-card textarea { width: 100%; border: 1px dashed transparent; padding: 8px; background: transparent; color: inherit; font-family: inherit; border-radius: 4px; }
         .slide-card input:focus, .slide-card textarea:focus { border-color: #3b82f6; outline: none; background: rgba(59,130,246,0.02); }
-        .slide-card input.title-input { font-size: 2.2rem; font-weight: 700; color: #0f172a; }
-        .slide-card textarea.body-input { font-size: 1.1rem; resize: none; height: 120px; color: #334155; }
+        .slide-card input.title-input { font-size: 2.2rem; font-weight: 700; }
+        .slide-card textarea.body-input { font-size: 1.1rem; resize: none; height: 120px; }
         .slide-card img.preview-img { max-height: 180px; object-fit: contain; border-radius: 6px; margin: 0 auto; }
+        
+        /* Conteneur d'formes هندسية */
+        .shapes-container { position: absolute; inset: 0; pointer-events: none; z-index: 5; }
+        .added-shape { position: absolute; pointer-events: auto; cursor: move; display: flex; align-items: center; justify-content: center; user-select: none; }
         
         /* Layouts */
         .slide-card.layout-centered { text-align: center; }
@@ -90,8 +98,6 @@
         body.dark-mode .sidebar h2, body.dark-mode .course-section h2 { color: #f8fafc; }
         body.dark-mode .slide-thumb { background: #334155; border-color: #475569; color: #fff; }
         body.dark-mode .slide-card { background-color: #1e293b; color: #fff; border-color: #334155; }
-        body.dark-mode .slide-card input.title-input { color: #fff; }
-        body.dark-mode .slide-card textarea.body-input { color: #cbd5e1; }
         body.dark-mode .card { background: #334155; color: #fff; }
         body.dark-mode .card h3 { color: #fff; }
         body.dark-mode .card p { color: #cbd5e1; }
@@ -129,41 +135,45 @@
         <!-- Zone Principale -->
         <div class="main-content">
             <div class="toolbar">
-                <!-- Présentations Wajdin (Modèles Prêts) -->
+                <!-- Présentations Wajdin -->
                 <label>🔥 Wajdin :</label>
                 <select onchange="loadPresetPresentation(this.value); this.value='';">
-                    <option value="">-- Charger un modèle prêt --</option>
-                    <option value="startup">🚀 Projet Startup / Business</option>
-                    <option value="course">🎓 Exposé / Cours Scolaire</option>
-                    <option value="report">💼 Rapport / Bilan Pro</option>
+                    <option value="">-- Modèles Prêts --</option>
+                    <option value="startup">🚀 Startup / Business</option>
+                    <option value="course">🎓 Exposé / Scolaire</option>
+                    <option value="report">💼 Rapport Pro</option>
                 </select>
 
-                <!-- Disposition (Layout) -->
-                <label>Layout :</label>
-                <select onchange="changeLayout(this.value)">
-                    <option value="default">Titre + Contenu</option>
-                    <option value="layout-centered">Centré / Citation</option>
-                    <option value="layout-columns">Deux Colonnes</option>
+                <!-- الأشكال الهندسية والرسومات الواجدة -->
+                <label>🔷 الأشكال :</label>
+                <select onchange="addShape(this.value); this.value='';">
+                    <option value="">-- إدراج شكل --</option>
+                    <option value="square">🟦 مربع (Carré)</option>
+                    <option value="circle">🟠 دائرة (Cercle)</option>
+                    <option value="triangle">🔺 مثلث (Triangle)</option>
+                    <option value="star">⭐ نجمة (Étoile)</option>
+                    <option value="arrow">➔ سهم (Flèche)</option>
+                    <option value="check">✅ صح (Checkmark)</option>
+                </select>
+
+                <!-- ألوان خلفيات وتصاميم واجدة -->
+                <label>🎨 الخلفية :</label>
+                <select onchange="changeBackgroundStyle(this.value)">
+                    <option value="">أبيض عادي</option>
+                    <option value="bg-gradient-blue">تدرج أزرق عصري</option>
+                    <option value="bg-gradient-purple">تدرج بنفسجي</option>
+                    <option value="bg-gradient-dark">تدرج داكن (Dark)</option>
+                    <option value="bg-pattern-grid">خلفية شبكية (Grid)</option>
                 </select>
 
                 <!-- Images -->
                 <input type="file" id="imageInput" accept="image/*" style="display:none;" onchange="uploadImage(event)">
                 <button onclick="document.getElementById('imageInput').click()">🖼️ Image</button>
-                <button class="danger" onclick="removeImage()">🗑️ Supprimer Img</button>
 
                 <!-- Dessin -->
                 <button id="drawBtn" onclick="toggleDrawingMode()">✏️ Dessiner</button>
                 <button onclick="clearCanvas()">🧹 Effacer</button>
 
-                <!-- Angle & Options -->
-                <label>Angles :</label>
-                <input type="range" min="0" max="40" value="12" onchange="changeRadius(this.value)">
-
-                <button onclick="toggleGlassEffect()">✨ Verre</button>
-                <button onclick="toggleLaser()">🎯 Laser</button>
-                <button onclick="toggleBlankScreen('black')">⬛ Noir</button>
-                <button onclick="toggleTheme()">🎨 Thème</button>
-                
                 <button class="success" onclick="window.print()">🖨 PDF</button>
                 <button class="primary" onclick="toggleFullscreen()">▶ Présentation</button>
             </div>
@@ -171,6 +181,7 @@
             <div class="editor-area">
                 <div class="slide-card-wrapper">
                     <canvas id="drawCanvas"></canvas>
+                    <div class="shapes-container" id="shapesContainer"></div>
                     <div class="slide-card" id="slideCard">
                         <input type="text" class="title-input" id="slideTitle" placeholder="Titre..." oninput="updateCurrentSlide()">
                         <textarea class="body-input" id="slideBody" placeholder="Contenu de la diapositive..." oninput="updateCurrentSlide()"></textarea>
@@ -198,31 +209,94 @@
     </div>
 
     <script>
-        /* --- 1. MODÈLES WAJDIN (PRÉSENTATIONS PRÊTES) --- */
+        /* --- 1. إضافة الأشكال الهندسية --- */
+        function addShape(type) {
+            if(!type) return;
+            const container = document.getElementById('shapesContainer');
+            const shape = document.createElement('div');
+            shape.className = 'added-shape';
+            shape.style.top = '40%';
+            shape.style.left = '40%';
+
+            if(type === 'square') {
+                shape.style.width = '70px'; shape.style.height = '70px';
+                shape.style.backgroundColor = '#3b82f6'; shape.style.borderRadius = '8px';
+            } else if(type === 'circle') {
+                shape.style.width = '70px'; shape.style.height = '70px';
+                shape.style.backgroundColor = '#f97316'; shape.style.borderRadius = '50%';
+            } else if(type === 'triangle') {
+                shape.innerHTML = '🔺'; shape.style.fontSize = '60px';
+            } else if(type === 'star') {
+                shape.innerHTML = '⭐'; shape.style.fontSize = '60px';
+            } else if(type === 'arrow') {
+                shape.innerHTML = '➔'; shape.style.fontSize = '60px'; shape.style.color = '#10b981';
+            } else if(type === 'check') {
+                shape.innerHTML = '✅'; shape.style.fontSize = '50px';
+            }
+
+            // إمكانية حذف الشكل بالنقر عليه مرتين
+            shape.ondblclick = () => shape.remove();
+            
+            // سحب الشكل بالماوس (Drag)
+            makeDraggable(shape);
+            container.appendChild(shape);
+        }
+
+        function makeDraggable(element) {
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            element.onmousedown = dragMouseDown;
+
+            function dragMouseDown(e) {
+                e.preventDefault();
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+            }
+
+            function elementDrag(e) {
+                e.preventDefault();
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                element.style.top = (element.offsetTop - pos2) + "px";
+                element.style.left = (element.offsetLeft - pos1) + "px";
+            }
+
+            function closeDragElement() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+            }
+        }
+
+        function changeBackgroundStyle(className) {
+            const card = document.getElementById('slideCard');
+            card.className = `slide-card ${className}`;
+            slides[currentIndex].bgClass = className;
+            saveAll();
+        }
+
+        /* --- 2. MODÈLES WAJDIN --- */
         const presetPresentations = {
             startup: [
-                { title: "🚀 Nom du Projet", body: "La solution innovante qui transforme notre secteur.\nPrésenté par : L'équipe Projet", image: "", layout: "layout-centered", borderRadius: "12" },
-                { title: "🎯 Le Problème", body: "1. Processus actuels trop lents.\n2. Coûts élevés pour les utilisateurs.\n3. Manque d'outils simples et modernes.", image: "", layout: "default", borderRadius: "12" },
-                { title: "💡 Notre Solution", body: "Une plateforme intuitive, rapide et accessible partout pour automatiser la gestion quotidienne.", image: "", layout: "default", borderRadius: "12" },
-                { title: "📊 Le Marché & Cible", body: "Marché potentiel : +1M d'utilisateurs.\nCible principale : Étudiants, Professionnels & Indépendants.", image: "", layout: "layout-columns", borderRadius: "12" },
-                { title: "🏁 Prochaines Étapes", body: "• Phase 1 : Lancement de la version Beta.\n• Phase 2 : Retours utilisateurs & améliorations.\n• Phase 3 : Déploiement officiel.", image: "", layout: "default", borderRadius: "12" }
+                { title: "🚀 Nom du Projet", body: "La solution innovante qui transforme notre secteur.\nPrésenté par : L'équipe Projet", image: "", layout: "layout-centered" },
+                { title: "🎯 Le Problème", body: "1. Processus actuels trop lents.\n2. Coûts élevés pour les utilisateurs.\n3. Manque d'outils simples.", image: "", layout: "default" },
+                { title: "💡 Notre Solution", body: "Une plateforme intuitive, rapide et accessible partout.", image: "", layout: "default" }
             ],
             course: [
-                { title: "🎓 Titre de l'Exposé", body: "Sujet : L'impact de la technologie moderne\nNom de l'étudiant / Classe", image: "", layout: "layout-centered", borderRadius: "12" },
-                { title: "📌 1. Introduction", body: "Mise en contexte du sujet, définition des termes clés et annonce du plan d'exposé.", image: "", layout: "default", borderRadius: "12" },
-                { title: "🔍 2. Analyse Principale", body: "Explication détaillée des points fondamentaux avec exemples pratiques et chiffres récents.", image: "", layout: "default", borderRadius: "12" },
-                { title: "💡 3. Conclusion & Question", body: "Synthèse des points abordés et ouverture du débat avec la salle.\nMerci pour votre attention !", image: "", layout: "layout-centered", borderRadius: "12" }
+                { title: "🎓 Titre de l'Exposé", body: "Sujet : L'impact de la technologie moderne\nNom de l'étudiant", image: "", layout: "layout-centered" },
+                { title: "📌 1. Introduction", body: "Mise en contexte du sujet et définition des termes.", image: "", layout: "default" }
             ],
             report: [
-                { title: "💼 Bilan & Rapport Trimestriel", body: "Analyse des performances et résultats stratégiques.\nDirection Générale", image: "", layout: "layout-centered", borderRadius: "12" },
-                { title: "📈 Chiffres Clés", body: "• Croissance : +15%\n• Objectifs atteints : 92%\n• Satisfaction client : 4.8/5", image: "", layout: "layout-columns", borderRadius: "12" },
-                { title: "🎯 Objectifs Suivants", body: "Renforcer l'efficacité opérationnelle et développer de nouvelles fonctionnalités d'ici le trimestre prochain.", image: "", layout: "default", borderRadius: "12" }
+                { title: "💼 Bilan & Rapport Trimestriel", body: "Analyse des performances et résultats stratégiques.", image: "", layout: "layout-centered" },
+                { title: "📈 Chiffres Clés", body: "• Croissance : +15%\n• Objectifs : 92%", image: "", layout: "default" }
             ]
         };
 
         function loadPresetPresentation(type) {
             if (!type || !presetPresentations[type]) return;
-            if (confirm("Voulez-vous charger cette présentation prête ? (Cela remplacera le projet actuel)")) {
+            if (confirm("Voulez-vous charger cette présentation prête ?")) {
                 slides = JSON.parse(JSON.stringify(presetPresentations[type]));
                 currentIndex = 0;
                 saveAll();
@@ -231,11 +305,9 @@
             }
         }
 
-        /* --- 2. GESTION DE PLUSIEURS PROJETS --- */
+        /* --- 3. GESTION DES PROJETS & SLIDES --- */
         let projects = JSON.parse(localStorage.getItem('app_projects')) || {
-            "Projet Principal": [
-                { title: "Bienvenue", body: "Choisissez un modèle 'Wajdin' ci-dessus pour démarrer rapidement !", image: "", layout: "default", borderRadius: "12" }
-            ]
+            "Projet Principal": [{ title: "Bienvenue", body: "Choisissez un modèle 'Wajdin' ou ajoutez des formes !", image: "", bgClass: "" }]
         };
         let currentProjectName = localStorage.getItem('current_project') || "Projet Principal";
         let slides = projects[currentProjectName] || projects[Object.keys(projects)[0]];
@@ -252,8 +324,7 @@
             select.innerHTML = '';
             Object.keys(projects).forEach(name => {
                 const opt = document.createElement('option');
-                opt.value = name;
-                opt.innerText = name;
+                opt.value = name; opt.innerText = name;
                 if(name === currentProjectName) opt.selected = true;
                 select.appendChild(opt);
             });
@@ -263,28 +334,18 @@
             const input = document.getElementById('newProjectName');
             const name = input.value.trim();
             if(name && !projects[name]) {
-                projects[name] = [{ title: "Nouvelle Présentation", body: "Contenu...", image: "", layout: "default", borderRadius: "12" }];
-                currentProjectName = name;
-                slides = projects[name];
-                currentIndex = 0;
+                projects[name] = [{ title: "Nouvelle Présentation", body: "Contenu...", image: "", bgClass: "" }];
+                currentProjectName = name; slides = projects[name]; currentIndex = 0;
                 input.value = '';
-                saveAll();
-                renderProjectSelect();
-                loadCurrentSlide();
-                renderSlideList();
+                saveAll(); renderProjectSelect(); loadCurrentSlide(); renderSlideList();
             }
         }
 
         function switchProject(name) {
-            currentProjectName = name;
-            slides = projects[name];
-            currentIndex = 0;
-            saveAll();
-            loadCurrentSlide();
-            renderSlideList();
+            currentProjectName = name; slides = projects[name]; currentIndex = 0;
+            saveAll(); loadCurrentSlide(); renderSlideList();
         }
 
-        /* --- 3. GESTION DES DIAPOSITIVES --- */
         function renderSlideList() {
             const list = document.getElementById('slideList');
             list.innerHTML = '';
@@ -292,219 +353,99 @@
                 const thumb = document.createElement('div');
                 thumb.className = `slide-thumb ${index === currentIndex ? 'active' : ''}`;
                 thumb.onclick = () => selectSlide(index);
-                thumb.innerHTML = `
-                    <strong>Diapo ${index + 1}</strong>: ${slide.title.substring(0, 12) || 'Sans titre'}
-                    <div class="controls">
-                        <button onclick="event.stopPropagation(); deleteSlide(${index})">🗑️</button>
-                    </div>
-                `;
+                thumb.innerHTML = `<strong>Diapo ${index + 1}</strong>: ${slide.title.substring(0, 12) || 'Sans titre'}`;
                 list.appendChild(thumb);
             });
         }
 
         function selectSlide(index) {
-            currentIndex = index;
-            loadCurrentSlide();
-            renderSlideList();
-            clearCanvas();
+            currentIndex = index; loadCurrentSlide(); renderSlideList(); clearCanvas();
         }
 
         function loadCurrentSlide() {
             const current = slides[currentIndex];
             document.getElementById('slideTitle').value = current.title || '';
             document.getElementById('slideBody').value = current.body || '';
-            
-            const card = document.getElementById('slideCard');
-            card.className = `slide-card ${current.layout || 'default'}`;
-            card.style.borderRadius = (current.borderRadius || 12) + 'px';
-
+            document.getElementById('slideCard').className = `slide-card ${current.bgClass || ''}`;
             const imgEl = document.getElementById('slideImg');
-            if (current.image) {
-                imgEl.src = current.image;
-                imgEl.style.display = 'block';
-            } else {
-                imgEl.style.display = 'none';
-            }
+            if (current.image) { imgEl.src = current.image; imgEl.style.display = 'block'; } 
+            else { imgEl.style.display = 'none'; }
         }
 
         function updateCurrentSlide() {
             slides[currentIndex].title = document.getElementById('slideTitle').value;
             slides[currentIndex].body = document.getElementById('slideBody').value;
-            saveAll();
-            renderSlideList();
+            saveAll(); renderSlideList();
         }
 
         function addSlide() {
-            slides.push({ title: "Nouvelle Diapositive", body: "", image: "", layout: "default", borderRadius: "12" });
+            slides.push({ title: "Nouvelle Diapositive", body: "", image: "", bgClass: "" });
             currentIndex = slides.length - 1;
-            loadCurrentSlide();
-            renderSlideList();
-            saveAll();
-        }
-
-        function deleteSlide(index) {
-            if (slides.length <= 1) return;
-            slides.splice(index, 1);
-            if (currentIndex >= slides.length) currentIndex = slides.length - 1;
-            loadCurrentSlide();
-            renderSlideList();
-            saveAll();
-        }
-
-        function changeLayout(layout) {
-            slides[currentIndex].layout = layout;
-            loadCurrentSlide();
-            saveAll();
-        }
-
-        function changeRadius(val) {
-            document.getElementById('slideCard').style.borderRadius = val + 'px';
-            slides[currentIndex].borderRadius = val;
-            saveAll();
+            loadCurrentSlide(); renderSlideList(); saveAll();
         }
 
         /* --- 4. DESSIN (CANVAS) --- */
         const canvas = document.getElementById('drawCanvas');
         const ctx = canvas.getContext('2d');
-        let isDrawing = false;
-        let drawingModeActive = false;
+        let isDrawing = false, drawingModeActive = false;
 
         function resizeCanvas() {
             const wrapper = document.querySelector('.slide-card-wrapper');
-            canvas.width = wrapper.clientWidth;
-            canvas.height = wrapper.clientHeight;
+            canvas.width = wrapper.clientWidth; canvas.height = wrapper.clientHeight;
         }
         window.addEventListener('resize', resizeCanvas);
 
         function toggleDrawingMode() {
             drawingModeActive = !drawingModeActive;
             const btn = document.getElementById('drawBtn');
-            if(drawingModeActive) {
-                canvas.classList.add('drawing-active');
-                btn.classList.add('active-tool');
-            } else {
-                canvas.classList.remove('drawing-active');
-                btn.classList.remove('active-tool');
-            }
+            if(drawingModeActive) { canvas.classList.add('drawing-active'); btn.classList.add('active-tool'); } 
+            else { canvas.classList.remove('drawing-active'); btn.classList.remove('active-tool'); }
         }
 
         canvas.addEventListener('mousedown', (e) => {
             if(!drawingModeActive) return;
-            isDrawing = true;
-            ctx.beginPath();
-            ctx.moveTo(e.offsetX, e.offsetY);
+            isDrawing = true; ctx.beginPath(); ctx.moveTo(e.offsetX, e.offsetY);
         });
 
         canvas.addEventListener('mousemove', (e) => {
             if (isDrawing && drawingModeActive) {
-                ctx.lineTo(e.offsetX, e.offsetY);
-                ctx.strokeStyle = '#ef4444';
-                ctx.lineWidth = 3;
-                ctx.lineCap = 'round';
-                ctx.stroke();
+                ctx.lineTo(e.offsetX, e.offsetY); ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 3; ctx.stroke();
             }
         });
 
         canvas.addEventListener('mouseup', () => isDrawing = false);
+        function clearCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
 
-        function clearCanvas() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }
-
-        /* --- 5. IMAGES & OUTILS --- */
         function uploadImage(event) {
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
-                    slides[currentIndex].image = e.target.result;
-                    loadCurrentSlide();
-                    saveAll();
-                };
+                reader.onload = function(e) { slides[currentIndex].image = e.target.result; loadCurrentSlide(); saveAll(); };
                 reader.readAsDataURL(file);
             }
         }
-
-        function removeImage() {
-            slides[currentIndex].image = "";
-            loadCurrentSlide();
-            saveAll();
-        }
-
-        function toggleGlassEffect() {
-            let card = document.getElementById('slideCard');
-            card.style.backdropFilter = card.style.backdropFilter ? "" : "blur(10px)";
-            card.style.background = card.style.backdropFilter ? "rgba(255, 255, 255, 0.5)" : "";
-        }
-
-        let laserActive = false;
-        function toggleLaser() {
-            laserActive = !laserActive;
-            document.body.style.cursor = laserActive ? "crosshair" : "default";
-        }
-
-        function toggleBlankScreen(color) {
-            let overlay = document.getElementById('blankOverlay');
-            if (!overlay) {
-                overlay = document.createElement('div');
-                overlay.id = 'blankOverlay';
-                overlay.style.position = 'fixed';
-                overlay.style.inset = '0';
-                overlay.style.zIndex = '9999';
-                overlay.onclick = () => overlay.style.display = 'none';
-                document.body.appendChild(overlay);
-            }
-            overlay.style.backgroundColor = color;
-            overlay.style.display = overlay.style.display === 'block' ? 'none' : 'block';
-        }
-
-        function toggleTheme() { document.body.classList.toggle('dark-mode'); }
 
         function toggleFullscreen() {
             const elem = document.querySelector('.slide-card-wrapper');
             if (elem.requestFullscreen) elem.requestFullscreen();
         }
 
-        /* --- 6. COURS OFFICE --- */
+        /* --- 5. COURS OFFICE --- */
         const courses = [
-            { id: 1, software: 'word', title: '1. Les Styles Automatiques', desc: 'Définissez la hiérarchie de vos titres pour créer une table des matières automatique.', code: 'Accueil > Styles > Modifier' },
-            { id: 2, software: 'word', title: '2. Table des Matières', desc: 'Générez un sommaire interactif mis à jour automatiquement.', code: 'Références > Table des matières' },
-            { id: 3, software: 'word', title: '3. Publipostage', desc: 'Générez des fiches personnalisées depuis une liste Excel.', code: 'Publipostage > Démarrer la fusion' },
-            { id: 4, software: 'word', title: '4. Copier la mise en forme', desc: 'Reproduisez le style exact d\'un texte rapidement.', code: 'Ctrl + Maj + C / Ctrl + Maj + V' },
-            { id: 5, software: 'excel', title: '1. Tableau Structuré', desc: 'Transformez vos plages de données en tableau dynamique.', code: 'Ctrl + L (ou Ctrl + T)' },
-            { id: 6, software: 'excel', title: '2. Tableau Croisé Dynamique', desc: 'Analysez des milliers de lignes sans formule.', code: 'Insérer > TCD' },
-            { id: 7, software: 'excel', title: '3. Formule RECHERCHEX', desc: 'Recherchez une valeur simplement dans vos colonnes.', code: '=RECHERCHEX(valeur; recherche; retour)' },
-            { id: 8, software: 'excel', title: '4. Somme Automatique', desc: 'Calculez instantanément la somme d\'une colonne.', code: 'Alt + =' },
-            { id: 9, software: 'ppt', title: '1. Masque de Diapositives', desc: 'Personnalisez le design de tout le diaporama d\'un coup.', code: 'Affichage > Masque de diapositives' },
-            { id: 10, software: 'ppt', title: '2. Transition Métamorphose', desc: 'Créez des animations fluides entre deux diapos.', code: 'Transitions > Métamorphose' },
-            { id: 11, software: 'ppt', title: '3. Convertir en SmartArt', desc: 'Transformez des puces en schémas modernes.', code: 'Clic droit > Convertir en SmartArt' },
-            { id: 12, software: 'ppt', title: '4. Dupliquer un élément', desc: 'Dupliquez instantanément une forme ou diapo.', code: 'Ctrl + D' }
+            { id: 1, software: 'word', title: '1. Les Styles Automatiques', desc: 'Définissez la hiérarchie de vos titres.', code: 'Accueil > Styles' },
+            { id: 2, software: 'excel', title: '1. Tableau Structuré', desc: 'Transformez vos plages de données.', code: 'Ctrl + L' },
+            { id: 3, software: 'ppt', title: '1. Masque de Diapositives', desc: 'Personnalisez le design complet.', code: 'Affichage > Masque' }
         ];
 
         let currentFilter = 'word';
 
         function renderCourses() {
             const grid = document.getElementById('courseGrid');
-            const searchText = document.getElementById('searchInput').value.toLowerCase();
             grid.innerHTML = '';
-
-            const filtered = courses.filter(item => {
-                const matchesTab = item.software === currentFilter;
-                const matchesSearch = item.title.toLowerCase().includes(searchText) || item.desc.toLowerCase().includes(searchText) || item.code.toLowerCase().includes(searchText);
-                return matchesTab && matchesSearch;
-            });
-
-            filtered.forEach(item => {
+            courses.filter(i => i.software === currentFilter).forEach(item => {
                 const card = document.createElement('div');
                 card.className = `card ${item.software}`;
-                card.innerHTML = `
-                    ### ${item.title}
-                    <p>${item.desc}</p>
-                    <div>
-                        <span class="shortcut-badge">${item.code}</span>
-                        <button class="copy-btn" onclick="copyToClipboard('${item.code}')">Copier</button>
-                    </div>
-                `;
+                card.innerHTML = `<h3>${item.title}</h3><p>${item.desc}</p><span class="shortcut-badge">${item.code}</span>`;
                 grid.appendChild(card);
             });
         }
@@ -516,18 +457,8 @@
             renderCourses();
         }
 
-        function searchCourse() { renderCourses(); }
-
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text);
-            alert('Copié : ' + text);
-        }
-
         /* Initialisation */
-        renderProjectSelect();
-        renderSlideList();
-        loadCurrentSlide();
-        renderCourses();
+        renderProjectSelect(); renderSlideList(); loadCurrentSlide(); renderCourses();
         setTimeout(resizeCanvas, 300);
     </script>
 </body>
