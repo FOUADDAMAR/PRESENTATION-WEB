@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur de Présentations Web Pro</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #1e1e2e;
+            color: #cdd6f4;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 300px;
+            background-color: #181825;
+            border-right: 1px solid #313244;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            gap: 15px;
+        }
+
+        .sidebar h2 {
+            font-size: 1.2rem;
+            color: #cba6f7;
+        }
+
+        .slide-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .slide-card {
+            padding: 12px;
+            background: #313244;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .slide-card.active {
+            border-color: #cba6f7;
+            background: #45475a;
+        }
+
+        .btn {
+            background-color: #cba6f7;
+            color: #11111b;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn:hover { background-color: #b4befe; }
+        .btn-present { background-color: #a6e3a1; }
+        .btn-danger { background-color: #f38ba8; color: #11111b; }
+        .btn-secondary { background-color: #89b4fa; color: #11111b; }
+
+        .editor {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 25px;
+            gap: 15px;
+            overflow-y: auto;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            background: #181825;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #313244;
+        }
+
+        .toolbar select, .toolbar input[type="color"] {
+            padding: 6px 10px;
+            border-radius: 6px;
+            background-color: #313244;
+            color: #cdd6f4;
+            border: 1px solid #45475a;
+            cursor: pointer;
+        }
+
+        .slide-preview {
+            width: 100%;
+            max-width: 800px;
+            aspect-ratio: 16 / 9;
+            margin: 0 auto;
+            border-radius: 12px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .theme-dark { background-color: #1e1e2e; color: #cdd6f4; }
+        .theme-light { background-color: #ffffff; color: #1e1e2e; }
+        .theme-ocean { background-color: #0f172a; color: #38bdf8; }
+        .theme-sunset { background-color: #2d1b2e; color: #f9e2af; }
+
+        .slide-preview input, .slide-preview textarea {
+            background: transparent;
+            border: none;
+            color: inherit;
+            outline: none;
+            width: 100%;
+            resize: none;
+            text-align: center;
+        }
+
+        .slide-preview input {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .slide-preview textarea {
+            font-size: 1.2rem;
+            height: 90px;
+        }
+
+        .slide-image {
+            max-height: 180px;
+            max-width: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .fullscreen-presentation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 80px;
+            text-align: center;
+        }
+
+        .fullscreen-presentation img {
+            max-height: 380px;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+
+        @media print {
+            .sidebar, .toolbar { display: none !important; }
+            body { height: auto; overflow: visible; background: white; }
+            .slide-preview { page-break-after: always; box-shadow: none; border: 1px solid #ccc; margin-bottom: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>📊 Mes Diapositives</h2>
+        <div class="slide-list" id="slideList"></div>
+        <button class="btn" onclick="addSlide()">+ Nouvelle Diapo</button>
+        <button class="btn btn-present" onclick="startPresentation()">▶ Mode Présentation</button>
+    </div>
+
+    <div class="editor">
+        <div class="toolbar">
+            <label>Thème :</label>
+            <select id="themeSelect" onchange="changeTheme(this.value)">
+                <option value="theme-dark">Sombre</option>
+                <option value="theme-light">Clair</option>
+                <option value="theme-ocean">Océan</option>
+                <option value="theme-sunset">Coucher de soleil</option>
+            </select>
+
+            <label class="btn btn-secondary" style="cursor:pointer;">
+                📁 Choisir Image
+                <input type="file" id="imageInput" accept="image/*" style="display:none;" onchange="uploadImage(event)">
+            </label>
+
+            <button class="btn btn-danger" onclick="removeImage()">🗑️ Suppr Image</button>
+
+            <label>Couleur texte :</label>
+            <input type="color" id="textColor" value="#cdd6f4" onchange="changeTextColor(this.value)">
+
+            <button class="btn" style="background:#f9e2af; color:#11111b;" onclick="window.print()">🖨️ PDF</button>
+            <button class="btn btn-danger" onclick="deleteCurrentSlide()">Supprimer diapo</button>
+        </div>
+
+        <div class="slide-preview theme-dark" id="slidePreview">
+            <input type="text" id="slideTitle" placeholder="Titre de la diapositive" oninput="updateSlideContent()">
+            <textarea id="slideBody" placeholder="Saisissez votre texte ici..." oninput="updateSlideContent()"></textarea>
+            <img id="slideImg" class="slide-image" src="" style="display: none;">
+        </div>
+    </div>
+
+    <script>
+        let savedSlides = localStorage.getItem('my_presentation_slides');
+        let slides = savedSlides ? JSON.parse(savedSlides) : [
+            { title: "Bienvenue sur votre présentation", body: "Utilisez les flèches ← et → en mode présentation !", image: "", color: "" }
+        ];
+
+        let currentIndex = 0;
+        let currentTheme = 'theme-dark';
+
+        function saveToStorage() {
+            localStorage.setItem('my_presentation_slides', JSON.stringify(slides));
+        }
+
+        function renderSlideList() {
+            const list = document.getElementById('slideList');
+            list.innerHTML = '';
+            slides.forEach((slide, index) => {
+                const card = document.createElement('div');
+                card.className = `slide-card ${index === currentIndex ? 'active' : ''}`;
+                card.innerText = `Diapo ${index + 1}: ${slide.title || 'Sans titre'}`;
+                card.onclick = () => selectSlide(index);
+                list.appendChild(card);
+            });
+        }
+
+        function loadCurrentSlide() {
+            const current = slides[currentIndex];
+            const titleEl = document.getElementById('slideTitle');
+            const bodyEl = document.getElementById('slideBody');
+            const imgEl = document.getElementById('slideImg');
+
+            titleEl.value = current.title || '';
+            bodyEl.value = current.body || '';
+
+            if (current.color) {
+                titleEl.style.color = current.color;
+                bodyEl.style.color = current.color;
+            } else {
+                titleEl.style.color = '';
+                bodyEl.style.color = '';
+            }
+
+            if (current.image) {
+                imgEl.src = current.image;
+                imgEl.style.display = 'block';
+            } else {
+                imgEl.style.display = 'none';
+            }
+
+            renderSlideList();
+        }
+
+        function updateSlideContent() {
+            slides[currentIndex].title = document.getElementById('slideTitle').value;
+            slides[currentIndex].body = document.getElementById('slideBody').value;
+            renderSlideList();
+            saveToStorage();
+        }
+
+        function changeTextColor(color) {
+            slides[currentIndex].color = color;
+            document.getElementById('slideTitle').style.color = color;
+            document.getElementById('slideBody').style.color = color;
+            saveToStorage();
+        }
+
+        function uploadImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    slides[currentIndex].image = e.target.result;
+                    loadCurrentSlide();
+                    saveToStorage();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeImage() {
+            slides[currentIndex].image = "";
+            loadCurrentSlide();
+            saveToStorage();
+        }
+
+        function addSlide() {
+            slides.push({ title: "Nouvelle Diapositive", body: "Contenu...", image: "", color: "" });
+            currentIndex = slides.length - 1;
+            loadCurrentSlide();
+            saveToStorage();
+        }
+
+        function selectSlide(index) {
+            currentIndex = index;
+            loadCurrentSlide();
+        }
+
+        function deleteCurrentSlide() {
+            if (slides.length > 1) {
+                slides.splice(currentIndex, 1);
+                currentIndex = Math.max(0, currentIndex - 1);
+                loadCurrentSlide();
+                saveToStorage();
+            } else {
+                alert("Vous devez garder au moins une diapositive.");
+            }
+        }
+
+        function changeTheme(theme) {
+            currentTheme = theme;
+            document.getElementById('slidePreview').className = `slide-preview ${theme}`;
+        }
+
+        function startPresentation() {
+            renderFullscreenSlide();
+            document.addEventListener('keydown', handleKeyPress);
+        }
+
+        function renderFullscreenSlide() {
+            let oldPres = document.getElementById('activePres');
+            if (oldPres) oldPres.remove();
+
+            const current = slides[currentIndex];
+            const presDiv = document.createElement('div');
+            presDiv.className = `fullscreen-presentation ${currentTheme}`;
+            presDiv.id = 'activePres';
+            
+            let imgHTML = current.image ? `<img src="${current.image}">` : '';
+            let styleColor = current.color ? `style="color: ${current.color};"` : '';
+
+            presDiv.innerHTML = `
+                <h1 ${styleColor} style="font-size: 3.5rem; margin-bottom: 20px;">${current.title}</h1>
+                <p ${styleColor} style="font-size: 1.8rem; white-space: pre-wrap;">${current.body}</p>
+                ${imgHTML}
+                <p style="position: absolute; bottom: 20px; font-size: 0.9rem; opacity: 0.6;">Flèches ← / → pour naviguer | 'Échap' pour quitter</p>
+            `;
+            document.body.appendChild(presDiv);
+        }
+
+        function handleKeyPress(e) {
+            const pres = document.getElementById('activePres');
+            if (!pres) return;
+
+            if (e.key === 'Escape') {
+                pres.remove();
+                document.removeEventListener('keydown', handleKeyPress);
+            } else if (e.key === 'ArrowRight') {
+                if (currentIndex < slides.length - 1) {
+                    currentIndex++;
+                    renderFullscreenSlide();
+                }
+            } else if (e.key === 'ArrowLeft') {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    renderFullscreenSlide();
+                }
+            }
+        }
+
+        loadCurrentSlide();
+    </script>
+</body>
+</html>
