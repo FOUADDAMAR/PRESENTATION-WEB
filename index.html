@@ -3,14 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Générateur de Présentations Web</title>
+    <title>Générateur de Présentations Pro</title>
+    <!-- Importation de Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:wght@700&family=Poppins:wght@400;600&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
         body { display: flex; height: 100vh; background-color: #f4f6f9; color: #333; transition: background-color 0.3s, color 0.3s; }
         
-        /* Styles de la barre latérale et des outils */
-        .sidebar { width: 300px; background: #fff; border-right: 1px solid #ddd; display: flex; flex-direction: column; padding: 15px; transition: background 0.3s, border-color 0.3s; }
-        .sidebar h2 { font-size: 1.2rem; margin-bottom: 15px; color: #2c3e50; }
+        /* Barre latérale */
+        .sidebar { width: 300px; background: #fff; border-right: 1px solid #ddd; display: flex; flex-direction: column; padding: 15px; transition: background 0.3s; }
+        .sidebar h2 { font-size: 1.2rem; margin-bottom: 10px; color: #2c3e50; }
         .slide-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
         .slide-thumb { padding: 10px; border: 2px solid #e0e0e0; border-radius: 6px; cursor: pointer; background: #fafafa; position: relative; transition: all 0.2s; }
         .slide-thumb.active { border-color: #3498db; background: #ebf5fb; }
@@ -18,42 +20,49 @@
         .slide-thumb button { background: none; border: none; cursor: pointer; font-size: 0.8rem; opacity: 0.6; }
         .slide-thumb button:hover { opacity: 1; }
         
+        /* Contenu principal et barre d'outils */
         .main-content { flex: 1; display: flex; flex-direction: column; }
-        .toolbar { background: #fff; border-bottom: 1px solid #ddd; padding: 10px 20px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; transition: background 0.3s, border-color 0.3s; }
-        .toolbar select, .toolbar button { padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; background: #fff; cursor: pointer; font-size: 0.9rem; }
+        .toolbar { background: #fff; border-bottom: 1px solid #ddd; padding: 10px 20px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; transition: background 0.3s; }
+        .toolbar select, .toolbar button { padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px; background: #fff; cursor: pointer; font-size: 0.85rem; }
         .toolbar button.primary { background: #3498db; color: white; border: none; }
         .toolbar button.primary:hover { background: #2980b9; }
         .toolbar button.success { background: #2ecc71; color: white; border: none; }
-        .toolbar button.success:hover { background: #27ae60; }
+        .toolbar button.danger { background: #e74c3c; color: white; border: none; }
         
-        .editor-area { flex: 1; padding: 30px; display: flex; justify-content: center; align-items: center; overflow-y: auto; }
-        .slide-card { width: 100%; max-width: 800px; aspect-ratio: 16/9; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-radius: 8px; padding: 40px; display: flex; flex-direction: column; justify-content: center; gap: 20px; position: relative; transition: background 0.3s, color 0.3s; }
-        .slide-card input, .slide-card textarea { width: 100%; border: 1px dashed transparent; padding: 8px; background: transparent; font-size: 1rem; color: inherit; transition: border 0.2s; }
+        /* Zone de travail et carte diapo */
+        .editor-area { flex: 1; padding: 30px; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow-y: auto; position: relative; }
+        .slide-card { width: 100%; max-width: 800px; aspect-ratio: 16/9; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-radius: 8px; padding: 40px; display: flex; flex-direction: column; justify-content: center; gap: 15px; position: relative; transition: all 0.3s ease-in-out; text-align: left; }
+        
+        /* Animation de transition */
+        .slide-card.fade-anim { opacity: 0; transform: translateY(10px); }
+        
+        .slide-card input, .slide-card textarea { width: 100%; border: 1px dashed transparent; padding: 6px; background: transparent; color: inherit; font-family: inherit; transition: border 0.2s; }
         .slide-card input:hover, .slide-card textarea:hover, .slide-card input:focus, .slide-card textarea:focus { border-color: #cbd5e1; outline: none; background: rgba(0,0,0,0.02); }
         .slide-card input.title-input { font-size: 2rem; font-weight: bold; }
-        .slide-card textarea.body-input { font-size: 1.2rem; resize: none; height: 120px; }
-        .slide-card img.preview-img { max-height: 180px; object-fit: contain; border-radius: 4px; }
+        .slide-card textarea.body-input { font-size: 1.1rem; resize: none; height: 100px; }
+        .slide-card img.preview-img { max-height: 160px; object-fit: contain; border-radius: 4px; margin: 0 auto; }
         
+        /* Informations en bas de page */
+        .info-bar { position: absolute; bottom: 10px; font-size: 0.85rem; color: #7f8c8d; }
+
         /* Modal Galerie */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
         .modal-content { background: white; padding: 20px; border-radius: 8px; max-width: 600px; width: 90%; }
-        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-top: 15px; }
-        .gallery-grid img { width: 100%; height: 100px; object-fit: cover; border-radius: 4px; cursor: pointer; border: 2px solid transparent; }
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-top: 15px; }
+        .gallery-grid img { width: 100%; height: 90px; object-fit: cover; border-radius: 4px; cursor: pointer; border: 2px solid transparent; }
         .gallery-grid img:hover { border-color: #3498db; }
 
-        /* --- THÈME SOMBRE --- */
+        /* Mode Sombre */
         body.dark-mode { background-color: #1e1e2e; color: #f8f9fa; }
-        body.dark-mode .sidebar { background-color: #2b2b3d; border-color: #444; color: #fff; }
+        body.dark-mode .sidebar, body.dark-mode .toolbar { background-color: #2b2b3d; border-color: #444; color: #fff; }
         body.dark-mode .sidebar h2 { color: #fff; }
         body.dark-mode .slide-thumb { background: #3b3b4f; border-color: #555; color: #fff; }
         body.dark-mode .slide-thumb.active { border-color: #3498db; background: #253342; }
-        body.dark-mode .toolbar { background-color: #2b2b3d; border-color: #444; color: #fff; }
         body.dark-mode .toolbar select, body.dark-mode .toolbar button { background-color: #3b3b4f; color: #fff; border-color: #555; }
-        body.dark-mode .slide-card { background-color: #2b2b3d; color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
 
-        /* --- IMPRESSION ET EXPORTATION PDF --- */
+        /* Exportation PDF */
         @media print {
-            .sidebar, .toolbar, .modal { display: none !important; }
+            .sidebar, .toolbar, .modal, .info-bar { display: none !important; }
             body { background: white !important; color: black !important; }
             .editor-area { padding: 0 !important; }
             .slide-card { box-shadow: none !important; width: 100% !important; height: 100vh !important; border-radius: 0 !important; page-break-after: always; }
@@ -65,27 +74,54 @@
     <div class="sidebar">
         <h2>Mes Diapos</h2>
         <div class="slide-list" id="slideList"></div>
-        <button class="primary" onclick="addSlide()">+ Nouvelle Diapo</button>
+        <div style="display:flex; gap:5px;">
+            <button class="primary" style="flex:1;" onclick="addSlide()">+ Diapo</button>
+            <button onclick="duplicateSlide()" title="Dupliquer">📋</button>
+        </div>
     </div>
 
     <div class="main-content">
         <div class="toolbar">
-            <label>Modèle :</label>
+            <!-- Modèles & Galerie -->
             <select id="templateSelect" onchange="loadTemplate(this.value)">
-                <option value="">-- Choisir un modèle --</option>
-                <option value="projet">🚀 Présentation de Projet</option>
-                <option value="expose">📚 Exposé Scolaire</option>
+                <option value="">-- Modèles --</option>
+                <option value="projet">🚀 Projet</option>
+                <option value="expose">📚 Exposé</option>
             </select>
 
-            <button onclick="openGallery()">🖼️ Galerie d'images</button>
-            <button onclick="document.getElementById('imgUpload').click()">📤 Importer Image</button>
+            <button onclick="openGallery()">🖼️ Galerie</button>
+            <button onclick="document.getElementById('imgUpload').click()">📤 Importer</button>
             <input type="file" id="imgUpload" accept="image/*" style="display:none" onchange="handleImageUpload(event)">
-            
-            <!-- Nouveaux boutons : Couleur/Thème et Imprimer -->
-            <button onclick="toggleTheme()">🎨 Mode Sombre / Clair</button>
-            <button class="success" onclick="window.print()">🖨️ Imprimer / PDF</button>
-            
-            <button class="primary" onclick="toggleFullscreen()">▶️ Mode Présentation</button>
+
+            <!-- Style & Alignement -->
+            <select onchange="changeFont(this.value)">
+                <option value="'Poppins', sans-serif">Police: Poppins</option>
+                <option value="'Roboto', sans-serif">Roboto</option>
+                <option value="'Montserrat', sans-serif">Montserrat</option>
+                <option value="'Playfair Display', serif">Playfair</option>
+            </select>
+
+            <select onchange="changeCardBg(this.value)">
+                <option value="#ffffff">Fond: Blanc</option>
+                <option value="#f0f9ff">Fond: Bleu pastel</option>
+                <option value="#f0fdf4">Fond: Vert pastel</option>
+                <option value="#fff7ed">Fond: Orange pastel</option>
+                <option value="#2d3748">Fond: Sombre</option>
+            </select>
+
+            <button onclick="changeAlign('left')">⬅️</button>
+            <button onclick="changeAlign('center')">↔️</button>
+            <button onclick="changeAlign('right')">➡️</button>
+
+            <!-- Thème, PDF & Fichiers -->
+            <button onclick="toggleTheme()">🎨 Sombre/Clair</button>
+            <button class="success" onclick="window.print()">🖨️️ PDF</button>
+            <button onclick="exportJSON()" title="Sauvegarder fichier">💾 Exporter</button>
+            <button onclick="document.getElementById('jsonInput').click()" title="Charger fichier">📂 Importer</button>
+            <input type="file" id="jsonInput" accept=".json" style="display:none" onchange="importJSON(event)">
+
+            <button class="danger" onclick="resetAll()" title="Recommencer tout">🗑️️ Raz</button>
+            <button class="primary" onclick="toggleFullscreen()">▶️ Présentation</button>
         </div>
 
         <div class="editor-area">
@@ -94,10 +130,11 @@
                 <textarea class="body-input" id="slideBody" placeholder="Contenu texte..." oninput="updateCurrentSlide()"></textarea>
                 <img id="slideImg" class="preview-img" style="display:none;" />
             </div>
+            <div class="info-bar" id="infoBar">Diapo 1/1 | 0 mots</div>
         </div>
     </div>
 
-    <!-- Modal Galerie d'images -->
+    <!-- Modal Galerie -->
     <div class="modal" id="galleryModal">
         <div class="modal-content">
             <h3>Choisir une image exemple</h3>
@@ -114,12 +151,13 @@
         ];
 
         let slides = JSON.parse(localStorage.getItem('presentation_slides')) || [
-            { title: "Bienvenue sur votre présentation", body: "Modifiez ce texte ou choisissez un modèle ci-dessus.", image: "" }
+            { title: "Bienvenue", body: "Modifiez ce texte ou choisissez un modèle ci-dessus.", image: "", font: "'Poppins', sans-serif", bg: "#ffffff", align: "left" }
         ];
         let currentIndex = 0;
 
         function saveToStorage() {
             localStorage.setItem('presentation_slides', JSON.stringify(slides));
+            updateInfoBar();
         }
 
         function renderSlideList() {
@@ -130,7 +168,7 @@
                 thumb.className = `slide-thumb ${index === currentIndex ? 'active' : ''}`;
                 thumb.onclick = () => selectSlide(index);
                 thumb.innerHTML = `
-                    <strong>Diapo ${index + 1}</strong>: ${slide.title.substring(0, 15) || 'Sans titre'}
+                    <strong>Diapo ${index + 1}</strong>: ${slide.title.substring(0, 12) || 'Sans titre'}
                     <div class="controls">
                         <button onclick="event.stopPropagation(); deleteSlide(${index})">🗑️</button>
                     </div>
@@ -141,7 +179,12 @@
 
         function selectSlide(index) {
             currentIndex = index;
-            loadCurrentSlide();
+            const card = document.getElementById('slideCard');
+            card.classList.add('fade-anim');
+            setTimeout(() => {
+                loadCurrentSlide();
+                card.classList.remove('fade-anim');
+            }, 150);
             renderSlideList();
         }
 
@@ -149,6 +192,19 @@
             const current = slides[currentIndex];
             document.getElementById('slideTitle').value = current.title || '';
             document.getElementById('slideBody').value = current.body || '';
+            
+            const card = document.getElementById('slideCard');
+            card.style.fontFamily = current.font || "'Poppins', sans-serif";
+            card.style.backgroundColor = current.bg || "#ffffff";
+            card.style.textAlign = current.align || "left";
+
+            // Adapter la couleur du texte si le fond est sombre
+            if(current.bg === "#2d3748") {
+                card.style.color = "#ffffff";
+            } else {
+                card.style.color = "inherit";
+            }
+
             const imgEl = document.getElementById('slideImg');
             if (current.image) {
                 imgEl.src = current.image;
@@ -156,6 +212,7 @@
             } else {
                 imgEl.style.display = 'none';
             }
+            updateInfoBar();
         }
 
         function updateCurrentSlide() {
@@ -166,8 +223,17 @@
         }
 
         function addSlide() {
-            slides.push({ title: "Nouvelle Diapositive", body: "", image: "" });
+            slides.push({ title: "Nouvelle Diapositive", body: "", image: "", font: "'Poppins', sans-serif", bg: "#ffffff", align: "left" });
             currentIndex = slides.length - 1;
+            loadCurrentSlide();
+            renderSlideList();
+            saveToStorage();
+        }
+
+        function duplicateSlide() {
+            const copy = JSON.parse(JSON.stringify(slides[currentIndex]));
+            slides.splice(currentIndex + 1, 0, copy);
+            currentIndex++;
             loadCurrentSlide();
             renderSlideList();
             saveToStorage();
@@ -182,6 +248,33 @@
             saveToStorage();
         }
 
+        /* Personnalisation */
+        function changeFont(font) {
+            slides[currentIndex].font = font;
+            loadCurrentSlide();
+            saveToStorage();
+        }
+
+        function changeCardBg(color) {
+            slides[currentIndex].bg = color;
+            loadCurrentSlide();
+            saveToStorage();
+        }
+
+        function changeAlign(align) {
+            slides[currentIndex].align = align;
+            loadCurrentSlide();
+            saveToStorage();
+        }
+
+        /* Compteur & Infos */
+        function updateInfoBar() {
+            const text = (slides[currentIndex].title + " " + slides[currentIndex].body).trim();
+            const words = text ? text.split(/\s+/).length : 0;
+            document.getElementById('infoBar').innerText = `Diapo ${currentIndex + 1}/${slides.length} | ${words} mots`;
+        }
+
+        /* Image & Galerie */
         function handleImageUpload(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -211,22 +304,60 @@
             document.getElementById('galleryModal').style.display = 'flex';
         }
 
-        function closeGallery() {
-            document.getElementById('galleryModal').style.display = 'none';
+        function closeGallery() { document.getElementById('galleryModal').style.display = 'none'; }
+
+        /* Import / Export JSON */
+        function exportJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(slides));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "presentation.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function importJSON(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    slides = JSON.parse(event.target.result);
+                    currentIndex = 0;
+                    loadCurrentSlide();
+                    renderSlideList();
+                    saveToStorage();
+                } catch (err) {
+                    alert("Fichier JSON invalide !");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function resetAll() {
+            if (confirm("Voulez-vous vraiment tout effacer et recommencer ?")) {
+                localStorage.removeItem('presentation_slides');
+                slides = [{ title: "Bienvenue", body: "Modifiez ce texte...", image: "", font: "'Poppins', sans-serif", bg: "#ffffff", align: "left" }];
+                currentIndex = 0;
+                loadCurrentSlide();
+                renderSlideList();
+                saveToStorage();
+            }
         }
 
         function loadTemplate(type) {
             if (type === 'projet') {
                 slides = [
-                    { title: "🚀 Nom du Projet", body: "Une brève présentation du projet et de ses enjeux.", image: stockImages[0] },
-                    { title: "🎯 Le Problème", body: "Quel problème cherchons-nous à résoudre ?", image: "" },
-                    { title: "💡 La Solution", body: "Notre approche innovante et ses avantages.", image: stockImages[1] }
+                    { title: "🚀 Nom du Projet", body: "Une brève présentation du projet et de ses enjeux.", image: stockImages[0], font: "'Poppins', sans-serif", bg: "#ffffff", align: "left" },
+                    { title: "🎯 Le Problème", body: "Quel problème cherchons-nous à résoudre ?", image: "", font: "'Poppins', sans-serif", bg: "#fff7ed", align: "left" },
+                    { title: "💡 La Solution", body: "Notre approche innovante et ses avantages.", image: stockImages[1], font: "'Poppins', sans-serif", bg: "#f0fdf4", align: "left" }
                 ];
             } else if (type === 'expose') {
                 slides = [
-                    { title: "📚 Titre de l'Exposé", body: "Présenté par : [Votre Nom]", image: stockImages[2] },
-                    { title: "1. Introduction", body: "Mise en contexte du sujet.", image: "" },
-                    { title: "2. Conclusion", body: "Synthèse et remerciements.", image: "" }
+                    { title: "📚 Titre de l'Exposé", body: "Présenté par : [Votre Nom]", image: stockImages[2], font: "'Playfair Display', serif", bg: "#ffffff", align: "center" },
+                    { title: "1. Introduction", body: "Mise en contexte du sujet.", image: "", font: "'Roboto', sans-serif", bg: "#ffffff", align: "left" },
+                    { title: "2. Conclusion", body: "Synthèse et remerciements.", image: "", font: "'Roboto', sans-serif", bg: "#ffffff", align: "left" }
                 ];
             }
             currentIndex = 0;
@@ -237,15 +368,20 @@
 
         function toggleFullscreen() {
             const elem = document.getElementById('slideCard');
-            if (elem.requestFullscreen) {
-                elem.requestFullscreen();
-            }
+            if (elem.requestFullscreen) elem.requestFullscreen();
         }
 
-        // Basculer entre le mode clair et le mode sombre
-        function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
-        }
+        function toggleTheme() { document.body.classList.toggle('dark-mode'); }
+
+        /* Navigation Clavier */
+        document.addEventListener('keydown', (e) => {
+            if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
+            if (e.key === 'ArrowRight' && currentIndex < slides.length - 1) {
+                selectSlide(currentIndex + 1);
+            } else if (e.key === 'ArrowLeft' && currentIndex > 0) {
+                selectSlide(currentIndex - 1);
+            }
+        });
 
         // Initialisation
         renderSlideList();
