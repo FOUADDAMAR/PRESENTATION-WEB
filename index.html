@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Générateur de Présentations & Cours Office Pro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Générateur de Présentations Pro & Modèles Wajdin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
-        body { display: flex; flex-direction: column; min-height: 100vh; background-color: #f1f5f9; color: #0f172a; transition: background-color 0.3s, color 0.3s; }
+        body { display: flex; flex-direction: column; min-height: 100vh; background-color: #f8fafc; color: #0f172a; transition: background-color 0.3s, color 0.3s; }
         
         .app-container { display: flex; flex: 1; height: calc(100vh - 60px); }
 
@@ -38,13 +38,14 @@
         .toolbar button.success:hover { background: #059669; }
         .toolbar button.danger { background: #ef4444; color: white; border: none; }
         .toolbar button.active-tool { background: #8b5cf6; color: white; border: none; }
+        .toolbar button.preset-btn { background: #8b5cf6; color: white; border: none; font-weight: 600; }
 
         /* Éditeur & Carte Diapositives */
         .editor-area { flex: 1; padding: 40px; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow-y: auto; position: relative; }
         
         .slide-card-wrapper { position: relative; width: 100%; max-width: 850px; aspect-ratio: 16/9; }
         
-        .slide-card { width: 100%; height: 100%; background: white; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); border-radius: 12px; padding: 40px; display: flex; flex-direction: column; justify-content: center; gap: 15px; position: relative; transition: all 0.3s ease; text-align: left; overflow: hidden; }
+        .slide-card { width: 100%; height: 100%; background: white; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.01); border: 1px solid #f1f5f9; border-radius: 12px; padding: 40px; display: flex; flex-direction: column; justify-content: center; gap: 15px; position: relative; transition: all 0.3s ease; text-align: left; overflow: hidden; }
         
         .slide-card input, .slide-card textarea { width: 100%; border: 1px dashed transparent; padding: 8px; background: transparent; color: inherit; font-family: inherit; border-radius: 4px; }
         .slide-card input:focus, .slide-card textarea:focus { border-color: #3b82f6; outline: none; background: rgba(59,130,246,0.02); }
@@ -52,16 +53,16 @@
         .slide-card textarea.body-input { font-size: 1.1rem; resize: none; height: 120px; color: #334155; }
         .slide-card img.preview-img { max-height: 180px; object-fit: contain; border-radius: 6px; margin: 0 auto; }
         
-        /* Layouts spéciaux */
+        /* Layouts */
         .slide-card.layout-centered { text-align: center; }
         .slide-card.layout-centered .title-input { font-size: 2.5rem; }
         .slide-card.layout-columns { display: grid; grid-template-columns: 1fr 1fr; align-items: center; }
         
-        /* Canvas de Dessin */
+        /* Canvas Dessin */
         #drawCanvas { position: absolute; inset: 0; z-index: 10; pointer-events: none; border-radius: 12px; }
         #drawCanvas.drawing-active { pointer-events: auto; cursor: crosshair; }
 
-        /* Section Cours Office */
+        /* Cours Office */
         .course-section { background: #ffffff; padding: 50px 20px; border-top: 1px solid #e2e8f0; }
         .course-container { max-width: 1000px; margin: 0 auto; }
         .course-section h2 { text-align: center; margin-bottom: 25px; color: #0f172a; font-size: 1.6rem; }
@@ -88,7 +89,7 @@
         body.dark-mode .sidebar, body.dark-mode .toolbar, body.dark-mode .course-section { background-color: #1e293b; border-color: #334155; color: #fff; }
         body.dark-mode .sidebar h2, body.dark-mode .course-section h2 { color: #f8fafc; }
         body.dark-mode .slide-thumb { background: #334155; border-color: #475569; color: #fff; }
-        body.dark-mode .slide-card { background-color: #1e293b; color: #fff; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5); }
+        body.dark-mode .slide-card { background-color: #1e293b; color: #fff; border-color: #334155; }
         body.dark-mode .slide-card input.title-input { color: #fff; }
         body.dark-mode .slide-card textarea.body-input { color: #cbd5e1; }
         body.dark-mode .card { background: #334155; color: #fff; }
@@ -96,7 +97,7 @@
         body.dark-mode .card p { color: #cbd5e1; }
         body.dark-mode .shortcut-badge { background: #475569; color: #fff; }
 
-        /* Impresion / PDF */
+        /* Impression / PDF */
         @media print {
             .sidebar, .toolbar, .course-section, #drawCanvas { display: none !important; }
             body { background: white !important; color: black !important; }
@@ -128,7 +129,16 @@
         <!-- Zone Principale -->
         <div class="main-content">
             <div class="toolbar">
-                <!-- Modèles de mise en page (Layouts) -->
+                <!-- Présentations Wajdin (Modèles Prêts) -->
+                <label>🔥 Wajdin :</label>
+                <select onchange="loadPresetPresentation(this.value); this.value='';">
+                    <option value="">-- Charger un modèle prêt --</option>
+                    <option value="startup">🚀 Projet Startup / Business</option>
+                    <option value="course">🎓 Exposé / Cours Scolaire</option>
+                    <option value="report">💼 Rapport / Bilan Pro</option>
+                </select>
+
+                <!-- Disposition (Layout) -->
                 <label>Layout :</label>
                 <select onchange="changeLayout(this.value)">
                     <option value="default">Titre + Contenu</option>
@@ -136,16 +146,16 @@
                     <option value="layout-columns">Deux Colonnes</option>
                 </select>
 
-                <!-- Gestion Images -->
+                <!-- Images -->
                 <input type="file" id="imageInput" accept="image/*" style="display:none;" onchange="uploadImage(event)">
                 <button onclick="document.getElementById('imageInput').click()">🖼️ Image</button>
                 <button class="danger" onclick="removeImage()">🗑️ Supprimer Img</button>
 
-                <!-- Dessin / Crayon -->
+                <!-- Dessin -->
                 <button id="drawBtn" onclick="toggleDrawingMode()">✏️ Dessiner</button>
-                <button onclick="clearCanvas()">🧹 Effacer Dessin</button>
+                <button onclick="clearCanvas()">🧹 Effacer</button>
 
-                <!-- Filtres & Outils -->
+                <!-- Angle & Options -->
                 <label>Angles :</label>
                 <input type="range" min="0" max="40" value="12" onchange="changeRadius(this.value)">
 
@@ -155,15 +165,12 @@
                 <button onclick="toggleTheme()">🎨 Thème</button>
                 
                 <button class="success" onclick="window.print()">🖨 PDF</button>
-                <button class="primary" onclick="toggleFullscreen()">▶️️ Présentation</button>
+                <button class="primary" onclick="toggleFullscreen()">▶ Présentation</button>
             </div>
 
             <div class="editor-area">
                 <div class="slide-card-wrapper">
-                    <!-- Surface de Dessin -->
                     <canvas id="drawCanvas"></canvas>
-                    
-                    <!-- Carte Diapositive -->
                     <div class="slide-card" id="slideCard">
                         <input type="text" class="title-input" id="slideTitle" placeholder="Titre..." oninput="updateCurrentSlide()">
                         <textarea class="body-input" id="slideBody" placeholder="Contenu de la diapositive..." oninput="updateCurrentSlide()"></textarea>
@@ -191,10 +198,43 @@
     </div>
 
     <script>
-        /* --- 1. GESTION DE PLUSIEURS PROJETS --- */
+        /* --- 1. MODÈLES WAJDIN (PRÉSENTATIONS PRÊTES) --- */
+        const presetPresentations = {
+            startup: [
+                { title: "🚀 Nom du Projet", body: "La solution innovante qui transforme notre secteur.\nPrésenté par : L'équipe Projet", image: "", layout: "layout-centered", borderRadius: "12" },
+                { title: "🎯 Le Problème", body: "1. Processus actuels trop lents.\n2. Coûts élevés pour les utilisateurs.\n3. Manque d'outils simples et modernes.", image: "", layout: "default", borderRadius: "12" },
+                { title: "💡 Notre Solution", body: "Une plateforme intuitive, rapide et accessible partout pour automatiser la gestion quotidienne.", image: "", layout: "default", borderRadius: "12" },
+                { title: "📊 Le Marché & Cible", body: "Marché potentiel : +1M d'utilisateurs.\nCible principale : Étudiants, Professionnels & Indépendants.", image: "", layout: "layout-columns", borderRadius: "12" },
+                { title: "🏁 Prochaines Étapes", body: "• Phase 1 : Lancement de la version Beta.\n• Phase 2 : Retours utilisateurs & améliorations.\n• Phase 3 : Déploiement officiel.", image: "", layout: "default", borderRadius: "12" }
+            ],
+            course: [
+                { title: "🎓 Titre de l'Exposé", body: "Sujet : L'impact de la technologie moderne\nNom de l'étudiant / Classe", image: "", layout: "layout-centered", borderRadius: "12" },
+                { title: "📌 1. Introduction", body: "Mise en contexte du sujet, définition des termes clés et annonce du plan d'exposé.", image: "", layout: "default", borderRadius: "12" },
+                { title: "🔍 2. Analyse Principale", body: "Explication détaillée des points fondamentaux avec exemples pratiques et chiffres récents.", image: "", layout: "default", borderRadius: "12" },
+                { title: "💡 3. Conclusion & Question", body: "Synthèse des points abordés et ouverture du débat avec la salle.\nMerci pour votre attention !", image: "", layout: "layout-centered", borderRadius: "12" }
+            ],
+            report: [
+                { title: "💼 Bilan & Rapport Trimestriel", body: "Analyse des performances et résultats stratégiques.\nDirection Générale", image: "", layout: "layout-centered", borderRadius: "12" },
+                { title: "📈 Chiffres Clés", body: "• Croissance : +15%\n• Objectifs atteints : 92%\n• Satisfaction client : 4.8/5", image: "", layout: "layout-columns", borderRadius: "12" },
+                { title: "🎯 Objectifs Suivants", body: "Renforcer l'efficacité opérationnelle et développer de nouvelles fonctionnalités d'ici le trimestre prochain.", image: "", layout: "default", borderRadius: "12" }
+            ]
+        };
+
+        function loadPresetPresentation(type) {
+            if (!type || !presetPresentations[type]) return;
+            if (confirm("Voulez-vous charger cette présentation prête ? (Cela remplacera le projet actuel)")) {
+                slides = JSON.parse(JSON.stringify(presetPresentations[type]));
+                currentIndex = 0;
+                saveAll();
+                loadCurrentSlide();
+                renderSlideList();
+            }
+        }
+
+        /* --- 2. GESTION DE PLUSIEURS PROJETS --- */
         let projects = JSON.parse(localStorage.getItem('app_projects')) || {
             "Projet Principal": [
-                { title: "Bienvenue", body: "Votre nouvelle présentation moderne...", image: "", layout: "default", borderRadius: "12" }
+                { title: "Bienvenue", body: "Choisissez un modèle 'Wajdin' ci-dessus pour démarrer rapidement !", image: "", layout: "default", borderRadius: "12" }
             ]
         };
         let currentProjectName = localStorage.getItem('current_project') || "Projet Principal";
@@ -244,7 +284,7 @@
             renderSlideList();
         }
 
-        /* --- 2. GESTION DES DIAPOSITIVES --- */
+        /* --- 3. GESTION DES DIAPOSITIVES --- */
         function renderSlideList() {
             const list = document.getElementById('slideList');
             list.innerHTML = '';
@@ -323,7 +363,7 @@
             saveAll();
         }
 
-        /* --- 3. DESSIN ET ANNOTATIONS (CANVAS) --- */
+        /* --- 4. DESSIN (CANVAS) --- */
         const canvas = document.getElementById('drawCanvas');
         const ctx = canvas.getContext('2d');
         let isDrawing = false;
@@ -371,7 +411,7 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
 
-        /* --- 4. IMAGES & AUTRES OUTILS --- */
+        /* --- 5. IMAGES & OUTILS --- */
         function uploadImage(event) {
             const file = event.target.files[0];
             if (file) {
@@ -425,7 +465,7 @@
             if (elem.requestFullscreen) elem.requestFullscreen();
         }
 
-        /* --- 5. COURS OFFICE --- */
+        /* --- 6. COURS OFFICE --- */
         const courses = [
             { id: 1, software: 'word', title: '1. Les Styles Automatiques', desc: 'Définissez la hiérarchie de vos titres pour créer une table des matières automatique.', code: 'Accueil > Styles > Modifier' },
             { id: 2, software: 'word', title: '2. Table des Matières', desc: 'Générez un sommaire interactif mis à jour automatiquement.', code: 'Références > Table des matières' },
@@ -458,7 +498,7 @@
                 const card = document.createElement('div');
                 card.className = `card ${item.software}`;
                 card.innerHTML = `
-                    <h3>${item.title}</h3>
+                    ### ${item.title}
                     <p>${item.desc}</p>
                     <div>
                         <span class="shortcut-badge">${item.code}</span>
