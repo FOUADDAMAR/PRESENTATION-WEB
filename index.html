@@ -1,11 +1,3 @@
-Voici exactement comment faire enregistrer et valider vos modifications sur GitHub :
-1. Pourquoi la case verte n'apparaît pas tout de suite ?
-Le bouton vert se trouve tout en haut à droite de l'écran !
- * Regardez en haut à droite de la page web sur votre ordinateur.
- * Vous trouverez un bouton vert intitulé "Commit changes...".
- * Cliquez dessus : une petite fenêtre s'ouvrira, puis cliquez à nouveau sur le bouton vert "Commit changes" pour valider.
-2. Le code complet et prêt à l'emploi (index.html)
-Afin d'éviter tout bogue ou manque de code, voici l'intégralité du fichier complet intégrant les modèles (templates) et la galerie d'images :
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -14,8 +6,10 @@ Afin d'éviter tout bogue ou manque de code, voici l'intégralité du fichier co
     <title>Générateur de Présentations Web</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { display: flex; height: 100vh; background-color: #f4f6f9; color: #333; }
-        .sidebar { width: 300px; background: #fff; border-right: 1px solid #ddd; display: flex; flex-direction: column; padding: 15px; }
+        body { display: flex; height: 100vh; background-color: #f4f6f9; color: #333; transition: background-color 0.3s, color 0.3s; }
+        
+        /* Styles de la barre latérale et des outils */
+        .sidebar { width: 300px; background: #fff; border-right: 1px solid #ddd; display: flex; flex-direction: column; padding: 15px; transition: background 0.3s, border-color 0.3s; }
         .sidebar h2 { font-size: 1.2rem; margin-bottom: 15px; color: #2c3e50; }
         .slide-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
         .slide-thumb { padding: 10px; border: 2px solid #e0e0e0; border-radius: 6px; cursor: pointer; background: #fafafa; position: relative; transition: all 0.2s; }
@@ -23,15 +17,19 @@ Afin d'éviter tout bogue ou manque de code, voici l'intégralité du fichier co
         .slide-thumb .controls { position: absolute; right: 5px; top: 5px; display: flex; gap: 4px; }
         .slide-thumb button { background: none; border: none; cursor: pointer; font-size: 0.8rem; opacity: 0.6; }
         .slide-thumb button:hover { opacity: 1; }
+        
         .main-content { flex: 1; display: flex; flex-direction: column; }
-        .toolbar { background: #fff; border-bottom: 1px solid #ddd; padding: 10px 20px; display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
-        .toolbar select, .toolbar button, .toolbar input { padding: 6px 12px; border: 1px solid #ccc; border-radius: 4px; background: #fff; cursor: pointer; font-size: 0.9rem; }
+        .toolbar { background: #fff; border-bottom: 1px solid #ddd; padding: 10px 20px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; transition: background 0.3s, border-color 0.3s; }
+        .toolbar select, .toolbar button { padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; background: #fff; cursor: pointer; font-size: 0.9rem; }
         .toolbar button.primary { background: #3498db; color: white; border: none; }
         .toolbar button.primary:hover { background: #2980b9; }
+        .toolbar button.success { background: #2ecc71; color: white; border: none; }
+        .toolbar button.success:hover { background: #27ae60; }
+        
         .editor-area { flex: 1; padding: 30px; display: flex; justify-content: center; align-items: center; overflow-y: auto; }
-        .slide-card { width: 100%; max-width: 800px; aspect-ratio: 16/9; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-radius: 8px; padding: 40px; display: flex; flex-direction: column; justify-content: center; gap: 20px; position: relative; }
-        .slide-card input, .slide-card textarea { width: 100%; border: 1px dashed transparent; padding: 8px; background: transparent; font-size: 1rem; transition: border 0.2s; }
-        .slide-card input:hover, .slide-card textarea:hover, .slide-card input:focus, .slide-card textarea:focus { border-color: #cbd5e1; outline: none; background: #f8fafc; }
+        .slide-card { width: 100%; max-width: 800px; aspect-ratio: 16/9; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-radius: 8px; padding: 40px; display: flex; flex-direction: column; justify-content: center; gap: 20px; position: relative; transition: background 0.3s, color 0.3s; }
+        .slide-card input, .slide-card textarea { width: 100%; border: 1px dashed transparent; padding: 8px; background: transparent; font-size: 1rem; color: inherit; transition: border 0.2s; }
+        .slide-card input:hover, .slide-card textarea:hover, .slide-card input:focus, .slide-card textarea:focus { border-color: #cbd5e1; outline: none; background: rgba(0,0,0,0.02); }
         .slide-card input.title-input { font-size: 2rem; font-weight: bold; }
         .slide-card textarea.body-input { font-size: 1.2rem; resize: none; height: 120px; }
         .slide-card img.preview-img { max-height: 180px; object-fit: contain; border-radius: 4px; }
@@ -42,6 +40,24 @@ Afin d'éviter tout bogue ou manque de code, voici l'intégralité du fichier co
         .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-top: 15px; }
         .gallery-grid img { width: 100%; height: 100px; object-fit: cover; border-radius: 4px; cursor: pointer; border: 2px solid transparent; }
         .gallery-grid img:hover { border-color: #3498db; }
+
+        /* --- THÈME SOMBRE --- */
+        body.dark-mode { background-color: #1e1e2e; color: #f8f9fa; }
+        body.dark-mode .sidebar { background-color: #2b2b3d; border-color: #444; color: #fff; }
+        body.dark-mode .sidebar h2 { color: #fff; }
+        body.dark-mode .slide-thumb { background: #3b3b4f; border-color: #555; color: #fff; }
+        body.dark-mode .slide-thumb.active { border-color: #3498db; background: #253342; }
+        body.dark-mode .toolbar { background-color: #2b2b3d; border-color: #444; color: #fff; }
+        body.dark-mode .toolbar select, body.dark-mode .toolbar button { background-color: #3b3b4f; color: #fff; border-color: #555; }
+        body.dark-mode .slide-card { background-color: #2b2b3d; color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+
+        /* --- IMPRESSION ET EXPORTATION PDF --- */
+        @media print {
+            .sidebar, .toolbar, .modal { display: none !important; }
+            body { background: white !important; color: black !important; }
+            .editor-area { padding: 0 !important; }
+            .slide-card { box-shadow: none !important; width: 100% !important; height: 100vh !important; border-radius: 0 !important; page-break-after: always; }
+        }
     </style>
 </head>
 <body>
@@ -49,7 +65,7 @@ Afin d'éviter tout bogue ou manque de code, voici l'intégralité du fichier co
     <div class="sidebar">
         <h2>Mes Diapos</h2>
         <div class="slide-list" id="slideList"></div>
-        <button class="toolbar select primary" onclick="addSlide()">+ Nouvelle Diapo</button>
+        <button class="primary" onclick="addSlide()">+ Nouvelle Diapo</button>
     </div>
 
     <div class="main-content">
@@ -64,6 +80,10 @@ Afin d'éviter tout bogue ou manque de code, voici l'intégralité du fichier co
             <button onclick="openGallery()">🖼️ Galerie d'images</button>
             <button onclick="document.getElementById('imgUpload').click()">📤 Importer Image</button>
             <input type="file" id="imgUpload" accept="image/*" style="display:none" onchange="handleImageUpload(event)">
+            
+            <!-- Nouveaux boutons : Couleur/Thème et Imprimer -->
+            <button onclick="toggleTheme()">🎨 Mode Sombre / Clair</button>
+            <button class="success" onclick="window.print()">🖨️ Imprimer / PDF</button>
             
             <button class="primary" onclick="toggleFullscreen()">▶️ Mode Présentation</button>
         </div>
@@ -220,6 +240,11 @@ Afin d'éviter tout bogue ou manque de code, voici l'intégralité du fichier co
             if (elem.requestFullscreen) {
                 elem.requestFullscreen();
             }
+        }
+
+        // Basculer entre le mode clair et le mode sombre
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
         }
 
         // Initialisation
