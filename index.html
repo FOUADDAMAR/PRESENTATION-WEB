@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Presentation Pro & Research Suite</title>
+    <title>Global Presentation Pro - 100 Designs Suite</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -13,13 +13,12 @@
             --panel-bg: #ffffff;
             --border-color: #cbd5e1;
             --text-color: #0f172a;
-            --accent: #7c3aed;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', 'Poppins', sans-serif; }
         body { display: flex; flex-direction: column; height: 100vh; background: var(--bg-main); color: var(--text-color); overflow: hidden; }
 
-        /* Office Ribbon Bar - شريط التبويبات العلوي */
+        /* Ribbon Header & Navigation */
         .ribbon-header { background: #1e293b; color: white; display: flex; align-items: center; justify-content: space-between; padding: 5px 20px; font-size: 0.9rem; }
         .ribbon-tabs { display: flex; background: #0f172a; padding: 0 15px; border-bottom: 1px solid var(--border-color); }
         .tab-btn { background: none; border: none; color: #94a3b8; padding: 10px 18px; cursor: pointer; font-weight: 700; font-size: 0.9rem; border-bottom: 3px solid transparent; }
@@ -40,7 +39,6 @@
         /* App Layout */
         .app-body { display: flex; flex: 1; height: calc(100vh - 120px); }
 
-        /* Left/Right Sidebar */
         .sidebar { width: 300px; background: var(--panel-bg); border-left: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 15px; gap: 12px; }
         .sidebar h3 { font-size: 0.95rem; font-weight: 800; color: var(--primary); }
         
@@ -48,16 +46,10 @@
         .slide-thumb { padding: 10px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; background: #f8fafc; position: relative; font-size: 0.85rem; }
         .slide-thumb.active { border-color: var(--primary); background: #eff6ff; font-weight: 700; }
 
-        /* Editor Work Area */
         .workspace { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; position: relative; }
         .slide-wrapper { position: relative; width: 100%; max-width: 900px; aspect-ratio: 16/9; }
         
-        .slide-card { width: 100%; height: 100%; background: white; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); border: 1px solid var(--border-color); padding: 40px; display: flex; flex-direction: column; justify-content: center; gap: 15px; position: relative; text-align: right; overflow: hidden; }
-
-        /* Background Presets */
-        .bg-gradient-blue { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%) !important; color: white !important; }
-        .bg-gradient-purple { background: linear-gradient(135deg, #581c87 0%, #a855f7 100%) !important; color: white !important; }
-        .bg-gradient-dark { background: linear-gradient(135deg, #0f172a 0%, #334155 100%) !important; color: white !important; }
+        .slide-card { width: 100%; height: 100%; background: white; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); border: 1px solid var(--border-color); padding: 40px; display: flex; flex-direction: column; justify-content: center; gap: 15px; position: relative; text-align: right; overflow: hidden; transition: all 0.3s ease; }
 
         .slide-card input, .slide-card textarea { width: 100%; border: 1px dashed transparent; padding: 6px; background: transparent; color: inherit; font-family: inherit; }
         .slide-card input:focus, .slide-card textarea:focus { border-color: var(--primary); outline: none; background: rgba(37, 99, 235, 0.05); }
@@ -65,31 +57,32 @@
         .slide-card textarea.body-input { font-size: 1.1rem; resize: none; height: 140px; line-height: 1.6; }
         .slide-card img.preview-img { max-height: 200px; object-fit: contain; margin: 0 auto; border-radius: 8px; }
 
-        /* Shapes & Canvas */
         .shapes-layer { position: absolute; inset: 0; pointer-events: none; z-index: 5; }
         .shape-item { position: absolute; pointer-events: auto; cursor: move; user-select: none; display: flex; align-items: center; justify-content: center; }
         
         #drawCanvas { position: absolute; inset: 0; z-index: 10; pointer-events: none; border-radius: 12px; }
         #drawCanvas.active { pointer-events: auto; cursor: crosshair; }
 
-        /* Modals & Media Panel */
+        /* Modal styling */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99; display: none; align-items: center; justify-content: center; }
         .modal-box { background: white; padding: 25px; border-radius: 12px; width: 90%; max-width: 700px; max-height: 80vh; overflow-y: auto; }
         .image-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-top: 15px; }
-        .image-grid img { width: 100%; height: 100px; object-fit: cover; border-radius: 6px; cursor: pointer; transition: transform 0.2s; }
-        .image-grid img:hover { transform: scale(1.05); }
+        .image-grid img { width: 100%; height: 100px; object-fit: cover; border-radius: 6px; cursor: pointer; }
 
-        /* Office Course Bottom Panel */
-        .course-footer { background: white; border-top: 1px solid var(--border-color); padding: 15px 20px; max-height: 180px; overflow-y: auto; }
+        .course-footer { background: white; border-top: 1px solid var(--border-color); padding: 15px 20px; max-height: 150px; overflow-y: auto; }
         .course-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
-        .course-card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; font-size: 0.8rem; }
+        .course-card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px; font-size: 0.8rem; }
+
+        /* Dynamic Design Styles (100 Styles injected dynamically) */
+        .design-picker { display: flex; gap: 8px; overflow-x: auto; max-width: 100%; padding: 5px 0; }
+        .design-option { min-width: 100px; height: 50px; border-radius: 6px; border: 2px solid #cbd5e1; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
     </style>
 </head>
 <body>
 
-    <!-- Header / Office Top Ribbon -->
+    <!-- Header -->
     <div class="ribbon-header">
-        <span>🌐 Global Office Presentation & Research Suite</span>
+        <span>🌐 Global Presentation Pro - 100 Themes Suite</span>
         <select onchange="changeLanguage(this.value)" style="background:#0f172a; color:white; border:none; padding:3px 8px; border-radius:4px;">
             <option value="ar">العربية 🇲🇦</option>
             <option value="fr">Français 🇫🇷</option>
@@ -97,11 +90,11 @@
         </select>
     </div>
 
-    <!-- Navigation Tabs (Ribbon) -->
+    <!-- Navigation Tabs -->
     <div class="ribbon-tabs">
         <button class="tab-btn active" onclick="switchRibbonTab('home')">الرئيسية (Accueil)</button>
+        <button class="tab-btn" onclick="switchRibbonTab('designs')">🎨 تصاميم ثيمات (100 Design)</button>
         <button class="tab-btn" onclick="switchRibbonTab('insert')">إدراج (Insertion)</button>
-        <button class="tab-btn" onclick="switchRibbonTab('design')">التصميم (Design)</button>
         <button class="tab-btn" onclick="switchRibbonTab('library')">مكتبة الأبحاث والصور</button>
         <button class="tab-btn" onclick="switchRibbonTab('ai')">الذكاء الاصطناعي (AI)</button>
     </div>
@@ -115,59 +108,62 @@
             <button class="btn-tool" onclick="duplicateSlide()">📋 تكرار</button>
         </div>
         <div class="tool-group">
-            <div><label>الرسم</label></div>
+            <div><label>الرسم والتلوين</label></div>
             <button class="btn-tool" id="drawBtn" onclick="toggleDrawingMode()">✏️ قلم الرسم</button>
             <input type="color" id="penColor" value="#ef4444">
             <button class="btn-tool" onclick="clearCanvas()">🧹 مسح</button>
         </div>
         <div class="tool-group">
-            <div><label>العرض والطباعة</label></div>
+            <div><label>التصدير والعرض</label></div>
             <button class="btn-tool" onclick="window.print()">🖨️ تصدير PDF</button>
             <button class="btn-tool primary" onclick="toggleFullscreen()">▶️ بدء العرض</button>
         </div>
     </div>
 
-    <!-- 2. Insert Tab -->
-    <div class="ribbon-toolbar" id="tab-insert">
-        <div class="tool-group">
-            <div><label>الأشكال الهندسة الشاملة</label></div>
-            <select class="btn-tool" onchange="addShape(this.value); this.value='';">
-                <option value="">-- إدراج شكل هندسي --</option>
-                <option value="square">🟦 مربع (Square)</option>
-                <option value="circle">🟠 دائرة (Circle)</option>
-                <option value="triangle">🔺 مثلث (Triangle)</option>
-                <option value="star">⭐ نجمة (Star)</option>
-                <option value="arrow">➔ سهم (Arrow)</option>
-                <option value="check">✅ صح (Check)</option>
-                <option value="diamond">🔷 معين (Diamond)</option>
-                <option value="cloud">☁️ سحابة (Cloud)</option>
+    <!-- 2. Designs Tab (100 Themes) -->
+    <div class="ribbon-toolbar" id="tab-designs">
+        <div class="tool-group" style="flex:1;">
+            <div><label>اختر من بين 100 تصميم احترافي متنسق:</label></div>
+            <select id="designSelector" class="btn-tool" style="width: 300px;" onchange="applyDesign(this.value)">
+                <!-- Will be populated with 100 design options by JS -->
             </select>
         </div>
         <div class="tool-group">
-            <div><label>الوسائط</label></div>
-            <input type="file" id="imageInput" accept="image/*" style="display:none;" onchange="uploadImage(event)">
-            <button class="btn-tool" onclick="document.getElementById('imageInput').click()">🖼️ من الجهاز</button>
-            <button class="btn-tool" onclick="openImageLibrary()">🌐 مكتبة الصور الجاهزة</button>
+            <div><label>معاينة سريعة</label></div>
+            <div class="design-picker" id="quickPicker"></div>
         </div>
     </div>
 
-    <!-- 3. Design Tab -->
-    <div class="ribbon-toolbar" id="tab-design">
+    <!-- 3. Insert Tab -->
+    <div class="ribbon-toolbar" id="tab-insert">
         <div class="tool-group">
-            <div><label>خلفيات وقوالب احترافية</label></div>
-            <button class="btn-tool" onclick="changeBackgroundStyle('')">أبيض هادئ</button>
-            <button class="btn-tool" onclick="changeBackgroundStyle('bg-gradient-blue')">تدرج أزرق ملكي</button>
-            <button class="btn-tool" onclick="changeBackgroundStyle('bg-gradient-purple')">تدرج بنفسجي</button>
-            <button class="btn-tool" onclick="changeBackgroundStyle('bg-gradient-dark')">نمط داكن (Dark)</button>
+            <div><label>الأشكال الهندسية</label></div>
+            <select class="btn-tool" onchange="addShape(this.value); this.value='';">
+                <option value="">-- إدراج شكل --</option>
+                <option value="square">🟦 مربع</option>
+                <option value="circle">🟠 دائرة</option>
+                <option value="triangle">🔺 مثلث</option>
+                <option value="star">⭐ نجمة</option>
+                <option value="arrow">➔ سهم</option>
+                <option value="check">✅ صح</option>
+                <option value="diamond">🔷 معين</option>
+                <option value="cloud">☁️ سحابة</option>
+            </select>
+        </div>
+        <div class="tool-group">
+            <div><label>الوسائط والصور</label></div>
+            <input type="file" id="imageInput" accept="image/*" style="display:none;" onchange="uploadImage(event)">
+            <button class="btn-tool" onclick="document.getElementById('imageInput').click()">🖼️ من الجهاز</button>
+            <button class="btn-tool" onclick="openImageLibrary()">🌐 صور جاهزة</button>
         </div>
     </div>
 
     <!-- 4. Research & Library Tab -->
     <div class="ribbon-toolbar" id="tab-library">
         <div class="tool-group">
-            <div><label>نماذج عروض ومحتوى جاهز (Presentations)</label></div>
+            <div><label>نماذج وأبحاث جاهزة</label></div>
             <button class="btn-tool" onclick="loadResearchPaper('ai_paper')">📄 بحث: الذكاء الاصطناعي</button>
-            <button class="btn-tool" onclick="loadResearchPaper('business_plan')">💼 عرض: خطة عمل شركة</button>
+            <button class="btn-tool" onclick="loadResearchPaper('business_plan')">💼 عرض: خطة شركة</button>
             <button class="btn-tool" onclick="loadResearchPaper('scientific_method')">🔬 بحث: المنهج العلمي</button>
         </div>
     </div>
@@ -176,46 +172,43 @@
     <div class="ribbon-toolbar" id="tab-ai">
         <div class="tool-group">
             <div><label>التوليد الآلي</label></div>
-            <button class="btn-tool ai-btn" onclick="generateAISlides()">🤖 توليد عرض كامل بالذكاء الاصطناعي</button>
+            <button class="btn-tool ai-btn" onclick="generateAISlides()">🤖 توليد عرض بالذكاء الاصطناعي</button>
         </div>
     </div>
 
     <!-- App Body -->
     <div class="app-body">
-        <!-- Sidebar -->
         <div class="sidebar">
-            <h3>📂 إدارة المشاريع</h3>
+            <h3>📂 المشاريع</h3>
             <select id="projectSelect" class="btn-tool" onchange="switchProject(this.value)"></select>
-            
-            <h3>📜 قائمة الشرائح</h3>
+            <h3>📜 الشرائح</h3>
             <div class="slide-list" id="slideList"></div>
         </div>
 
-        <!-- Editor Workspace -->
         <div class="workspace">
             <div class="slide-wrapper">
                 <canvas id="drawCanvas"></canvas>
                 <div class="shapes-layer" id="shapesContainer"></div>
                 <div class="slide-card" id="slideCard">
                     <input type="text" class="title-input" id="slideTitle" placeholder="عنوان الشريحة..." oninput="updateCurrentSlide()">
-                    <textarea class="body-input" id="slideBody" placeholder="أدخل محتوى الشريحة أو البحث هنا..." oninput="updateCurrentSlide()"></textarea>
+                    <textarea class="body-input" id="slideBody" placeholder="أدخل محتوى الشريحة هنا..." oninput="updateCurrentSlide()"></textarea>
                     <img id="slideImg" class="preview-img" style="display:none;" />
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Bottom Office Tips Panel -->
+    <!-- Bottom Panel -->
     <div class="course-footer">
-        <h4 style="font-size:0.85rem; margin-bottom:8px; color:var(--primary);">🎓 مكتبة دروس Office Express</h4>
+        <h4 style="font-size:0.85rem; margin-bottom:8px; color:var(--primary);">🎓 دروس Office Express السريعة</h4>
         <div class="course-grid">
-            <div class="course-card"><strong>Word:</strong> الأنماط والأنماط التلقائية (Accueil > Styles)</div>
-            <div class="course-card"><strong>Excel:</strong> الجداول المنسقة والتحليل (Ctrl + T)</div>
-            <div class="course-card"><strong>PowerPoint:</strong> الانتقال المنساب (Transitions > Morph)</div>
+            <div class="course-card"><strong>Word:</strong> الأنماط والتنسيق التلقائي</div>
+            <div class="course-card"><strong>Excel:</strong> الجداول التفاعلية (Ctrl + T)</div>
+            <div class="course-card"><strong>PowerPoint:</strong> التحويل التدريجي (Morph)</div>
         </div>
     </div>
 
-    <!-- Image Library Modal -->
+    <!-- Image Modal -->
     <div class="modal-overlay" id="imageModal">
         <div class="modal-box">
             <h3>🌐 اختر صورة جاهزة عالية الجودة</h3>
@@ -230,7 +223,81 @@
     </div>
 
     <script>
-        /* --- 1. RIBBON TAB SYSTEM --- */
+        /* --- GENERATE 100 DESIGNS SYSTEM --- */
+        const designs = [];
+        
+        // 1. Neon & Gradient Themes (1-25)
+        for(let i=1; i<=25; i++) {
+            let hue1 = (i * 14) % 360;
+            let hue2 = (hue1 + 50) % 360;
+            designs.push({
+                id: `design-gradient-${i}`,
+                name: `🌈 تدرج عصري ${i}`,
+                style: `background: linear-gradient(135deg, hsl(${hue1}, 70%, 50%), hsl(${hue2}, 80%, 40%)); color: white;`
+            });
+        }
+
+        // 2. Dark & Luxury Themes (26-50)
+        for(let i=1; i<=25; i++) {
+            let lightness = 10 + (i % 10);
+            let hue = (i * 15) % 360;
+            designs.push({
+                id: `design-dark-${i}`,
+                name: `🌑 داكن فاخر ${i}`,
+                style: `background: linear-gradient(135deg, hsl(${hue}, 20%, ${lightness}%), hsl(${hue}, 30%, 5%)); color: #f8fafc;`
+            });
+        }
+
+        // 3. Light, Pastel & Academic Themes (51-75)
+        for(let i=1; i<=25; i++) {
+            let hue = (i * 14) % 360;
+            designs.push({
+                id: `design-pastel-${i}`,
+                name: `🎨 باستيل هادئ ${i}`,
+                style: `background: linear-gradient(135deg, hsl(${hue}, 60%, 94%), hsl(${hue}, 40%, 86%)); color: #0f172a;`
+            });
+        }
+
+        // 4. Glass & Modern Modern Cards (76-100)
+        for(let i=1; i<=25; i++) {
+            let hue = (i * 12) % 360;
+            designs.push({
+                id: `design-glass-${i}`,
+                name: `✨ زجاج مودرن ${i}`,
+                style: `background: hsla(${hue}, 50%, 90%, 0.85); backdrop-filter: blur(15px); border: 2px solid hsla(${hue}, 50%, 40%, 0.3); color: #0f172a;`
+            });
+        }
+
+        // Populate 100 Designs Selectors
+        function initDesigns() {
+            const selector = document.getElementById('designSelector');
+            const quickPicker = document.getElementById('quickPicker');
+            
+            designs.forEach((d, idx) => {
+                let opt = document.createElement('option');
+                opt.value = d.style;
+                opt.innerText = `${idx + 1}. ${d.name}`;
+                selector.appendChild(opt);
+
+                if (idx < 15) { // Add first 15 to quick picker
+                    let div = document.createElement('div');
+                    div.className = 'design-option';
+                    div.style = d.style;
+                    div.innerText = d.name.substring(0, 8);
+                    div.onclick = () => applyDesign(d.style);
+                    quickPicker.appendChild(div);
+                }
+            });
+        }
+
+        function applyDesign(cssStyle) {
+            const card = document.getElementById('slideCard');
+            card.style = cssStyle;
+            slides[currentIndex].customStyle = cssStyle;
+            saveAll();
+        }
+
+        /* --- RIBBON TAB SYSTEM --- */
         function switchRibbonTab(tabName) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.ribbon-toolbar').forEach(panel => panel.classList.remove('active'));
@@ -239,18 +306,18 @@
             document.getElementById(`tab-${tabName}`).classList.add('active');
         }
 
-        /* --- 2. PROJECTS & SLIDE MANAGEMENT --- */
-        let projects = JSON.parse(localStorage.getItem('global_office_projects')) || {
-            "المشروع العلمي 1": [{ title: "مرحباً بك في المنصة المتقدمة", body: "استخدم التبويبات بالفي أعلى لتصفح الأدوات، إضافة الأشكال، والمستندات الجاهزة.", image: "", bgClass: "" }]
+        /* --- PROJECTS & SLIDE MANAGEMENT --- */
+        let projects = JSON.parse(localStorage.getItem('global_100design_projects')) || {
+            "المشروع العلمي 1": [{ title: "مرحباً بك مع 100 تصميم احترافي!", body: "يمكنك الآن الانتقال لتبويب (🎨 تصاميم ثيمات) والاختيار من بين 100 شكل مذهل بنقرة واحدة.", image: "", customStyle: "" }]
         };
-        let currentProjectName = localStorage.getItem('global_current_project') || "المشروع العلمي 1";
+        let currentProjectName = localStorage.getItem('global_current_project_100') || "المشروع العلمي 1";
         let slides = projects[currentProjectName] || projects[Object.keys(projects)[0]];
         let currentIndex = 0;
 
         function saveAll() {
             projects[currentProjectName] = slides;
-            localStorage.setItem('global_office_projects', JSON.stringify(projects));
-            localStorage.setItem('global_current_project', currentProjectName);
+            localStorage.setItem('global_100design_projects', JSON.stringify(projects));
+            localStorage.setItem('global_current_project_100', currentProjectName);
         }
 
         function renderProjectSelect() {
@@ -284,7 +351,13 @@
             const current = slides[currentIndex];
             document.getElementById('slideTitle').value = current.title || '';
             document.getElementById('slideBody').value = current.body || '';
-            document.getElementById('slideCard').className = `slide-card ${current.bgClass || ''}`;
+            
+            const card = document.getElementById('slideCard');
+            if(current.customStyle) {
+                card.style = current.customStyle;
+            } else {
+                card.style = "";
+            }
             
             const imgEl = document.getElementById('slideImg');
             if (current.image) { imgEl.src = current.image; imgEl.style.display = 'block'; } 
@@ -298,7 +371,7 @@
         }
 
         function addSlide() {
-            slides.push({ title: "شريحة جديدة", body: "", image: "", bgClass: "" });
+            slides.push({ title: "شريحة جديدة", body: "", image: "", customStyle: "" });
             currentIndex = slides.length - 1;
             loadCurrentSlide(); renderSlideList(); saveAll();
         }
@@ -315,7 +388,7 @@
             saveAll(); loadCurrentSlide(); renderSlideList();
         }
 
-        /* --- 3. SHAPES & MEDIA --- */
+        /* --- SHAPES & MEDIA --- */
         function addShape(type) {
             if(!type) return;
             const container = document.getElementById('shapesContainer');
@@ -330,7 +403,7 @@
             else if(type === 'arrow') shape.innerHTML = '➔';
             else if(type === 'check') shape.innerHTML = '✅';
             else if(type === 'diamond') shape.innerHTML = '🔷';
-            else if(type === 'cloud') shape.innerHTML = '☁️';
+            else if(type === 'cloud') shape.innerHTML = '☁️️';
 
             shape.ondblclick = () => shape.remove();
             makeDraggable(shape);
@@ -368,23 +441,17 @@
             }
         }
 
-        function changeBackgroundStyle(className) {
-            document.getElementById('slideCard').className = `slide-card ${className}`;
-            slides[currentIndex].bgClass = className;
-            saveAll();
-        }
-
-        /* --- 4. RESEARCH PAPERS & AI GENERATOR --- */
+        /* --- RESEARCH PAPERS & AI GENERATOR --- */
         const researchPapers = {
             ai_paper: [
-                { title: "🔬 بحث: الذكاء الاصطناعي والتطور التكنولوجي", body: "ملخص البحث:\nيقدم هذا البحث دراسة شاملة حول أثر الذكاء الاصطناعي في تحسين أداء التطبيقات الحديثة والتحول الرقمي.", image: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=500", bgClass: "bg-gradient-dark" },
-                { title: "📊 منهجية الدراسة والنتائج", body: "تم اعتماد المنهج التحليلي المقارن لقياس أداء الخوارزميات وتأثيرها على تجربة المستخدم النهائي.", image: "", bgClass: "" }
+                { title: "🔬 بحث: الذكاء الاصطناعي والتطور التكنولوجي", body: "ملخص البحث:\nيقدم هذا البحث دراسة شاملة حول أثر الذكاء الاصطناعي في تحسين أداء التطبيقات الحديثة.", image: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=500", customStyle: designs[25].style },
+                { title: "📊 منهجية الدراسة والنتائج", body: "تم اعتماد المنهج التحليلي المقارن لقياس أداء الخوارزميات ورضا المستخدم النهائي.", image: "", customStyle: designs[0].style }
             ],
             business_plan: [
-                { title: "💼 خطة عمل شركة ناشئة (Business Pitch)", body: "الرؤية والرسالة:\nبناء منصة إنتاجية رقمية تقدم حلولاً خافضة للتكاليف وموجهة للسوق العالمي.", image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=500", bgClass: "bg-gradient-blue" }
+                { title: "💼 خطة عمل شركة ناشئة (Business Pitch)", body: "الرؤية والرسالة:\nبناء منصة رقمية متكاملة تقدم حلولاً خافضة للتكاليف وموجهة للسوق العالمي.", image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=500", customStyle: designs[10].style }
             ],
             scientific_method: [
-                { title: "🔬 خطوات المنهج العلمي الحديث", body: "1. الملاحظة وصياغة المشكلة.\n2. وضع الفرضيات العلمية.\n3. التجربة والتحليل والاستنتاج.", image: "", bgClass: "bg-gradient-purple" }
+                { title: "🔬 خطوات المنهج العلمي الحديث", body: "1. الملاحظة وصياغة المشكلة.\n2. وضع الفرضيات العلمية.\n3. التجربة والتحليل والاستنتاج.", image: "", customStyle: designs[50].style }
             ]
         };
 
@@ -399,13 +466,13 @@
             const topic = prompt("أدخل عنوان البحث أو موضوع العرض التقديمي:");
             if (!topic) return;
             slides = [
-                { title: `🎓 بحث / عرض: ${topic}`, body: `دراسة تحليلية ومقدمة شاملة موضوع : ${topic}.\nتم الإنشاء تلقائياً عبر المحرك الذكي.`, image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=500", bgClass: "bg-gradient-dark" },
-                { title: "📌 المحاور الرئيسية", body: "• المحور الأول: المفاهيم والأسس.\n• المحور الثاني: التحديات والفرص.\n• المحور الثالث: التوصيات المستقبلية.", image: "", bgClass: "" }
+                { title: `🎓 بحث / عرض: ${topic}`, body: `دراسة تحليلية ومقدمة شاملة حول موضوع : ${topic}.\nتم الإنشاء تلقائياً عبر المحرك الذكي.`, image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=500", customStyle: designs[30].style },
+                { title: "📌 المحاور الرئيسية", body: "• المحور الأول: المفاهيم والأسس.\n• المحور الثاني: التحديات والفرص.\n• المحور الثالث: التوصيات المستقبلية.", image: "", customStyle: designs[5].style }
             ];
             currentIndex = 0; saveAll(); loadCurrentSlide(); renderSlideList();
         }
 
-        /* --- 5. CANVAS & FULLSCREEN --- */
+        /* --- CANVAS & FULLSCREEN --- */
         const canvas = document.getElementById('drawCanvas');
         const ctx = canvas.getContext('2d');
         let isDrawing = false, drawingActive = false;
@@ -447,7 +514,10 @@
         }
 
         /* Init */
-        renderProjectSelect(); renderSlideList(); loadCurrentSlide();
+        initDesigns();
+        renderProjectSelect(); 
+        renderSlideList(); 
+        loadCurrentSlide();
         setTimeout(resizeCanvas, 300);
     </script>
 </body>
