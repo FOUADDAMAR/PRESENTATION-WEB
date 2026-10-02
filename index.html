@@ -1,115 +1,117 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Générateur de Présentations Pro - Version Complète</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Global Slides AI & Office Pro Studio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
-        body { display: flex; flex-direction: column; min-height: 100vh; background-color: #f8fafc; color: #0f172a; transition: background-color 0.3s, color 0.3s; }
-        
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg-light: #f8fafc;
+            --bg-dark: #0f172a;
+            --card-light: rgba(255, 255, 255, 0.85);
+            --card-dark: rgba(30, 41, 59, 0.85);
+            --text-light: #0f172a;
+            --text-dark: #f8fafc;
+            --accent: #ec4899;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', 'Poppins', sans-serif; transition: background 0.2s, color 0.2s; }
+        body { display: flex; flex-direction: column; min-height: 100vh; background: var(--bg-light); color: var(--text-light); }
+        body.dark-mode { background: var(--bg-dark); color: var(--text-dark); }
+
         .app-container { display: flex; flex: 1; height: calc(100vh - 60px); }
 
-        /* Sidebar moderne */
-        .sidebar { width: 320px; background: #ffffff; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; padding: 20px; gap: 15px; box-shadow: 2px 0 10px rgba(0,0,0,0.02); transition: background 0.3s; }
-        .sidebar h2 { font-size: 1.1rem; color: #334155; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-        
-        /* Gestion des projets */
-        .project-manager { display: flex; flex-direction: column; gap: 8px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0; }
-        .project-manager select, .project-manager input { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.85rem; outline: none; }
-        
-        .slide-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-right: 4px; }
-        .slide-thumb { padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; background: #f8fafc; position: relative; transition: all 0.2s; }
-        .slide-thumb:hover { border-color: #94a3b8; }
-        .slide-thumb.active { border-color: #3b82f6; background: #eff6ff; box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15); }
-        .slide-thumb .controls { position: absolute; right: 8px; top: 8px; display: flex; gap: 4px; }
-        .slide-thumb button { background: none; border: none; cursor: pointer; font-size: 0.85rem; opacity: 0.6; }
+        /* Sidebar - شريط جانبى متطور */
+        .sidebar { width: 320px; background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(15px); border-left: 1px solid rgba(226, 232, 240, 0.8); display: flex; flex-direction: column; padding: 20px; gap: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
+        body.dark-mode .sidebar { background: rgba(30, 41, 59, 0.6); border-color: rgba(51, 65, 85, 0.8); }
+        .sidebar h2 { font-size: 1.1rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .project-manager { display: flex; flex-direction: column; gap: 8px; padding-bottom: 12px; border-bottom: 1px solid #cbd5e1; }
+        .project-manager select, .project-manager input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.85rem; outline: none; background: rgba(255,255,255,0.9); }
+        body.dark-mode .project-manager select, body.dark-mode .project-manager input { background: #334155; color: #fff; border-color: #475569; }
+
+        .slide-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-left: 4px; }
+        .slide-thumb { padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; cursor: pointer; background: rgba(255, 255, 255, 0.5); position: relative; transition: all 0.2s; }
+        .slide-thumb:hover { border-color: var(--primary); transform: translateY(-2px); }
+        .slide-thumb.active { border-color: var(--primary); background: rgba(99, 102, 241, 0.1); box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2); }
+        .slide-thumb .controls { position: absolute; left: 8px; top: 8px; display: flex; gap: 4px; }
+        .slide-thumb button { background: none; border: none; cursor: pointer; font-size: 0.85rem; opacity: 0.7; }
         .slide-thumb button:hover { opacity: 1; }
 
-        /* Zone Principale & Toolbar */
+        /* Main Area & Toolbar */
         .main-content { flex: 1; display: flex; flex-direction: column; }
-        .toolbar { background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 12px 20px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; box-shadow: 0 2px 5px rgba(0,0,0,0.02); transition: background 0.3s; }
-        .toolbar select, .toolbar button, .toolbar input[type="range"] { padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; cursor: pointer; font-size: 0.82rem; font-weight: 500; transition: all 0.2s; }
-        .toolbar button:hover { background-color: #f8fafc; }
-        .toolbar button.primary { background: #3b82f6; color: white; border: none; }
-        .toolbar button.primary:hover { background: #2563eb; }
+        .toolbar { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); border-bottom: 1px solid #e2e8f0; padding: 12px 20px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        body.dark-mode .toolbar { background: rgba(30, 41, 59, 0.7); border-color: #334155; }
+        
+        .toolbar select, .toolbar button, .toolbar input[type="color"], .toolbar input[type="range"] { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; cursor: pointer; font-size: 0.82rem; font-weight: 600; }
+        body.dark-mode .toolbar select, body.dark-mode .toolbar button { background: #334155; color: #fff; border-color: #475569; }
+        .toolbar button.btn-ai { background: linear-gradient(135deg, #a855f7, #ec4899); color: white; border: none; box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3); }
+        .toolbar button.primary { background: var(--primary); color: white; border: none; }
+        .toolbar button.primary:hover { background: var(--primary-hover); }
         .toolbar button.success { background: #10b981; color: white; border: none; }
         .toolbar button.danger { background: #ef4444; color: white; border: none; }
-        .toolbar button.active-tool { background: #8b5cf6; color: white; border: none; }
 
-        /* Éditeur & Carte Diapositives */
+        /* Slide Editor Screen */
         .editor-area { flex: 1; padding: 30px; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow-y: auto; position: relative; }
-        
         .slide-card-wrapper { position: relative; width: 100%; max-width: 850px; aspect-ratio: 16/9; }
         
-        .slide-card { width: 100%; height: 100%; background: white; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; border-radius: 12px; padding: 40px; display: flex; flex-direction: column; justify-content: center; gap: 15px; position: relative; transition: all 0.3s ease; text-align: left; overflow: hidden; }
+        .slide-card { width: 100%; height: 100%; background: var(--card-light); backdrop-filter: blur(20px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); border: 1px solid rgba(255,255,255,0.4); border-radius: 16px; padding: 40px; display: flex; flex-direction: column; justify-content: center; gap: 15px; position: relative; text-align: right; overflow: hidden; }
+        body.dark-mode .slide-card { background: var(--card-dark); border-color: rgba(255,255,255,0.1); }
         
-        /* Background Styles Wajdin */
-        .bg-gradient-blue { background: linear-gradient(135deg, #e0f2fe 0%, #3b82f6 100%) !important; color: white !important; }
-        .bg-gradient-purple { background: linear-gradient(135deg, #f3e8ff 0%, #a855f7 100%) !important; color: white !important; }
-        .bg-gradient-dark { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important; color: white !important; }
-        .bg-pattern-grid { background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 15px 15px; }
+        /* Predefined Gradients */
+        .bg-gradient-blue { background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%) !important; color: white !important; }
+        .bg-gradient-purple { background: linear-gradient(135deg, #a855f7 0%, #6b21a8 100%) !important; color: white !important; }
+        .bg-gradient-neon { background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 50%, #8b5cf6 100%) !important; color: white !important; }
+        .bg-gradient-sunset { background: linear-gradient(135deg, #f97316 0%, #ec4899 100%) !important; color: white !important; }
 
-        .slide-card input, .slide-card textarea { width: 100%; border: 1px dashed transparent; padding: 8px; background: transparent; color: inherit; font-family: inherit; border-radius: 4px; }
-        .slide-card input:focus, .slide-card textarea:focus { border-color: #3b82f6; outline: none; background: rgba(59,130,246,0.02); }
-        .slide-card input.title-input { font-size: 2.2rem; font-weight: 700; }
-        .slide-card textarea.body-input { font-size: 1.1rem; resize: none; height: 120px; }
-        .slide-card img.preview-img { max-height: 180px; object-fit: contain; border-radius: 6px; margin: 0 auto; transition: filter 0.3s; }
-        
-        /* Formes */
+        .slide-card input, .slide-card textarea { width: 100%; border: 1px dashed transparent; padding: 8px; background: transparent; color: inherit; font-family: inherit; border-radius: 6px; }
+        .slide-card input:focus, .slide-card textarea:focus { border-color: var(--primary); outline: none; background: rgba(99, 102, 241, 0.05); }
+        .slide-card input.title-input { font-size: 2.2rem; font-weight: 900; }
+        .slide-card textarea.body-input { font-size: 1.1rem; resize: none; height: 130px; line-height: 1.6; }
+        .slide-card img.preview-img { max-height: 180px; object-fit: contain; border-radius: 8px; margin: 0 auto; }
+
+        /* Shapes Container */
         .shapes-container { position: absolute; inset: 0; pointer-events: none; z-index: 5; }
         .added-shape { position: absolute; pointer-events: auto; cursor: move; display: flex; align-items: center; justify-content: center; user-select: none; }
-        
-        /* Layouts */
-        .slide-card.layout-centered { text-align: center; }
-        .slide-card.layout-centered .title-input { font-size: 2.5rem; }
-        .slide-card.layout-columns { display: grid; grid-template-columns: 1fr 1fr; align-items: center; }
-        
-        /* Canvas Dessin */
-        #drawCanvas { position: absolute; inset: 0; z-index: 10; pointer-events: none; border-radius: 12px; }
+
+        /* Canvas Drawing */
+        #drawCanvas { position: absolute; inset: 0; z-index: 10; pointer-events: none; border-radius: 16px; }
         #drawCanvas.drawing-active { pointer-events: auto; cursor: crosshair; }
 
-        /* Cours Office */
-        .course-section { background: #ffffff; padding: 50px 20px; border-top: 1px solid #e2e8f0; }
+        /* Office Pro Course Section */
+        .course-section { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); padding: 50px 20px; border-top: 1px solid #e2e8f0; }
+        body.dark-mode .course-section { background: rgba(30, 41, 59, 0.8); border-color: #334155; }
         .course-container { max-width: 1000px; margin: 0 auto; }
-        .course-section h2 { text-align: center; margin-bottom: 25px; color: #0f172a; font-size: 1.6rem; }
+        .course-section h2 { text-align: center; margin-bottom: 25px; font-size: 1.6rem; font-weight: 800; color: var(--primary); }
         .tabs { display: flex; gap: 12px; justify-content: center; margin-bottom: 25px; }
-        .tab-btn { padding: 10px 22px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; color: white; opacity: 0.7; transition: all 0.2s; }
-        .tab-btn.active { opacity: 1; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .tab-btn { padding: 10px 22px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; color: white; opacity: 0.8; }
+        .tab-btn.active { opacity: 1; transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
         .btn-word { background-color: #2563eb; }
         .btn-excel { background-color: #10b981; }
         .btn-ppt { background-color: #f97316; }
         .search-box { margin-bottom: 25px; text-align: center; }
-        .search-box input { width: 100%; max-width: 500px; padding: 12px 18px; border: 1px solid #cbd5e1; border-radius: 25px; outline: none; font-size: 0.9rem; }
+        .search-box input { width: 100%; max-width: 500px; padding: 12px 18px; border: 1px solid #cbd5e1; border-radius: 25px; outline: none; }
         .course-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .card { background: #f8fafc; border-radius: 10px; padding: 20px; border-top: 4px solid #ccc; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
+        .card { background: #f8fafc; border-radius: 12px; padding: 20px; border-top: 4px solid #ccc; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
+        body.dark-mode .card { background: #334155; color: #fff; }
         .card.word { border-top-color: #2563eb; }
         .card.excel { border-top-color: #10b981; }
         .card.ppt { border-top-color: #f97316; }
-        .card h3 { font-size: 1.1rem; margin-bottom: 8px; color: #1e293b; }
-        .card p { font-size: 0.88rem; color: #64748b; margin-bottom: 12px; line-height: 1.5; }
-        .shortcut-badge { background: #e2e8f0; padding: 4px 8px; border-radius: 4px; font-family: monospace; font-size: 0.8rem; font-weight: 600; color: #0f172a; }
-        .copy-btn { float: right; background: none; border: none; color: #3b82f6; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
-
-        /* Mode Sombre */
-        body.dark-mode { background-color: #0f172a; color: #f8fafc; }
-        body.dark-mode .sidebar, body.dark-mode .toolbar, body.dark-mode .course-section { background-color: #1e293b; border-color: #334155; color: #fff; }
-        body.dark-mode .sidebar h2, body.dark-mode .course-section h2 { color: #f8fafc; }
-        body.dark-mode .slide-thumb { background: #334155; border-color: #475569; color: #fff; }
-        body.dark-mode .slide-card { background-color: #1e293b; color: #fff; border-color: #334155; }
-        body.dark-mode .card { background: #334155; color: #fff; }
-        body.dark-mode .card h3 { color: #fff; }
-        body.dark-mode .card p { color: #cbd5e1; }
+        .card h3 { font-size: 1.1rem; margin-bottom: 8px; }
+        .card p { font-size: 0.88rem; opacity: 0.8; margin-bottom: 12px; }
+        .shortcut-badge { background: #e2e8f0; padding: 4px 8px; border-radius: 6px; font-family: monospace; font-size: 0.8rem; font-weight: 700; color: #0f172a; }
         body.dark-mode .shortcut-badge { background: #475569; color: #fff; }
+        .copy-btn { float: left; background: none; border: none; color: var(--primary); cursor: pointer; font-weight: 700; }
 
-        /* Impression / PDF */
         @media print {
             .sidebar, .toolbar, .course-section, #drawCanvas { display: none !important; }
             body { background: white !important; color: black !important; }
-            .editor-area { padding: 0 !important; display: block !important; }
+            .editor-area { padding: 0 !important; }
             .slide-card-wrapper { max-width: 100% !important; height: 100vh !important; }
-            .slide-card { box-shadow: none !important; border-radius: 0 !important; page-break-after: always; display: flex !important; justify-content: center !important; }
+            .slide-card { box-shadow: none !important; border-radius: 0 !important; page-break-after: always; }
         }
     </style>
 </head>
@@ -118,81 +120,78 @@
     <div class="app-container">
         <!-- Sidebar -->
         <div class="sidebar">
-            <h2>📁 Projets</h2>
+            <h2 id="txtProjects">📁 المشاريع</h2>
             <div class="project-manager">
                 <select id="projectSelect" onchange="switchProject(this.value)"></select>
                 <div style="display:flex; gap:5px;">
-                    <input type="text" id="newProjectName" placeholder="Nouveau projet...">
+                    <input type="text" id="newProjectName" placeholder="مشروع جديد...">
                     <button class="primary" onclick="createProject()">+</button>
                 </div>
             </div>
 
-            <h2>Mes Diapos</h2>
+            <h2 id="txtSlides">📜 الشرائح</h2>
             <div class="slide-list" id="slideList"></div>
-            <button class="primary" onclick="addSlide()">+ Nouvelle Diapo</button>
+            <button class="primary" onclick="addSlide()" id="btnAddSlide">+ شريحة جديدة</button>
         </div>
 
-        <!-- Zone Principale -->
+        <!-- Main Content Area -->
         <div class="main-content">
             <div class="toolbar">
-                <!-- Modèles Prêts Wajdin -->
-                <label>🔥 Wajdin :</label>
-                <select onchange="loadPresetPresentation(this.value); this.value='';">
-                    <option value="">-- Modèles Prêts --</option>
-                    <option value="startup">🚀 Startup / Business</option>
-                    <option value="course">🎓 Exposé / Scolaire</option>
-                    <option value="report">💼 Rapport Pro</option>
+                <!-- AI & Generator -->
+                <button class="btn-ai" onclick="generateAISlides()">🤖 إنشاء بالذكاء الاصطناعي</button>
+
+                <!-- Languages -->
+                <select onchange="changeLanguage(this.value)">
+                    <option value="ar">العربية 🇲🇦</option>
+                    <option value="fr">Français 🇫🇷</option>
+                    <option value="en">English 🇬🇧</option>
                 </select>
 
-                <!-- الأشكال الهندسية -->
-                <label>🔷 الأشكال :</label>
+                <!-- Preset Models Wajdin -->
+                <select onchange="loadPresetPresentation(this.value); this.value='';">
+                    <option value="">-- نماذج جاهزة Wajdin --</option>
+                    <option value="startup">🚀 مشروع / Startup</option>
+                    <option value="course">🎓 عرض تعليمي</option>
+                    <option value="report">💼 تقرير عمل</option>
+                </select>
+
+                <!-- Shapes -->
                 <select onchange="addShape(this.value); this.value='';">
                     <option value="">-- إدراج شكل --</option>
-                    <option value="square">🟦 مربع (Carré)</option>
-                    <option value="circle">🟠 دائرة (Cercle)</option>
-                    <option value="triangle">🔺 مثلث (Triangle)</option>
-                    <option value="star">⭐ نجمة (Étoile)</option>
-                    <option value="arrow">➔ سهم (Flèche)</option>
-                    <option value="check">✅ صح (Checkmark)</option>
+                    <option value="square">🟦 مربع</option>
+                    <option value="circle">🟠 دائرة</option>
+                    <option value="triangle">🔺 مثلث</option>
+                    <option value="star">⭐ نجمة</option>
+                    <option value="arrow">➔ سهم</option>
+                    <option value="check">✅ علامة صح</option>
                 </select>
 
-                <!-- خلفيات واجدة -->
-                <label>🎨 الخلفية :</label>
+                <!-- Gradients Backgrounds -->
                 <select onchange="changeBackgroundStyle(this.value)">
-                    <option value="">أبيض عادي</option>
-                    <option value="bg-gradient-blue">تدرج أزرق عصري</option>
-                    <option value="bg-gradient-purple">تدرج بنفسجي</option>
-                    <option value="bg-gradient-dark">تدرج داكن (Dark)</option>
-                    <option value="bg-pattern-grid">خلفية شبكية (Grid)</option>
+                    <option value="">خلفية هادئة</option>
+                    <option value="bg-gradient-blue">تدرج أزرق ملكي</option>
+                    <option value="bg-gradient-purple">تدرج بنفسجي سحري</option>
+                    <option value="bg-gradient-neon">تدرج نيون عصري</option>
+                    <option value="bg-gradient-sunset">تدرج الغروب</option>
                 </select>
 
-                <!-- Images & Filtres -->
+                <!-- Images & Filters -->
                 <input type="file" id="imageInput" accept="image/*" style="display:none;" onchange="uploadImage(event)">
-                <button onclick="document.getElementById('imageInput').click()">🖼️ Image</button>
-                <button class="danger" onclick="removeImage()">🗑️ Suppr Img</button>
+                <button onclick="document.getElementById('imageInput').click()">🖼️️ صورة</button>
+                <button class="danger" onclick="removeImage()">🗑️ حذف صورة</button>
 
-                <select onchange="applyImageFilter(this.value)">
-                    <option value="none">Filtre: Normal</option>
-                    <option value="grayscale(100%)">Noir & Blanc</option>
-                    <option value="sepia(100%)">Sépia / Vintage</option>
-                    <option value="brightness(130%)">Luminosité</option>
-                </select>
+                <!-- Draw Tool & Colors -->
+                <button id="drawBtn" onclick="toggleDrawingMode()">✏️ رسم</button>
+                <input type="color" id="penColor" value="#ef4444" title="لون القلم">
+                <button onclick="clearCanvas()">🧹 مسح الرسم</button>
 
-                <!-- Dessin / Crayon -->
-                <button id="drawBtn" onclick="toggleDrawingMode()">✏️ Dessiner</button>
-                <button onclick="clearCanvas()">🧹 Effacer</button>
+                <!-- Effects & Dark Mode -->
+                <button onclick="toggleGlassEffect()">✨ زجاج</button>
+                <button onclick="toggleLaser()">🎯 ليزر</button>
+                <button onclick="toggleTheme()">🎨 المظهر</button>
 
-                <!-- Effets & Outils -->
-                <label>Angles :</label>
-                <input type="range" min="0" max="40" value="12" onchange="changeRadius(this.value)">
-
-                <button onclick="toggleGlassEffect()">✨ Verre</button>
-                <button onclick="toggleLaser()">🎯 Laser</button>
-                <button onclick="toggleBlankScreen('black')">⬛ Noir</button>
-                <button onclick="toggleTheme()">🎨 Thème</button>
-
-                <button class="success" onclick="window.print()">🖨 PDF</button>
-                <button class="primary" onclick="toggleFullscreen()">▶ Présentation</button>
+                <button class="success" onclick="window.print()">🖨️ PDF</button>
+                <button class="primary" onclick="toggleFullscreen()">▶️ عرض كامل</button>
             </div>
 
             <div class="editor-area">
@@ -200,8 +199,8 @@
                     <canvas id="drawCanvas"></canvas>
                     <div class="shapes-container" id="shapesContainer"></div>
                     <div class="slide-card" id="slideCard">
-                        <input type="text" class="title-input" id="slideTitle" placeholder="Titre..." oninput="updateCurrentSlide()">
-                        <textarea class="body-input" id="slideBody" placeholder="Contenu de la diapositive..." oninput="updateCurrentSlide()"></textarea>
+                        <input type="text" class="title-input" id="slideTitle" placeholder="عنوان الشريحة..." oninput="updateCurrentSlide()">
+                        <textarea class="body-input" id="slideBody" placeholder="اكتب محتوى الشريحة هنا..." oninput="updateCurrentSlide()"></textarea>
                         <img id="slideImg" class="preview-img" style="display:none;" />
                     </div>
                 </div>
@@ -209,56 +208,60 @@
         </div>
     </div>
 
-    <!-- Cours Office -->
+    <!-- Office Course Section -->
     <div class="course-section">
         <div class="course-container">
-            <h2>🎓 Cours Express Office Pro</h2>
+            <h2>🎓 دورة احتراف Office Pro السريعة</h2>
             <div class="tabs">
                 <button class="tab-btn btn-word active" onclick="filterSoftware('word')">📄 Word</button>
                 <button class="tab-btn btn-excel" onclick="filterSoftware('excel')">📊 Excel</button>
                 <button class="tab-btn btn-ppt" onclick="filterSoftware('ppt')">📙 PowerPoint</button>
             </div>
             <div class="search-box">
-                <input type="text" id="searchInput" placeholder="🔎 Rechercher une astuce, une formule..." onkeyup="searchCourse()">
+                <input type="text" id="searchInput" placeholder="🔎 بحث عن اختصار، صيغة، أو حيلة..." onkeyup="searchCourse()">
             </div>
             <div class="course-grid" id="courseGrid"></div>
         </div>
     </div>
 
     <script>
-        /* --- 1. MODÈLES WAJDIN --- */
-        const presetPresentations = {
-            startup: [
-                { title: "🚀 Nom du Projet", body: "La solution innovante qui transforme notre secteur.\nPrésenté par : L'équipe Projet", image: "", bgClass: "" },
-                { title: "🎯 Le Problème", body: "1. Processus actuels trop lents.\n2. Coûts élevés pour les utilisateurs.\n3. Manque d'outils simples.", image: "", bgClass: "" },
-                { title: "💡 Notre Solution", body: "Une plateforme intuitive, rapide et accessible partout.", image: "", bgClass: "" }
-            ],
-            course: [
-                { title: "🎓 Titre de l'Exposé", body: "Sujet : L'impact de la technologie moderne\nNom de l'étudiant", image: "", bgClass: "" },
-                { title: "📌 1. Introduction", body: "Mise en contexte du sujet et définition des termes.", image: "", bgClass: "" }
-            ],
-            report: [
-                { title: "💼 Bilan & Rapport Trimestriel", body: "Analyse des performances et résultats stratégiques.", image: "", bgClass: "" },
-                { title: "📈 Chiffres Clés", body: "• Croissance : +15%\n• Objectifs : 92%", image: "", bgClass: "" }
-            ]
-        };
+        /* --- 1. الذكاء الاصطناعي (AI SLIDE GENERATOR - MOCK) --- */
+        function generateAISlides() {
+            const topic = prompt("أدخل موضوع العرض التقديمي (مثال: الذكاء الاصطناعي، التسويق الرقمي، الطاقة النظيفة):");
+            if (!topic) return;
 
-        function loadPresetPresentation(type) {
-            if (!type || !presetPresentations[type]) return;
-            if (confirm("Voulez-vous charger cette présentation prête ?")) {
-                slides = JSON.parse(JSON.stringify(presetPresentations[type]));
-                currentIndex = 0;
-                saveAll();
-                loadCurrentSlide();
-                renderSlideList();
-            }
+            slides = [
+                { title: `🚀 ${topic}`, body: `عرض تقديمي شامل حول : ${topic}\nتم إنشاؤه بواسطة الذكاء الاصطناعي الخاص بالمنصة.`, image: "", bgClass: "bg-gradient-neon" },
+                { title: "📌 الأهمية والأهداف", body: "1. فهم المفاهيم الأساسية والأهمية.\n2. تحسين الإنتاجية والكفاءة العالية.\n3. تطبيق أفضل الممارسات العالمية.", image: "", bgClass: "" },
+                { title: "💡 الحلول والاستراتيجيات", body: "تطوير أدوات مبتكرة تعتمد على أحدث التقنيات لضمان تحقيق أفضل النتائج الممكنة.", image: "", bgClass: "bg-gradient-blue" },
+                { title: "🎯 الخلاصة والتوصيات", body: "شكراً لمتابعتكم! نوصي بالبدء بالخطوات الأولى فوراً لتحقيق النجاح المطلوب.", image: "", bgClass: "" }
+            ];
+            currentIndex = 0;
+            saveAll();
+            loadCurrentSlide();
+            renderSlideList();
         }
 
-        /* --- 2. GESTION DES PROJETS & SLIDES --- */
-        let projects = JSON.parse(localStorage.getItem('app_projects')) || {
-            "Projet Principal": [{ title: "Bienvenue", body: "Toutes les fonctionnalités sont actives !", image: "", bgClass: "" }]
+        /* --- 2. MULTILINGUAL ENGINE (تعدد اللغات) --- */
+        const translations = {
+            ar: { projects: "📁 المشاريع", slides: "📜 الشرائح", addSlide: "+ شريحة جديدة" },
+            fr: { projects: "📁 Projets", slides: "📜 Diapositives", addSlide: "+ Nouvelle Diapo" },
+            en: { projects: "📁 Projects", slides: "📜 Slides", addSlide: "+ New Slide" }
         };
-        let currentProjectName = localStorage.getItem('current_project') || "Projet Principal";
+
+        function changeLanguage(lang) {
+            document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+            document.documentElement.lang = lang;
+            document.getElementById('txtProjects').innerText = translations[lang].projects;
+            document.getElementById('txtSlides').innerText = translations[lang].slides;
+            document.getElementById('btnAddSlide').innerText = translations[lang].addSlide;
+        }
+
+        /* --- 3. PROJECT & SLIDE MANAGEMENT --- */
+        let projects = JSON.parse(localStorage.getItem('app_projects')) || {
+            "المشروع الأول": [{ title: "مرحباً بك في المنصة العالمية", body: "استخدم زر الذكاء الاصطناعي أو اختر نموذجاً جاهزاً للبدء!", image: "", bgClass: "" }]
+        };
+        let currentProjectName = localStorage.getItem('current_project') || "المشروع الأول";
         let slides = projects[currentProjectName] || projects[Object.keys(projects)[0]];
         let currentIndex = 0;
 
@@ -283,7 +286,7 @@
             const input = document.getElementById('newProjectName');
             const name = input.value.trim();
             if(name && !projects[name]) {
-                projects[name] = [{ title: "Nouvelle Présentation", body: "Contenu...", image: "", bgClass: "" }];
+                projects[name] = [{ title: "عرض جديد", body: "محتوى الشريحة...", image: "", bgClass: "" }];
                 currentProjectName = name; slides = projects[name]; currentIndex = 0;
                 input.value = '';
                 saveAll(); renderProjectSelect(); loadCurrentSlide(); renderSlideList();
@@ -303,7 +306,7 @@
                 thumb.className = `slide-thumb ${index === currentIndex ? 'active' : ''}`;
                 thumb.onclick = () => selectSlide(index);
                 thumb.innerHTML = `
-                    <strong>Diapo ${index + 1}</strong>: ${slide.title.substring(0, 12) || 'Sans titre'}
+                    <strong>شريحة ${index + 1}</strong>: ${slide.title.substring(0, 14) || 'بدون عنوان'}
                     <div class="controls">
                         <button onclick="event.stopPropagation(); deleteSlide(${index})">🗑️</button>
                     </div>
@@ -321,13 +324,11 @@
             document.getElementById('slideTitle').value = current.title || '';
             document.getElementById('slideBody').value = current.body || '';
             document.getElementById('slideCard').className = `slide-card ${current.bgClass || ''}`;
-            document.getElementById('slideCard').style.borderRadius = (current.borderRadius || 12) + 'px';
             
             const imgEl = document.getElementById('slideImg');
             if (current.image) { 
                 imgEl.src = current.image; 
                 imgEl.style.display = 'block'; 
-                imgEl.style.filter = current.imgFilter || 'none';
             } else { 
                 imgEl.style.display = 'none'; 
             }
@@ -340,7 +341,7 @@
         }
 
         function addSlide() {
-            slides.push({ title: "Nouvelle Diapositive", body: "", image: "", bgClass: "" });
+            slides.push({ title: "شريحة جديدة", body: "", image: "", bgClass: "" });
             currentIndex = slides.length - 1;
             loadCurrentSlide(); renderSlideList(); saveAll();
         }
@@ -352,7 +353,33 @@
             loadCurrentSlide(); renderSlideList(); saveAll();
         }
 
-        /* --- 3. FORMES & BACKGROUNDS --- */
+        /* --- 4. MODEL WAJDIN PRESETS --- */
+        const presetPresentations = {
+            startup: [
+                { title: "🚀 مشروع واعد", body: "الحل الذكي والابتكاري لعالم أفضل.\nإعداد الفريق المطور", image: "", bgClass: "bg-gradient-neon" },
+                { title: "🎯 المشكلة والفرصة", body: "1. تعقيد الممارسات التقليدية.\n2. ارتفاع التكاليف.\n3. الحاجة إلى حلول سريعة وسحابة.", image: "", bgClass: "" },
+                { title: "💡 الحل المبتكر", body: "منصة ذكية وشاملة تتيح للمستخدمين إنجاز أعمالهم بأقل جهد ممكن.", image: "", bgClass: "bg-gradient-blue" }
+            ],
+            course: [
+                { title: "🎓 عنوان العرض التعليمي", body: "مادة البحث العلمي والتكنولوجيا الحديثة\nإعداد الطالب / الباحث", image: "", bgClass: "bg-gradient-purple" },
+                { title: "📌 المقدمة", body: "تحديد الفرضيات ومراجعة المفاهيم العلمية الأساسية للموضوع.", image: "", bgClass: "" }
+            ],
+            report: [
+                { title: "💼 التقرير السنوي", body: "مراجعة الأداء المالي والتشغيلي والمؤشرات الرئيسية.", image: "", bgClass: "bg-gradient-sunset" },
+                { title: "📈 النتائج الإيجابية", body: "• نسبة النمو : +25%\n• الرضا العام : 95%", image: "", bgClass: "" }
+            ]
+        };
+
+        function loadPresetPresentation(type) {
+            if (!type || !presetPresentations[type]) return;
+            if (confirm("هل تريد تحميل هذا النموذج الجاهز؟")) {
+                slides = JSON.parse(JSON.stringify(presetPresentations[type]));
+                currentIndex = 0;
+                saveAll(); loadCurrentSlide(); renderSlideList();
+            }
+        }
+
+        /* --- 5. SHAPES & CANVAS DRAWING --- */
         function addShape(type) {
             if(!type) return;
             const container = document.getElementById('shapesContainer');
@@ -360,8 +387,8 @@
             shape.className = 'added-shape';
             shape.style.top = '40%'; shape.style.left = '40%';
 
-            if(type === 'square') { shape.style.width = '70px'; shape.style.height = '70px'; shape.style.backgroundColor = '#3b82f6'; shape.style.borderRadius = '8px'; } 
-            else if(type === 'circle') { shape.style.width = '70px'; shape.style.height = '70px'; shape.style.backgroundColor = '#f97316'; shape.style.borderRadius = '50%'; } 
+            if(type === 'square') { shape.style.width = '70px'; shape.style.height = '70px'; shape.style.backgroundColor = '#6366f1'; shape.style.borderRadius = '8px'; } 
+            else if(type === 'circle') { shape.style.width = '70px'; shape.style.height = '70px'; shape.style.backgroundColor = '#ec4899'; shape.style.borderRadius = '50%'; } 
             else if(type === 'triangle') { shape.innerHTML = '🔺'; shape.style.fontSize = '60px'; } 
             else if(type === 'star') { shape.innerHTML = '⭐'; shape.style.fontSize = '60px'; } 
             else if(type === 'arrow') { shape.innerHTML = '➔'; shape.style.fontSize = '60px'; shape.style.color = '#10b981'; } 
@@ -393,34 +420,6 @@
             saveAll();
         }
 
-        function changeRadius(val) {
-            document.getElementById('slideCard').style.borderRadius = val + 'px';
-            slides[currentIndex].borderRadius = val;
-            saveAll();
-        }
-
-        /* --- 4. IMAGES & FILTRES --- */
-        function uploadImage(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) { slides[currentIndex].image = e.target.result; loadCurrentSlide(); saveAll(); };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function removeImage() {
-            slides[currentIndex].image = "";
-            loadCurrentSlide(); saveAll();
-        }
-
-        function applyImageFilter(filter) {
-            slides[currentIndex].imgFilter = filter;
-            document.getElementById('slideImg').style.filter = filter;
-            saveAll();
-        }
-
-        /* --- 5. DESSIN, LASER & MOTEUR D'EFFETS --- */
         const canvas = document.getElementById('drawCanvas');
         const ctx = canvas.getContext('2d');
         let isDrawing = false, drawingModeActive = false;
@@ -434,8 +433,8 @@
         function toggleDrawingMode() {
             drawingModeActive = !drawingModeActive;
             const btn = document.getElementById('drawBtn');
-            if(drawingModeActive) { canvas.classList.add('drawing-active'); btn.classList.add('active-tool'); } 
-            else { canvas.classList.remove('drawing-active'); btn.classList.remove('active-tool'); }
+            if(drawingModeActive) { canvas.classList.add('drawing-active'); btn.style.background = '#8b5cf6'; btn.style.color = '#fff'; } 
+            else { canvas.classList.remove('drawing-active'); btn.style.background = ''; btn.style.color = ''; }
         }
 
         canvas.addEventListener('mousedown', (e) => {
@@ -445,59 +444,45 @@
 
         canvas.addEventListener('mousemove', (e) => {
             if (isDrawing && drawingModeActive) {
-                ctx.lineTo(e.offsetX, e.offsetY); ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 3; ctx.stroke();
+                ctx.lineTo(e.offsetX, e.offsetY); 
+                ctx.strokeStyle = document.getElementById('penColor').value; 
+                ctx.lineWidth = 3; 
+                ctx.stroke();
             }
         });
 
         canvas.addEventListener('mouseup', () => isDrawing = false);
         function clearCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
 
+        /* --- 6. UTILITIES & OFFICE COURSES --- */
+        function uploadImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) { slides[currentIndex].image = e.target.result; loadCurrentSlide(); saveAll(); };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeImage() { slides[currentIndex].image = ""; loadCurrentSlide(); saveAll(); }
         function toggleGlassEffect() {
             let card = document.getElementById('slideCard');
-            card.style.backdropFilter = card.style.backdropFilter ? "" : "blur(10px)";
-            card.style.background = card.style.backdropFilter ? "rgba(255, 255, 255, 0.5)" : "";
+            card.style.backdropFilter = card.style.backdropFilter ? "" : "blur(15px)";
         }
-
-        let laserActive = false;
-        function toggleLaser() {
-            laserActive = !laserActive;
-            document.body.style.cursor = laserActive ? "crosshair" : "default";
-        }
-
-        function toggleBlankScreen(color) {
-            let overlay = document.getElementById('blankOverlay');
-            if (!overlay) {
-                overlay = document.createElement('div');
-                overlay.id = 'blankOverlay';
-                overlay.style.position = 'fixed'; overlay.style.inset = '0'; overlay.style.zIndex = '9999';
-                overlay.onclick = () => overlay.style.display = 'none';
-                document.body.appendChild(overlay);
-            }
-            overlay.style.backgroundColor = color;
-            overlay.style.display = overlay.style.display === 'block' ? 'none' : 'block';
-        }
-
+        function toggleLaser() { document.body.style.cursor = document.body.style.cursor === 'crosshair' ? 'default' : 'crosshair'; }
         function toggleTheme() { document.body.classList.toggle('dark-mode'); }
-
         function toggleFullscreen() {
             const elem = document.querySelector('.slide-card-wrapper');
             if (elem.requestFullscreen) elem.requestFullscreen();
         }
 
-        /* --- 6. COURS OFFICE --- */
         const courses = [
-            { id: 1, software: 'word', title: '1. Les Styles Automatiques', desc: 'Définissez la hiérarchie de vos titres pour créer une table des matières automatique.', code: 'Accueil > Styles > Modifier' },
-            { id: 2, software: 'word', title: '2. Table des Matières', desc: 'Générez un sommaire interactif mis à jour automatiquement.', code: 'Références > Table des matières' },
-            { id: 3, software: 'word', title: '3. Publipostage', desc: 'Générez des fiches personnalisées depuis une liste Excel.', code: 'Publipostage > Démarrer la fusion' },
-            { id: 4, software: 'word', title: '4. Copier la mise en forme', desc: 'Reproduisez le style exact d\'un texte rapidement.', code: 'Ctrl + Maj + C / Ctrl + Maj + V' },
-            { id: 5, software: 'excel', title: '1. Tableau Structuré', desc: 'Transformez vos plages de données en tableau dynamique.', code: 'Ctrl + L (ou Ctrl + T)' },
-            { id: 6, software: 'excel', title: '2. Tableau Croisé Dynamique', desc: 'Analysez des milliers de lignes sans formule.', code: 'Insérer > TCD' },
-            { id: 7, software: 'excel', title: '3. Formule RECHERCHEX', desc: 'Recherchez une valeur simplement dans vos colonnes.', code: '=RECHERCHEX(valeur; recherche; retour)' },
-            { id: 8, software: 'excel', title: '4. Somme Automatique', desc: 'Calculez instantanément la somme d\'une colonne.', code: 'Alt + =' },
-            { id: 9, software: 'ppt', title: '1. Masque de Diapositives', desc: 'Personnalisez le design de tout le diaporama d\'un coup.', code: 'Affichage > Masque de diapositives' },
-            { id: 10, software: 'ppt', title: '2. Transition Métamorphose', desc: 'Créez des animations fluides entre deux diapos.', code: 'Transitions > Métamorphose' },
-            { id: 11, software: 'ppt', title: '3. Convertir en SmartArt', desc: 'Transformez des puces en schémas modernes.', code: 'Clic droit > Convertir en SmartArt' },
-            { id: 12, software: 'ppt', title: '4. Dupliquer un élément', desc: 'Dupliquez instantanément une forme ou diapo.', code: 'Ctrl + D' }
+            { id: 1, software: 'word', title: '1. التنسيق التلقائي للأنماط', desc: 'حدد تسلسل العناوين لتأطير المستند وإنشاء فهرس تلقائي.', code: 'الصفحة الرئيسية > الأنماط' },
+            { id: 2, software: 'word', title: '2. جدول المحتويات التلقائي', desc: 'أنشئ فهرساً تفاعلياً يتحدث بضغطة زر واحدة.', code: 'مراجع > جدول المحتويات' },
+            { id: 3, software: 'excel', title: '1. الجداول المنسقة (Structured Table)', desc: 'حول بياناتك إلى جدول تفاعلي ذكي يوسع الفلاتر والدوال تلقائياً.', code: 'Ctrl + T (أو Ctrl + L)' },
+            { id: 4, software: 'excel', title: '2. الجداول المحورية (Pivot Table)', desc: 'حلل ملايين البيانات ودمجها بمرونة دون كتابة معادلة واحدة.', code: 'إدراج > PivotTable' },
+            { id: 5, software: 'ppt', title: '1. الشريحة الرئيسية (Slide Master)', desc: 'خصص تصميم ولوجو الخط لكل الشرايح بضغطة واحدة.', code: 'عرض > الشريحة الرئيسية' },
+            { id: 6, software: 'ppt', title: '2. الانتقال المنساب (Morph)', desc: 'أنشئ تحريكات بصرية وانتقالات احترافية بين الشرائح.', code: 'انتقالات > التحويل التدريجي' }
         ];
 
         let currentFilter = 'word';
@@ -521,7 +506,7 @@
                     <p>${item.desc}</p>
                     <div>
                         <span class="shortcut-badge">${item.code}</span>
-                        <button class="copy-btn" onclick="copyToClipboard('${item.code}')">Copier</button>
+                        <button class="copy-btn" onclick="copyToClipboard('${item.code}')">نسخ</button>
                     </div>
                 `;
                 grid.appendChild(card);
@@ -536,13 +521,9 @@
         }
 
         function searchCourse() { renderCourses(); }
+        function copyToClipboard(text) { navigator.clipboard.writeText(text); alert('تم النسخ: ' + text); }
 
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text);
-            alert('Copié : ' + text);
-        }
-
-        /* Initialisation */
+        /* Initial Setup */
         renderProjectSelect(); renderSlideList(); loadCurrentSlide(); renderCourses();
         setTimeout(resizeCanvas, 300);
     </script>
