@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Presentation Pro - 100 Designs Suite</title>
+    <title>Global Presentation Pro - Multi-AI Suite</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -18,7 +18,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', 'Poppins', sans-serif; }
         body { display: flex; flex-direction: column; height: 100vh; background: var(--bg-main); color: var(--text-color); overflow: hidden; }
 
-        /* Ribbon Header & Navigation */
+        /* Ribbon Header */
         .ribbon-header { background: #1e293b; color: white; display: flex; align-items: center; justify-content: space-between; padding: 5px 20px; font-size: 0.9rem; }
         .ribbon-tabs { display: flex; background: #0f172a; padding: 0 15px; border-bottom: 1px solid var(--border-color); }
         .tab-btn { background: none; border: none; color: #94a3b8; padding: 10px 18px; cursor: pointer; font-weight: 700; font-size: 0.9rem; border-bottom: 3px solid transparent; }
@@ -39,7 +39,7 @@
         /* App Layout */
         .app-body { display: flex; flex: 1; height: calc(100vh - 120px); }
 
-        .sidebar { width: 300px; background: var(--panel-bg); border-left: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 15px; gap: 12px; }
+        .sidebar { width: 280px; background: var(--panel-bg); border-left: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 15px; gap: 12px; }
         .sidebar h3 { font-size: 0.95rem; font-weight: 800; color: var(--primary); }
         
         .slide-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
@@ -63,17 +63,25 @@
         #drawCanvas { position: absolute; inset: 0; z-index: 10; pointer-events: none; border-radius: 12px; }
         #drawCanvas.active { pointer-events: auto; cursor: crosshair; }
 
+        /* AI Assistant Sidebar Panel */
+        .ai-chat-panel { width: 320px; background: #ffffff; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; height: 100%; box-shadow: -2px 0 10px rgba(0,0,0,0.03); }
+        .ai-chat-header { padding: 12px; background: #0f172a; color: white; font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; justify-content: space-between; }
+        .ai-chat-body { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #f8fafc; }
+        
+        .chat-msg { padding: 10px 12px; border-radius: 8px; font-size: 0.85rem; line-height: 1.5; max-width: 90%; }
+        .chat-msg.user { background: #2563eb; color: white; align-self: flex-start; border-bottom-right-radius: 2px; }
+        .chat-msg.ai { background: #ffffff; color: #0f172a; align-self: flex-end; border: 1px solid #e2e8f0; border-bottom-left-radius: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+
+        .ai-chat-footer { padding: 10px; border-top: 1px solid var(--border-color); background: white; display: flex; flex-direction: column; gap: 6px; }
+        .ai-input-box { display: flex; gap: 6px; }
+        .ai-input-box input { flex: 1; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.85rem; outline: none; }
+
         /* Modal styling */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99; display: none; align-items: center; justify-content: center; }
         .modal-box { background: white; padding: 25px; border-radius: 12px; width: 90%; max-width: 700px; max-height: 80vh; overflow-y: auto; }
         .image-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-top: 15px; }
         .image-grid img { width: 100%; height: 100px; object-fit: cover; border-radius: 6px; cursor: pointer; }
 
-        .course-footer { background: white; border-top: 1px solid var(--border-color); padding: 15px 20px; max-height: 150px; overflow-y: auto; }
-        .course-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
-        .course-card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px; font-size: 0.8rem; }
-
-        /* Dynamic Design Styles (100 Styles injected dynamically) */
         .design-picker { display: flex; gap: 8px; overflow-x: auto; max-width: 100%; padding: 5px 0; }
         .design-option { min-width: 100px; height: 50px; border-radius: 6px; border: 2px solid #cbd5e1; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
     </style>
@@ -82,7 +90,7 @@
 
     <!-- Header -->
     <div class="ribbon-header">
-        <span>🌐 Global Presentation Pro - 100 Themes Suite</span>
+        <span>🌐 Global Presentation Pro - Multi-AI Engine Suite</span>
         <select onchange="changeLanguage(this.value)" style="background:#0f172a; color:white; border:none; padding:3px 8px; border-radius:4px;">
             <option value="ar">العربية 🇲🇦</option>
             <option value="fr">Français 🇫🇷</option>
@@ -93,10 +101,10 @@
     <!-- Navigation Tabs -->
     <div class="ribbon-tabs">
         <button class="tab-btn active" onclick="switchRibbonTab('home')">الرئيسية (Accueil)</button>
+        <button class="tab-btn" onclick="switchRibbonTab('ai')">🤖 مساعد الذكاء الاصطناعي (Multi-AI)</button>
         <button class="tab-btn" onclick="switchRibbonTab('designs')">🎨 تصاميم ثيمات (100 Design)</button>
         <button class="tab-btn" onclick="switchRibbonTab('insert')">إدراج (Insertion)</button>
         <button class="tab-btn" onclick="switchRibbonTab('library')">مكتبة الأبحاث والصور</button>
-        <button class="tab-btn" onclick="switchRibbonTab('ai')">الذكاء الاصطناعي (AI)</button>
     </div>
 
     <!-- Toolbar Panels -->
@@ -120,13 +128,28 @@
         </div>
     </div>
 
-    <!-- 2. Designs Tab (100 Themes) -->
+    <!-- 2. AI Tab -->
+    <div class="ribbon-toolbar" id="tab-ai">
+        <div class="tool-group">
+            <div><label>محرك الذكاء الاصطناعي النشط:</label></div>
+            <select id="aiModelSelect" class="btn-tool" style="font-weight:700;">
+                <option value="ChatGPT (GPT-4o)">🤖 ChatGPT (OpenAI GPT-4o)</option>
+                <option value="Google Gemini 1.5">⚡ Google Gemini 1.5 Pro</option>
+                <option value="Claude 3.5 Sonnet">🧠 Anthropic Claude 3.5</option>
+                <option value="DeepSeek-V3">🚀 DeepSeek-V3 Engine</option>
+            </select>
+        </div>
+        <div class="tool-group">
+            <div><label>توليد سريع</label></div>
+            <button class="btn-tool ai-btn" onclick="quickAIPresentation()">🪄 توليد عرض كامل موضوعك تلقائياً</button>
+        </div>
+    </div>
+
+    <!-- 3. Designs Tab -->
     <div class="ribbon-toolbar" id="tab-designs">
         <div class="tool-group" style="flex:1;">
-            <div><label>اختر من بين 100 تصميم احترافي متنسق:</label></div>
-            <select id="designSelector" class="btn-tool" style="width: 300px;" onchange="applyDesign(this.value)">
-                <!-- Will be populated with 100 design options by JS -->
-            </select>
+            <div><label>اختر من بين 100 تصميم احترافي:</label></div>
+            <select id="designSelector" class="btn-tool" style="width: 300px;" onchange="applyDesign(this.value)"></select>
         </div>
         <div class="tool-group">
             <div><label>معاينة سريعة</label></div>
@@ -134,7 +157,7 @@
         </div>
     </div>
 
-    <!-- 3. Insert Tab -->
+    <!-- 4. Insert Tab -->
     <div class="ribbon-toolbar" id="tab-insert">
         <div class="tool-group">
             <div><label>الأشكال الهندسية</label></div>
@@ -158,7 +181,7 @@
         </div>
     </div>
 
-    <!-- 4. Research & Library Tab -->
+    <!-- 5. Research & Library Tab -->
     <div class="ribbon-toolbar" id="tab-library">
         <div class="tool-group">
             <div><label>نماذج وأبحاث جاهزة</label></div>
@@ -168,16 +191,9 @@
         </div>
     </div>
 
-    <!-- 5. AI Tab -->
-    <div class="ribbon-toolbar" id="tab-ai">
-        <div class="tool-group">
-            <div><label>التوليد الآلي</label></div>
-            <button class="btn-tool ai-btn" onclick="generateAISlides()">🤖 توليد عرض بالذكاء الاصطناعي</button>
-        </div>
-    </div>
-
     <!-- App Body -->
     <div class="app-body">
+        <!-- Left Sidebar: Projects -->
         <div class="sidebar">
             <h3>📂 المشاريع</h3>
             <select id="projectSelect" class="btn-tool" onchange="switchProject(this.value)"></select>
@@ -185,6 +201,7 @@
             <div class="slide-list" id="slideList"></div>
         </div>
 
+        <!-- Center Workspace -->
         <div class="workspace">
             <div class="slide-wrapper">
                 <canvas id="drawCanvas"></canvas>
@@ -196,15 +213,25 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Bottom Panel -->
-    <div class="course-footer">
-        <h4 style="font-size:0.85rem; margin-bottom:8px; color:var(--primary);">🎓 دروس Office Express السريعة</h4>
-        <div class="course-grid">
-            <div class="course-card"><strong>Word:</strong> الأنماط والتنسيق التلقائي</div>
-            <div class="course-card"><strong>Excel:</strong> الجداول التفاعلية (Ctrl + T)</div>
-            <div class="course-card"><strong>PowerPoint:</strong> التحويل التدريجي (Morph)</div>
+        <!-- Right Sidebar: Interactive Multi-AI Chat Panel -->
+        <div class="ai-chat-panel">
+            <div class="ai-chat-header">
+                <span>💬 شات الذكاء الاصطناعي</span>
+                <span id="currentModelBadge" style="font-size: 0.7rem; background:#2563eb; padding:2px 6px; border-radius:4px;">ChatGPT</span>
+            </div>
+            <div class="ai-chat-body" id="chatMessages">
+                <div class="chat-msg ai">
+                    مرحباً بك! أنا مساعد الذكاء الاصطناعي. اسألني أي سؤال أو اطلب مني تحضير بحث أو ملخص شريحة وسأجيبك مثل ChatGPT فوراً!
+                </div>
+            </div>
+            <div class="ai-chat-footer">
+                <div class="ai-input-box">
+                    <input type="text" id="userQuery" placeholder="اكتب سؤالك أو موضوعك هنا..." onkeydown="if(event.key==='Enter') sendAIQuestion()">
+                    <button class="btn-tool primary" onclick="sendAIQuestion()">إرسال</button>
+                </div>
+                <button class="btn-tool ai-btn" style="width:100%; justify-content:center;" onclick="insertLastAIResponseToSlide()">📌 إدراج آخر إجابة في الشريحة الحالية</button>
+            </div>
         </div>
     </div>
 
@@ -223,66 +250,99 @@
     </div>
 
     <script>
-        /* --- GENERATE 100 DESIGNS SYSTEM --- */
+        /* --- MULTI-AI INTERACTIVE CHAT ENGINE --- */
+        let lastAIResponseText = "";
+
+        function sendAIQuestion() {
+            const inputEl = document.getElementById('userQuery');
+            const query = inputEl.value.trim();
+            if(!query) return;
+
+            const selectedModel = document.getElementById('aiModelSelect').value;
+            document.getElementById('currentModelBadge').innerText = selectedModel.split(' ')[0];
+
+            // Render User Message
+            const chatBody = document.getElementById('chatMessages');
+            const userMsg = document.createElement('div');
+            userMsg.className = 'chat-msg user';
+            userMsg.innerText = query;
+            chatBody.appendChild(userMsg);
+
+            inputEl.value = '';
+            chatBody.scrollTop = chatBody.scrollHeight;
+
+            // Render Loading AI Message
+            const aiMsg = document.createElement('div');
+            aiMsg.className = 'chat-msg ai';
+            aiMsg.innerText = `جاري التفكير والتوليد باستخدام [${selectedModel}]... ⏳`;
+            chatBody.appendChild(aiMsg);
+            chatBody.scrollTop = chatBody.scrollHeight;
+
+            // Simulate Multi-AI Model Processing
+            setTimeout(() => {
+                let aiResponse = generateSimulatedAIResponse(query, selectedModel);
+                lastAIResponseText = aiResponse;
+                aiMsg.innerHTML = `<strong>${selectedModel}:</strong><br>` + aiResponse.replace(/\n/g, '<br>');
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }, 1000);
+        }
+
+        function generateSimulatedAIResponse(prompt, model) {
+            return `بناءً على سؤالك حول "${prompt}":\n\n1. المفاهيم الأساسية: الموضوع يتناول عناصر جوهرية تتعلق بالتحليل والتطوير.\n2. أهم الأفكار: يمكن تقسيم هذا المحور إلى 3 نقاط رئيسية تشمل التخطيط، التنفيذ، والتقييم النهائي.\n3. التوصيات: يوصى باعتتماد أفضل الممارسات المعتمدة حديثاً للحصول على أفضل النتائج.`;
+        }
+
+        function insertLastAIResponseToSlide() {
+            if(!lastAIResponseText) {
+                alert("يرجى طرح سؤال على الذكاء الاصطناعي أولاً!");
+                return;
+            }
+            slides[currentIndex].body = lastAIResponseText;
+            loadCurrentSlide();
+            saveAll();
+        }
+
+        function quickAIPresentation() {
+            const topic = prompt("أدخل موضوع العرض لتوليده باستخدام الذكاء الاصطناعي:");
+            if (!topic) return;
+            const model = document.getElementById('aiModelSelect').value;
+            
+            slides = [
+                { title: `🎓 عرض: ${topic}`, body: `تم توليد هذا العرض تلقائياً بواسطة محرك الذكاء الاصطناعي (${model}).\nيتناول هذا العرض نظرة شاملة وتحليلية للموضوع.`, image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=500", customStyle: designs[5].style },
+                { title: "📌 المحاور والنتائج الرئيسية", body: "• المقدمة والأهداف العامة.\n• المنهجية والأدوات المستخدمة.\n• النتائج والتوصيات المستقبلية.", image: "", customStyle: designs[12].style }
+            ];
+            currentIndex = 0; saveAll(); loadCurrentSlide(); renderSlideList();
+        }
+
+        /* --- 100 DESIGNS SYSTEM --- */
         const designs = [];
-        
-        // 1. Neon & Gradient Themes (1-25)
         for(let i=1; i<=25; i++) {
-            let hue1 = (i * 14) % 360;
-            let hue2 = (hue1 + 50) % 360;
-            designs.push({
-                id: `design-gradient-${i}`,
-                name: `🌈 تدرج عصري ${i}`,
-                style: `background: linear-gradient(135deg, hsl(${hue1}, 70%, 50%), hsl(${hue2}, 80%, 40%)); color: white;`
-            });
+            let hue1 = (i * 14) % 360, hue2 = (hue1 + 50) % 360;
+            designs.push({ id: `d1-${i}`, name: `🌈 تدرج عصري ${i}`, style: `background: linear-gradient(135deg, hsl(${hue1}, 70%, 50%), hsl(${hue2}, 80%, 40%)); color: white;` });
         }
-
-        // 2. Dark & Luxury Themes (26-50)
         for(let i=1; i<=25; i++) {
-            let lightness = 10 + (i % 10);
-            let hue = (i * 15) % 360;
-            designs.push({
-                id: `design-dark-${i}`,
-                name: `🌑 داكن فاخر ${i}`,
-                style: `background: linear-gradient(135deg, hsl(${hue}, 20%, ${lightness}%), hsl(${hue}, 30%, 5%)); color: #f8fafc;`
-            });
+            let lightness = 10 + (i % 10), hue = (i * 15) % 360;
+            designs.push({ id: `d2-${i}`, name: `🌑 داكن فاخر ${i}`, style: `background: linear-gradient(135deg, hsl(${hue}, 20%, ${lightness}%), hsl(${hue}, 30%, 5%)); color: #f8fafc;` });
         }
-
-        // 3. Light, Pastel & Academic Themes (51-75)
         for(let i=1; i<=25; i++) {
             let hue = (i * 14) % 360;
-            designs.push({
-                id: `design-pastel-${i}`,
-                name: `🎨 باستيل هادئ ${i}`,
-                style: `background: linear-gradient(135deg, hsl(${hue}, 60%, 94%), hsl(${hue}, 40%, 86%)); color: #0f172a;`
-            });
+            designs.push({ id: `d3-${i}`, name: `🎨 باستيل هادئ ${i}`, style: `background: linear-gradient(135deg, hsl(${hue}, 60%, 94%), hsl(${hue}, 40%, 86%)); color: #0f172a;` });
         }
-
-        // 4. Glass & Modern Modern Cards (76-100)
         for(let i=1; i<=25; i++) {
             let hue = (i * 12) % 360;
-            designs.push({
-                id: `design-glass-${i}`,
-                name: `✨ زجاج مودرن ${i}`,
-                style: `background: hsla(${hue}, 50%, 90%, 0.85); backdrop-filter: blur(15px); border: 2px solid hsla(${hue}, 50%, 40%, 0.3); color: #0f172a;`
-            });
+            designs.push({ id: `d4-${i}`, name: `✨ زجاج مودرن ${i}`, style: `background: hsla(${hue}, 50%, 90%, 0.85); backdrop-filter: blur(15px); border: 2px solid hsla(${hue}, 50%, 40%, 0.3); color: #0f172a;` });
         }
 
-        // Populate 100 Designs Selectors
         function initDesigns() {
             const selector = document.getElementById('designSelector');
             const quickPicker = document.getElementById('quickPicker');
-            
             designs.forEach((d, idx) => {
                 let opt = document.createElement('option');
-                opt.value = d.style;
-                opt.innerText = `${idx + 1}. ${d.name}`;
+                opt.value = d.style; opt.innerText = `${idx + 1}. ${d.name}`;
                 selector.appendChild(opt);
 
-                if (idx < 15) { // Add first 15 to quick picker
+                if (idx < 12) {
                     let div = document.createElement('div');
-                    div.className = 'design-option';
-                    div.style = d.style;
+                    div.className = 'design-option'; div.style = d.style;
                     div.innerText = d.name.substring(0, 8);
                     div.onclick = () => applyDesign(d.style);
                     quickPicker.appendChild(div);
@@ -306,18 +366,18 @@
             document.getElementById(`tab-${tabName}`).classList.add('active');
         }
 
-        /* --- PROJECTS & SLIDE MANAGEMENT --- */
-        let projects = JSON.parse(localStorage.getItem('global_100design_projects')) || {
-            "المشروع العلمي 1": [{ title: "مرحباً بك مع 100 تصميم احترافي!", body: "يمكنك الآن الانتقال لتبويب (🎨 تصاميم ثيمات) والاختيار من بين 100 شكل مذهل بنقرة واحدة.", image: "", customStyle: "" }]
+        /* --- PROJECTS & SLIDES MANAGEMENT --- */
+        let projects = JSON.parse(localStorage.getItem('global_multiai_projects')) || {
+            "المشروع العلمي 1": [{ title: "مرحباً بك في المنصة الذكية المتعددة (Multi-AI)", body: "اكتب أي سؤال في شات الذكاء الاصطناعي على اليسار للحصول على إجابات فورية متقدمة وإدراجها بضغطة زر!", image: "", customStyle: "" }]
         };
-        let currentProjectName = localStorage.getItem('global_current_project_100') || "المشروع العلمي 1";
+        let currentProjectName = localStorage.getItem('global_current_project_ai') || "المشروع العلمي 1";
         let slides = projects[currentProjectName] || projects[Object.keys(projects)[0]];
         let currentIndex = 0;
 
         function saveAll() {
             projects[currentProjectName] = slides;
-            localStorage.setItem('global_100design_projects', JSON.stringify(projects));
-            localStorage.setItem('global_current_project_100', currentProjectName);
+            localStorage.setItem('global_multiai_projects', JSON.stringify(projects));
+            localStorage.setItem('global_current_project_ai', currentProjectName);
         }
 
         function renderProjectSelect() {
@@ -353,11 +413,7 @@
             document.getElementById('slideBody').value = current.body || '';
             
             const card = document.getElementById('slideCard');
-            if(current.customStyle) {
-                card.style = current.customStyle;
-            } else {
-                card.style = "";
-            }
+            card.style = current.customStyle ? current.customStyle : "";
             
             const imgEl = document.getElementById('slideImg');
             if (current.image) { imgEl.src = current.image; imgEl.style.display = 'block'; } 
@@ -403,7 +459,7 @@
             else if(type === 'arrow') shape.innerHTML = '➔';
             else if(type === 'check') shape.innerHTML = '✅';
             else if(type === 'diamond') shape.innerHTML = '🔷';
-            else if(type === 'cloud') shape.innerHTML = '☁️️';
+            else if(type === 'cloud') shape.innerHTML = '☁️';
 
             shape.ondblclick = () => shape.remove();
             makeDraggable(shape);
@@ -428,8 +484,7 @@
         function openImageLibrary() { document.getElementById('imageModal').style.display = 'flex'; }
         function closeImageLibrary() { document.getElementById('imageModal').style.display = 'none'; }
         function selectStockImage(url) {
-            slides[currentIndex].image = url;
-            loadCurrentSlide(); saveAll(); closeImageLibrary();
+            slides[currentIndex].image = url; loadCurrentSlide(); saveAll(); closeImageLibrary();
         }
 
         function uploadImage(event) {
@@ -441,14 +496,13 @@
             }
         }
 
-        /* --- RESEARCH PAPERS & AI GENERATOR --- */
+        /* --- RESEARCH PAPERS --- */
         const researchPapers = {
             ai_paper: [
-                { title: "🔬 بحث: الذكاء الاصطناعي والتطور التكنولوجي", body: "ملخص البحث:\nيقدم هذا البحث دراسة شاملة حول أثر الذكاء الاصطناعي في تحسين أداء التطبيقات الحديثة.", image: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=500", customStyle: designs[25].style },
-                { title: "📊 منهجية الدراسة والنتائج", body: "تم اعتماد المنهج التحليلي المقارن لقياس أداء الخوارزميات ورضا المستخدم النهائي.", image: "", customStyle: designs[0].style }
+                { title: "🔬 بحث: الذكاء الاصطناعي والتطور التكنولوجي", body: "ملخص البحث:\nيقدم هذا البحث دراسة شاملة حول أثر الذكاء الاصطناعي الحديث.", image: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=500", customStyle: designs[25].style }
             ],
             business_plan: [
-                { title: "💼 خطة عمل شركة ناشئة (Business Pitch)", body: "الرؤية والرسالة:\nبناء منصة رقمية متكاملة تقدم حلولاً خافضة للتكاليف وموجهة للسوق العالمي.", image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=500", customStyle: designs[10].style }
+                { title: "💼 خطة عمل شركة ناشئة (Business Pitch)", body: "الرؤية والرسالة:\nبناء منصة رقمية متكاملة تقدم حلولاً خافضة للتكاليف.", image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=500", customStyle: designs[10].style }
             ],
             scientific_method: [
                 { title: "🔬 خطوات المنهج العلمي الحديث", body: "1. الملاحظة وصياغة المشكلة.\n2. وضع الفرضيات العلمية.\n3. التجربة والتحليل والاستنتاج.", image: "", customStyle: designs[50].style }
@@ -460,16 +514,6 @@
                 slides = JSON.parse(JSON.stringify(researchPapers[type]));
                 currentIndex = 0; saveAll(); loadCurrentSlide(); renderSlideList();
             }
-        }
-
-        function generateAISlides() {
-            const topic = prompt("أدخل عنوان البحث أو موضوع العرض التقديمي:");
-            if (!topic) return;
-            slides = [
-                { title: `🎓 بحث / عرض: ${topic}`, body: `دراسة تحليلية ومقدمة شاملة حول موضوع : ${topic}.\nتم الإنشاء تلقائياً عبر المحرك الذكي.`, image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=500", customStyle: designs[30].style },
-                { title: "📌 المحاور الرئيسية", body: "• المحور الأول: المفاهيم والأسس.\n• المحور الثاني: التحديات والفرص.\n• المحور الثالث: التوصيات المستقبلية.", image: "", customStyle: designs[5].style }
-            ];
-            currentIndex = 0; saveAll(); loadCurrentSlide(); renderSlideList();
         }
 
         /* --- CANVAS & FULLSCREEN --- */
