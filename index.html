@@ -3,209 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Presentation Pro Suite - Mega Office Edition</title>
-    <!-- Fonts & FontAwesome -->
+    <title>Presentation Pro Ultimate Suite</title>
+    <!-- Fonts & Icons & Chart.js -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
-    <!-- Chart.js for Excel Charts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <style>
-        :root {
-            --bg-main: #070a13;
-            --panel-bg: rgba(15, 23, 42, 0.9);
-            --card-bg: rgba(30, 41, 59, 0.75);
-            --border-glass: rgba(255, 255, 255, 0.12);
-            --accent-cyan: #06b6d4;
-            --accent-indigo: #6366f1;
-            --accent-pink: #ec4899;
-            --accent-amber: #f59e0b;
-            --accent-emerald: #10b981;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
-        body { background: var(--bg-main); color: var(--text-primary); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-
-        /* Top Header Navigation */
-        .header-nav {
-            background: rgba(11, 17, 32, 0.95);
-            border-bottom: 1px solid var(--border-glass);
-            padding: 8px 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            backdrop-filter: blur(12px);
-            z-index: 100;
-        }
-        .brand {
-            font-size: 1.1rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-indigo), var(--accent-pink));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* Ribbon Navigation Tabs System */
-        .ribbon-container { background: rgba(15, 23, 42, 0.9); border-bottom: 1px solid var(--border-glass); }
-        .ribbon-tabs { display: flex; gap: 4px; padding: 4px 12px 0 12px; overflow-x: auto; scrollbar-width: thin; }
-        .tab-btn {
-            background: transparent; border: none; color: var(--text-secondary);
-            padding: 8px 14px; font-weight: 700; font-size: 0.8rem; cursor: pointer;
-            border-radius: 8px 8px 0 0; transition: all 0.2s; display: flex; align-items: center; gap: 6px; white-space: nowrap;
-        }
-        .tab-btn:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
-        .tab-btn.active { color: var(--accent-cyan); background: rgba(6, 182, 212, 0.12); border-bottom: 2px solid var(--accent-cyan); }
-
-        .ribbon-toolbar { padding: 8px 16px; display: none; gap: 12px; align-items: center; flex-wrap: wrap; }
-        .ribbon-toolbar.active { display: flex; }
-
-        .tool-section { display: flex; align-items: center; gap: 6px; padding-left: 10px; border-left: 1px solid var(--border-glass); }
-        .tool-section:last-child { border-left: none; }
-        .tool-label { font-size: 0.68rem; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 2px; }
-
-        /* General Buttons Styling */
-        .btn {
-            background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-glass);
-            color: var(--text-primary); padding: 5px 10px; border-radius: 6px; font-size: 0.78rem;
-            font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s;
-        }
-        .btn:hover { background: rgba(255, 255, 255, 0.15); border-color: var(--accent-cyan); transform: translateY(-1px); }
-        .btn-cyan { background: linear-gradient(135deg, var(--accent-cyan), #0891b2); color: white; border: none; }
-        .btn-indigo { background: linear-gradient(135deg, var(--accent-indigo), #4f46e5); color: white; border: none; }
-        .btn-amber { background: linear-gradient(135deg, var(--accent-amber), #d97706); color: white; border: none; }
-        .btn-emerald { background: linear-gradient(135deg, var(--accent-emerald), #059669); color: white; border: none; }
-        .btn-pink { background: linear-gradient(135deg, var(--accent-pink), #be185d); color: white; border: none; }
-
-        /* Main Workspace */
-        .workspace { display: flex; flex: 1; height: calc(100vh - 105px); overflow: hidden; }
-
-        /* Left Slides Navigator */
-        .sidebar-slides { width: 220px; background: var(--panel-bg); border-left: 1px solid var(--border-glass); padding: 12px; display: flex; flex-direction: column; gap: 10px; }
-        .slides-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-        .slide-thumb {
-            background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass);
-            border-radius: 8px; padding: 10px; cursor: pointer; transition: all 0.2s; font-size: 0.78rem;
-        }
-        .slide-thumb.active { border-color: var(--accent-cyan); background: rgba(6, 182, 212, 0.12); font-weight: 700; }
-
-        /* Main Canvas Stage */
-        .stage { flex: 1; background: radial-gradient(circle at center, #111827 0%, #030712 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; overflow-y: auto; position: relative; }
-        
-        .slide-wrapper { width: 100%; max-width: 850px; aspect-ratio: 16/9; position: relative; }
-        .slide-card {
-            width: 100%; height: 100%; background: var(--card-bg); backdrop-filter: blur(16px);
-            border: 1px solid var(--border-glass); border-radius: 16px; padding: 25px;
-            display: flex; flex-direction: column; gap: 10px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            position: relative; overflow: auto;
-        }
-
-        .slide-title-input { background: transparent; border: none; outline: none; color: var(--text-primary); font-size: 1.5rem; font-weight: 800; border-bottom: 2px dashed rgba(255,255,255,0.1); padding-bottom: 6px; }
-        .slide-body-editor { background: transparent; border: none; outline: none; color: var(--text-primary); font-size: 0.92rem; line-height: 1.7; min-height: 120px; outline: none; }
-
-        .slide-image-preview { width: 100%; max-height: 180px; object-fit: cover; border-radius: 10px; border: 1px solid var(--border-glass); display: none; margin-top: 6px; }
-
-        /* Canvas Drawing Overlay */
-        #drawingCanvas { position: absolute; inset: 0; pointer-events: none; z-index: 10; width: 100%; height: 100%; }
-
-        /* Interactive Table Inside Slide */
-        .slide-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        .slide-table th, .slide-table td { border: 1px solid var(--border-glass); padding: 6px 10px; font-size: 0.8rem; text-align: center; }
-        .slide-table th { background: rgba(6, 182, 212, 0.2); font-weight: 700; }
-
-        /* Speaker Notes Panel */
-        .notes-panel { width: 100%; max-width: 850px; margin-top: 10px; background: rgba(15, 23, 42, 0.9); border: 1px solid var(--border-glass); border-radius: 10px; padding: 8px 12px; }
-        .notes-panel textarea { width: 100%; background: transparent; border: none; outline: none; color: #cbd5e1; font-size: 0.78rem; resize: none; height: 35px; }
-
-        /* AI Side Control Panel */
-        .sidebar-ai { width: 260px; background: var(--panel-bg); border-right: 1px solid var(--border-glass); padding: 12px; display: flex; flex-direction: column; gap: 10px; }
-        .ai-chat { flex: 1; background: rgba(0,0,0,0.25); border: 1px solid var(--border-glass); border-radius: 10px; padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-        .chat-msg { padding: 8px 12px; border-radius: 8px; font-size: 0.78rem; line-height: 1.4; }
-        .chat-msg.ai { background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.3); }
-        .chat-msg.user { background: var(--accent-cyan); color: #000; font-weight: 700; align-self: flex-end; }
-
-        /* Scientific Calculator Modal */
-        .calc-modal {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: #0f172a; border: 1px solid var(--border-glass); border-radius: 16px;
-            padding: 16px; width: 320px; box-shadow: 0 20px 40px rgba(0,0,0,0.8);
-            display: none; z-index: 1000; flex-direction: column; gap: 10px;
-        }
-        .calc-display { background: #020617; border: 1px solid var(--border-glass); border-radius: 8px; padding: 10px; color: #06b6d4; font-size: 1.2rem; font-weight: 800; text-align: left; min-height: 45px; word-break: break-all; }
-        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-        .calc-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: white; padding: 10px; border-radius: 6px; font-weight: 700; cursor: pointer; text-align: center; font-size: 0.85rem; }
-        .calc-btn:hover { background: rgba(255,255,255,0.15); }
-        .calc-btn.op { background: rgba(99, 102, 241, 0.2); color: var(--accent-cyan); }
-        .calc-btn.eq { background: var(--accent-emerald); color: white; grid-column: span 2; }
-
-        /* Laser Pointer Element */
-        #laser {
-            position: fixed; width: 16px; height: 16px; background: #ff0055;
-            border-radius: 50%; box-shadow: 0 0 15px #ff0055, 0 0 30px #ff0055;
-            pointer-events: none; display: none; z-index: 9999; transform: translate(-50%, -50%);
-        }
-    </style>
-</head>
-<body>
-
-    <div id="laser"></div>
-
-    <!-- Scientific Calculator Modal -->
-    <div class="calc-modal" id="calcModal">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <span style="font-weight:800; color:var(--accent-cyan); font-size:0.85rem;"><i class="fa-solid fa-calculator"></i> الآلة الحاسبة العلمية</span>
-            <button class="btn" style="padding:2px 6px;" onclick="toggleCalc()"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div class="calc-display" id="calcDisplay">0</div>
-        <div class="calc-grid">
-            <button class="calc-btn op" onclick="calcAppend('sin(')">sin</button>
-            <button class="calc-btn op" onclick="calcAppend('cos(')">cos</button>
-            <button class="calc-btn op" onclick="calcAppend('tan(')">tan</button>
-            <button class="calc-btn op" onclick="calcClear()">C</button>
-            
-            <button class="calc-btn op" onclick="calcAppend('√(')">√</button>
-            <button class="calc-btn op" onclick="calcAppend('^')">^</button>
-
-            <button class="calc-btn op" onclick="calcAppend('(')">(</button>
-            <button class="calc-btn op" onclick="calcAppend(')')">)</button>
-            
-            <button class="calc-btn" onclick="إليك الكود المطور والكامل، حيث تم إرجاع جميع الميزات السابقة، بالإضافة إلى إضافة أدوات متقدمة مستوحاة من برامج Word وExcel وPowerPoint:
-
-### 🌟 الميزات المضافة والمسترجعة:
-1. **ميزات مستوحاة من Excel:**
-   * **إدراج جدول تفاعلي:** إمكانية إضافة جدول قابل للتعديل والتحكم في عدد الصفوف والأعمدة.
-   * **إنشاء مخططات ورسوم بيانية (Charts):** رسم بياني تفاعلي يُدرج مباشرة في الشريحة بدعم من مكتبة Chart.js.
-   * **آلة حاسبة علمية شاملة:** حاسبة متطورة تدعم العمليات الحسابية الأساسية والدوال العلمية ($\sin, \cos, \tan, \sqrt{x}, x^2, \log, \pi$).
-
-2. **ميزات مستوحاة من Word:**
-   * **أدوات تنسيق النصوص الاحترافية:** (غامق **B**، مائل *I*، تحت الخط <u>U</u>، محاذاة النص للشارحة أو الوسط أو اليمين، وتغيير لون وحجم الخط).
-
-3. **ميزات مستوحاة من PowerPoint:**
-   * **تنسيق الخلفيات والأشكال:** إمكانية اختيار لون خلفية الشريحة أو تدرج اللون.
-   * **تأثيرات الانتقال:** اختيار حركات الانتقال بين الشرائح (Slide Transitions).
-
-4. **إعادة الميزات السابقة وتجميل الواجهة:**
-   * مستكشف البحث العلمي، أداة الرسم وقلم الليزر، الملاحظات الخاصة بالمحاضر، شات الذكاء الاصطناعي، القراءة والتسجيل الصوتي.
-
----
-
-### 💻 الكود الكامل المطور (قم بنسخه واستبدال كامل محتوى `index.html` به):
-
-```html
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Presentation Pro 3D - Ultimate Mega Suite</title>
-    <!-- Fonts & Icons & Chart.js -->
-    <link href="[https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap](https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap)" rel="stylesheet">
-    <script src="[https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js)"></script>
-    <script src="[https://cdn.jsdelivr.net/npm/chart.js](https://cdn.jsdelivr.net/npm/chart.js)"></script>
     <style>
         :root {
             --bg-main: #070a13;
@@ -228,12 +30,12 @@
         .header-nav {
             background: rgba(11, 17, 32, 0.95);
             border-bottom: 1px solid var(--border-glass);
-            padding: 6px 14px;
+            padding: 8px 16px;
             display: flex; align-items: center; justify-content: space-between;
             backdrop-filter: blur(12px); z-index: 100;
         }
         .brand {
-            font-size: 1.05rem; font-weight: 900;
+            font-size: 1.1rem; font-weight: 900;
             background: linear-gradient(135deg, var(--accent-cyan), var(--accent-indigo), var(--accent-pink));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             display: flex; align-items: center; gap: 8px;
@@ -241,26 +43,25 @@
 
         /* Ribbon Navbar System */
         .ribbon-container { background: rgba(15, 23, 42, 0.95); border-bottom: 1px solid var(--border-glass); }
-        .ribbon-tabs { display: flex; gap: 2px; padding: 4px 10px 0 10px; overflow-x: auto; scrollbar-width: thin; }
+        .ribbon-tabs { display: flex; gap: 4px; padding: 4px 12px 0 12px; overflow-x: auto; }
         .tab-btn {
             background: transparent; border: none; color: var(--text-secondary);
-            padding: 6px 12px; font-weight: 700; font-size: 0.8rem; cursor: pointer;
-            border-radius: 6px 6px 0 0; transition: all 0.2s; display: flex; align-items: center; gap: 6px; white-space: nowrap;
+            padding: 8px 14px; font-weight: 700; font-size: 0.8rem; cursor: pointer;
+            border-radius: 8px 8px 0 0; transition: all 0.2s; display: flex; align-items: center; gap: 6px; white-space: nowrap;
         }
         .tab-btn:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
         .tab-btn.active { color: var(--accent-cyan); background: rgba(6, 182, 212, 0.12); border-bottom: 2px solid var(--accent-cyan); }
 
-        .ribbon-toolbar { padding: 6px 12px; display: none; gap: 10px; align-items: center; flex-wrap: wrap; background: rgba(10, 15, 29, 0.6); }
+        .ribbon-toolbar { padding: 8px 16px; display: none; gap: 12px; align-items: center; flex-wrap: wrap; background: rgba(10, 15, 29, 0.6); }
         .ribbon-toolbar.active { display: flex; }
 
         .tool-group { display: flex; align-items: center; gap: 6px; padding-left: 10px; border-left: 1px solid var(--border-glass); }
         .tool-group:last-child { border-left: none; }
-        .tool-group label { font-size: 0.68rem; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 2px; }
 
         /* UI Buttons & Controls */
         .btn {
             background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-glass);
-            color: var(--text-primary); padding: 5px 10px; border-radius: 6px; font-size: 0.75rem;
+            color: var(--text-primary); padding: 5px 10px; border-radius: 6px; font-size: 0.78rem;
             font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s;
         }
         .btn:hover { background: rgba(255, 255, 255, 0.15); border-color: var(--accent-cyan); }
@@ -270,64 +71,58 @@
         .btn-emerald { background: linear-gradient(135deg, var(--accent-emerald), #059669); color: white; border: none; }
         .btn-pink { background: linear-gradient(135deg, var(--accent-pink), #be185d); color: white; border: none; }
 
-        /* Color inputs & selects */
-        .input-mini { background: #0f172a; border: 1px solid var(--border-glass); color: white; padding: 4px; border-radius: 4px; font-size: 0.75rem; outline: none; }
-
         /* Main Workspace Structure */
-        .workspace { display: flex; flex: 1; height: calc(100vh - 110px); overflow: hidden; }
+        .workspace { display: flex; flex: 1; height: calc(100vh - 105px); overflow: hidden; }
 
         /* Left Slides Navigator */
-        .sidebar-slides { width: 210px; background: var(--panel-bg); border-left: 1px solid var(--border-glass); padding: 10px; display: flex; flex-direction: column; gap: 8px; }
-        .slides-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
+        .sidebar-slides { width: 220px; background: var(--panel-bg); border-left: 1px solid var(--border-glass); padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+        .slides-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
         .slide-thumb {
             background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass);
-            border-radius: 8px; padding: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.75rem;
+            border-radius: 8px; padding: 10px; cursor: pointer; transition: all 0.2s; font-size: 0.78rem;
         }
-        .slide-thumb.active { border-color: var(--accent-cyan); background: rgba(6, 182, 212, 0.15); }
+        .slide-thumb.active { border-color: var(--accent-cyan); background: rgba(6, 182, 212, 0.15); font-weight: 700; }
 
         /* Canvas Stage */
         .stage { flex: 1; background: radial-gradient(circle at center, #111827 0%, #030712 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; overflow-y: auto; position: relative; }
         
-        .slide-wrapper { width: 100%; max-width: 820px; aspect-ratio: 16/9; position: relative; }
+        .slide-wrapper { width: 100%; max-width: 850px; aspect-ratio: 16/9; position: relative; }
         .slide-card {
             width: 100%; height: 100%; background: var(--card-bg); backdrop-filter: blur(16px);
-            border: 1px solid var(--border-glass); border-radius: 14px; padding: 22px;
-            display: flex; flex-direction: column; gap: 10px; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            border: 1px solid var(--border-glass); border-radius: 16px; padding: 25px;
+            display: flex; flex-direction: column; gap: 10px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
             position: relative; overflow-y: auto; transition: background 0.3s;
         }
 
-        .slide-title-input { background: transparent; border: none; outline: none; color: var(--text-primary); font-size: 1.5rem; font-weight: 800; border-bottom: 2px dashed rgba(255,255,255,0.1); padding-bottom: 4px; }
+        .slide-title-input { background: transparent; border: none; outline: none; color: var(--text-primary); font-size: 1.5rem; font-weight: 800; border-bottom: 2px dashed rgba(255,255,255,0.1); padding-bottom: 6px; }
         
-        /* Editable Content Field (Word Features Support) */
         .editable-body {
             background: transparent; border: none; outline: none; color: var(--text-primary);
-            font-size: 0.95rem; line-height: 1.6; min-height: 100px; flex: 1; overflow-y: auto;
+            font-size: 0.95rem; line-height: 1.7; min-height: 100px; flex: 1; overflow-y: auto;
         }
 
-        /* Dynamic Table Style (Excel Feature) */
-        .dynamic-table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 0.8rem; }
-        .dynamic-table th, .dynamic-table td { border: 1px solid var(--border-glass); padding: 6px; text-align: center; background: rgba(0,0,0,0.2); color: var(--text-primary); }
+        .dynamic-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.8rem; }
+        .dynamic-table th, .dynamic-table td { border: 1px solid var(--border-glass); padding: 8px; text-align: center; background: rgba(0,0,0,0.2); color: var(--text-primary); }
         .dynamic-table th { background: rgba(6, 182, 212, 0.2); font-weight: 700; }
 
-        /* Chart Canvas Holder */
-        .chart-box { width: 100%; height: 160px; margin-top: 8px; display: none; }
+        .chart-box { width: 100%; height: 180px; margin-top: 10px; display: none; }
 
         /* Speaker Notes Panel */
-        .notes-panel { width: 100%; max-width: 820px; margin-top: 8px; background: rgba(15, 23, 42, 0.9); border: 1px solid var(--border-glass); border-radius: 8px; padding: 8px; }
+        .notes-panel { width: 100%; max-width: 850px; margin-top: 10px; background: rgba(15, 23, 42, 0.9); border: 1px solid var(--border-glass); border-radius: 10px; padding: 8px 12px; }
         .notes-panel textarea { width: 100%; background: transparent; border: none; outline: none; color: #cbd5e1; font-size: 0.78rem; resize: none; height: 35px; }
 
         /* Right AI Sidebar */
-        .sidebar-ai { width: 250px; background: var(--panel-bg); border-right: 1px solid var(--border-glass); padding: 10px; display: flex; flex-direction: column; gap: 8px; }
-        .ai-chat { flex: 1; background: rgba(0,0,0,0.25); border: 1px solid var(--border-glass); border-radius: 8px; padding: 8px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
-        .chat-msg { padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; line-height: 1.4; }
+        .sidebar-ai { width: 260px; background: var(--panel-bg); border-right: 1px solid var(--border-glass); padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+        .ai-chat { flex: 1; background: rgba(0,0,0,0.25); border: 1px solid var(--border-glass); border-radius: 10px; padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+        .chat-msg { padding: 8px 12px; border-radius: 8px; font-size: 0.78rem; line-height: 1.4; }
         .chat-msg.ai { background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.3); }
         .chat-msg.user { background: var(--accent-cyan); color: #000; font-weight: 700; align-self: flex-end; }
 
         /* Scientific Calculator Modal */
         .calc-modal {
-            position: fixed; top: 80px; left: 20px; background: rgba(15, 23, 42, 0.95);
+            position: fixed; top: 70px; left: 20px; background: rgba(15, 23, 42, 0.95);
             border: 1px solid var(--accent-cyan); border-radius: 12px; padding: 12px;
-            width: 260px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); display: none; z-index: 1000; backdrop-filter: blur(10px);
+            width: 270px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); display: none; z-index: 1000; backdrop-filter: blur(10px);
         }
         .calc-display { width: 100%; background: #000; border: 1px solid var(--border-glass); color: #00ffcc; font-family: monospace; font-size: 1.1rem; text-align: left; padding: 8px; border-radius: 6px; margin-bottom: 8px; }
         .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
@@ -336,7 +131,7 @@
 
         /* Laser Pointer Element */
         #laser {
-            position: fixed; width: 14px; height: 14px; background: #ff0055;
+            position: fixed; width: 16px; height: 16px; background: #ff0055;
             border-radius: 50%; box-shadow: 0 0 15px #ff0055, 0 0 30px #ff0055;
             pointer-events: none; display: none; z-index: 9999; transform: translate(-50%, -50%);
         }
@@ -368,75 +163,59 @@
         </div>
 
         <!-- Toolbars -->
-        <!-- Home Toolbar -->
         <div class="ribbon-toolbar active" id="tab-home">
             <div class="tool-group">
-                <label>الشرائح</label>
                 <button class="btn btn-cyan" onclick="addSlide()"><i class="fa-solid fa-plus"></i> شريحة جديدة</button>
                 <button class="btn" onclick="deleteSlide()"><i class="fa-solid fa-trash"></i> حذف</button>
             </div>
             <div class="tool-group">
-                <label>التصدير والطباعة</label>
                 <button class="btn" onclick="window.print()"><i class="fa-solid fa-print"></i> طباعة / PDF</button>
             </div>
         </div>
 
-        <!-- Word Formatting Toolbar -->
         <div class="ribbon-toolbar" id="tab-word">
             <div class="tool-group">
-                <label>نمط الخط</label>
                 <button class="btn" onclick="formatText('bold')"><i class="fa-solid fa-bold"></i></button>
                 <button class="btn" onclick="formatText('italic')"><i class="fa-solid fa-italic"></i></button>
                 <button class="btn" onclick="formatText('underline')"><i class="fa-solid fa-underline"></i></button>
             </div>
             <div class="tool-group">
-                <label>المحاذاة</label>
                 <button class="btn" onclick="formatText('justifyRight')"><i class="fa-solid fa-align-right"></i></button>
                 <button class="btn" onclick="formatText('justifyCenter')"><i class="fa-solid fa-align-center"></i></button>
                 <button class="btn" onclick="formatText('justifyLeft')"><i class="fa-solid fa-align-left"></i></button>
             </div>
             <div class="tool-group">
-                <label>الألوان</label>
-                <input type="color" class="input-mini" id="textColor" onchange="formatTextColor(this.value)">
+                <input type="color" onchange="formatTextColor(this.value)" style="border:none; background:transparent; cursor:pointer;">
             </div>
         </div>
 
-        <!-- Excel Toolbar (Tables & Charts) -->
         <div class="ribbon-toolbar" id="tab-excel">
             <div class="tool-group">
-                <label>جداول Excel</label>
-                <button class="btn btn-emerald" onclick="insertTable()"><i class="fa-solid fa-table"></i> إدراج جدول 3x3</button>
+                <button class="btn btn-emerald" onclick="insertTable()"><i class="fa-solid fa-table"></i> إدراج جدول</button>
             </div>
             <div class="tool-group">
-                <label>الرسوم البيانية (Charts)</label>
                 <button class="btn btn-cyan" onclick="insertChart('bar')"><i class="fa-solid fa-chart-column"></i> أعمدة</button>
                 <button class="btn btn-amber" onclick="insertChart('line')"><i class="fa-solid fa-chart-line"></i> خطي</button>
                 <button class="btn btn-pink" onclick="insertChart('pie')"><i class="fa-solid fa-chart-pie"></i> دائري</button>
             </div>
         </div>
 
-        <!-- PowerPoint Toolbar (Design & BG) -->
         <div class="ribbon-toolbar" id="tab-powerpoint">
             <div class="tool-group">
-                <label>خلفية الشريحة</label>
-                <input type="color" class="input-mini" value="#1e293b" onchange="changeSlideBg(this.value)">
+                <button class="btn" onclick="changeSlideBg('rgba(30, 41, 59, 0.75)')">افتراضي</button>
                 <button class="btn" onclick="changeSlideBg('linear-gradient(135deg, #1e1b4b, #0f172a)')">تدرج ليلي</button>
                 <button class="btn" onclick="changeSlideBg('linear-gradient(135deg, #065f46, #064e3b)')">تدرج زمردي</button>
             </div>
         </div>
 
-        <!-- AI Toolbar -->
         <div class="ribbon-toolbar" id="tab-ai">
             <div class="tool-group">
-                <label>المساعد الأكاديمي</label>
                 <button class="btn btn-emerald" onclick="summarizeSlide()"><i class="fa-solid fa-bolt"></i> تلخيص محتوى الشريحة</button>
             </div>
         </div>
 
-        <!-- Speech Toolbar -->
         <div class="ribbon-toolbar" id="tab-speech">
             <div class="tool-group">
-                <label>القراءة النطقية</label>
                 <button class="btn btn-emerald" onclick="speakText()"><i class="fa-solid fa-volume-high"></i> قراءة بصوت واضح</button>
             </div>
         </div>
@@ -444,45 +223,35 @@
 
     <!-- Workspace -->
     <div class="workspace">
-        <!-- Left Sidebar -->
         <aside class="sidebar-slides">
             <div style="font-size:0.78rem; font-weight:800; color:var(--accent-cyan);">الشرائح والمشاريع</div>
             <div class="slides-list" id="slidesContainer"></div>
         </aside>
 
-        <!-- Canvas Stage -->
         <main class="stage">
             <div class="slide-wrapper">
                 <div class="slide-card" id="slideCard">
                     <input type="text" class="slide-title-input" id="slideTitle" placeholder="عنوان الشريحة..." oninput="saveSlide()">
-                    
-                    <!-- Editable rich text body for Word features -->
                     <div class="editable-body" id="slideBody" contenteditable="true" oninput="saveSlide()">
                         اكتب الشرح والتفاصيل هنا...
                     </div>
-
-                    <!-- Excel Table Placeholder -->
                     <div id="tableHolder"></div>
-
-                    <!-- Excel Chart Placeholder -->
                     <div class="chart-box" id="chartHolder">
                         <canvas id="myChart"></canvas>
                     </div>
                 </div>
             </div>
 
-            <!-- Speaker Notes -->
             <div class="notes-panel">
                 <label style="font-size:0.75rem; color:var(--accent-amber); font-weight:800;">📝 ملاحظات المحاضر (تظهر لك فقط):</label>
-                <textarea id="slideNotes" placeholder="اكتب ملاحظاتك العلمية والتذكيرية..." oninput="saveSlide()"></textarea>
+                <textarea id="slideNotes" placeholder="اكتب ملاحظاتك العلمية..." oninput="saveSlide()"></textarea>
             </div>
         </main>
 
-        <!-- Right AI Sidebar -->
         <aside class="sidebar-ai">
             <div style="font-size:0.78rem; font-weight:800; color:var(--accent-indigo);">مساعد الذكاء الاصطناعي</div>
             <div class="ai-chat" id="chatBox">
-                <div class="chat-msg ai">مرحباً! أنا جاهز لمساعدتك في كتابة المحتوى والتحليل الحسابي والتعاريف.</div>
+                <div class="chat-msg ai">مرحباً! أنا جاهز لمساعدتك في صياغة المحتوى والتحليلات.</div>
             </div>
             <div style="display:flex; gap:4px;">
                 <input type="text" id="aiQuery" placeholder="اسأل الذكاء الاصطناعي..." style="flex:1; padding:6px; border-radius:6px; background:#0f172a; border:1px solid var(--border-glass); color:white; font-size:0.75rem;">
@@ -493,7 +262,7 @@
 
     <!-- Scientific Calculator Modal -->
     <div class="calc-modal" id="calcModal">
-        <div style="display:flex; justify-size:space-between; align-items:center; margin-bottom:6px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
             <span style="font-size:0.75rem; font-weight:800; color:var(--accent-cyan);">آلة حاسبة علمية</span>
             <button class="btn" style="padding:2px 6px;" onclick="toggleCalc()">✕</button>
         </div>
@@ -582,11 +351,9 @@
             renderSlidesList();
         }
 
-        /* Word Text Formatting Tools */
         function formatText(cmd) { document.execCommand(cmd, false, null); saveSlide(); }
         function formatTextColor(color) { document.execCommand('foreColor', false, color); saveSlide(); }
 
-        /* Excel Dynamic Table Tool */
         function insertTable() {
             const html = `
                 <table class="dynamic-table" contenteditable="true">
@@ -599,7 +366,6 @@
             saveSlide();
         }
 
-        /* Excel Chart Tool */
         function insertChart(type) {
             const box = document.getElementById('chartHolder');
             box.style.display = 'block';
@@ -620,7 +386,6 @@
             });
         }
 
-        /* PowerPoint BG Control */
         function changeSlideBg(val) {
             document.getElementById('slideCard').style.background = val;
             slides[currentIndex].bg = val;
@@ -659,7 +424,6 @@
             }
         });
 
-        /* Scientific Calculator Logic */
         function toggleCalc() {
             const modal = document.getElementById('calcModal');
             modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
@@ -701,7 +465,7 @@
             chatBox.innerHTML += `<div class="chat-msg user">${txt}</div>`;
             input.value = '';
             try {
-                const res = await fetch(`[https://text.pollinations.ai/$](https://text.pollinations.ai/$){encodeURIComponent(txt)}`);
+                const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(txt)}`);
                 const reply = await res.text();
                 chatBox.innerHTML += `<div class="chat-msg ai">${reply}</div>`;
                 chatBox.scrollTop = chatBox.scrollHeight;
@@ -712,4 +476,4 @@
         loadSlide();
     </script>
 </body>
-HTML
+</html>
