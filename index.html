@@ -1,35 +1,487 @@
-@media print {
-    /* إخفاء كل العناصر الهامشية: الأشرطة العلمية والقوائم وشات الذكاء الاصطناعي */
-    .ribbon-header,
-    .ribbon-tabs,
-    .ribbon-toolbar,
-    .sidebar,
-    .ai-chat-panel,
-    .modal-overlay {
-        display: none !important;
-    }
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Presentation Pro 3D - Modern Workspace</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <style>
+        :root {
+            --bg-dark: #0a0f1d;
+            --panel-bg: rgba(18, 26, 47, 0.75);
+            --border-glass: rgba(255, 255, 255, 0.12);
+            --primary-neon: #6366f1;
+            --accent-cyan: #06b6d4;
+            --accent-pink: #ec4899;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
 
-    /* ضبط أبعاد الشاشة ومساحة العمل لتناسب الطباعة فقط */
-    body, .app-body, .workspace {
-        height: auto !important;
-        width: 100% !important;
-        background: white !important;
-        overflow: visible !important;
-        padding: 0 !important;
-        margin: 0 !important;
-    }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        body { background: var(--bg-dark); color: var(--text-main); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-    /* تكبير وتوسيط الشريحة لتملأ الصفحة عند الطباعة أو التصدير لـ PDF */
-    .slide-wrapper {
-        width: 100% !important;
-        max-width: none !important;
-        box-shadow: none !important;
-        border: none !important;
-        page-break-after: always;
-    }
+        /* Top Header Navigation */
+        .top-navbar {
+            height: 60px;
+            background: rgba(10, 15, 29, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-glass);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 50;
+        }
 
-    .slide-card {
-        border: none !important;
-        box-shadow: none !important;
-    }
-}
+        .brand-logo {
+            font-size: 1.15rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--primary-neon), var(--accent-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .action-group { display: flex; gap: 10px; align-items: center; }
+
+        /* Buttons Styling */
+        .btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glass);
+            color: var(--text-main);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover { background: rgba(255, 255, 255, 0.15); border-color: var(--accent-cyan); transform: translateY(-1px); }
+        .btn-neon { background: linear-gradient(135deg, var(--primary-neon), var(--accent-cyan)); border: none; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3); }
+        .btn-neon:hover { opacity: 0.9; box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5); }
+        .btn-3d { background: linear-gradient(135deg, #ec4899, #8b5cf6); border: none; font-weight: 800; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3); }
+
+        /* App Main Grid */
+        .app-workspace { display: flex; flex: 1; height: calc(100vh - 60px); position: relative; }
+
+        /* Left Floating Sidebar */
+        .sidebar-left {
+            width: 250px;
+            background: var(--panel-bg);
+            backdrop-filter: blur(15px);
+            border-left: 1px solid var(--border-glass);
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            gap: 12px;
+        }
+
+        .slide-thumbnails-container { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .thumb-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-glass);
+            border-radius: 10px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.85rem;
+        }
+        .thumb-card.active { border-color: var(--accent-cyan); background: rgba(6, 182, 212, 0.1); font-weight: 700; }
+
+        /* Central Presentation Area */
+        .main-stage {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at center, #1e1b4b 0%, #0a0f1d 70%);
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Floating Controls Bar */
+        .floating-toolbar {
+            position: absolute;
+            top: 20px;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 8px 16px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            z-index: 10;
+        }
+
+        /* Slide View Card */
+        .slide-canvas-wrapper { position: relative; width: 100%; max-width: 850px; aspect-ratio: 16/9; perspective: 1000px; }
+        
+        .slide-card {
+            width: 100%; height: 100%;
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            padding: 40px;
+            display: flex; flex-direction: column; justify-content: center; gap: 15px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transition: transform 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide-card input.title-in {
+            background: transparent; border: none; outline: none;
+            color: var(--text-main); font-size: 1.8rem; font-weight: 800;
+            border-bottom: 2px dashed rgba(255,255,255,0.1);
+            padding-bottom: 5px;
+        }
+
+        .slide-card textarea.body-in {
+            background: transparent; border: none; outline: none;
+            color: var(--text-muted); font-size: 1rem; line-height: 1.8;
+            resize: none; flex: 1;
+        }
+
+        /* Video / Media Box */
+        .media-preview-container {
+            width: 100%; height: 180px;
+            border-radius: 10px; overflow: hidden;
+            display: none; background: #000;
+        }
+        .media-preview-container iframe, .media-preview-container video { width: 100%; height: 100%; border: none; }
+
+        /* Canvas Draw Layer */
+        #drawCanvas { position: absolute; inset: 0; pointer-events: none; z-index: 5; border-radius: 16px; }
+        #drawCanvas.active { pointer-events: auto; cursor: crosshair; }
+
+        /* Right AI Panel */
+        .sidebar-right {
+            width: 300px;
+            background: var(--panel-bg);
+            backdrop-filter: blur(15px);
+            border-right: 1px solid var(--border-glass);
+            display: flex; flex-direction: column; padding: 15px; gap: 15px;
+        }
+
+        .ai-chat-box {
+            flex: 1; background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass);
+            border-radius: 10px; padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;
+        }
+        .msg { padding: 8px 12px; border-radius: 8px; font-size: 0.8rem; line-height: 1.5; }
+        .msg.ai { background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.3); align-self: flex-start; }
+        .msg.user { background: var(--accent-cyan); color: #000; font-weight: 600; align-self: flex-end; }
+
+        /* Modal Box for Video Input */
+        .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 100; }
+        .modal-card { background: #1e293b; border: 1px solid var(--border-glass); border-radius: 16px; padding: 25px; width: 90%; max-width: 450px; display: flex; flex-direction: column; gap: 15px; }
+        .modal-card input { padding: 10px; background: #0f172a; border: 1px solid var(--border-glass); border-radius: 8px; color: white; outline: none; }
+
+        /* Fullscreen 3D Cinematic Style Mode */
+        .cinematic-mode {
+            position: fixed; inset: 0; background: #020617; z-index: 999;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .cinematic-stage { perspective: 1200px; width: 80%; max-width: 1000px; aspect-ratio: 16/9; }
+        .cinematic-card {
+            width: 100%; height: 100%; background: linear-gradient(135deg, #1e1b4b, #0f172a);
+            border: 2px solid var(--accent-cyan); border-radius: 20px; padding: 50px;
+            box-shadow: 0 0 50px rgba(6, 182, 212, 0.3); transform: rotateY(-10deg) rotateX(5deg);
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; flex-direction: column; gap: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation Bar -->
+    <div class="top-navbar">
+        <div class="brand-logo">
+            <i class="fa-solid fa-cube"></i> Global Presentation Pro 3D
+        </div>
+        <div class="action-group">
+            <button class="btn btn-3d" onclick="open3DCinematic()"><i class="fa-solid fa-play"></i> العرض السينمائي 3D</button>
+            <button class="btn btn-neon" onclick="addSlide()"><i class="fa-solid fa-plus"></i> شريحة جديدة</button>
+        </div>
+    </div>
+
+    <!-- Main Application Workspace -->
+    <div class="app-workspace">
+        
+        <!-- Left Panel: Slide Overview -->
+        <div class="sidebar-left">
+            <div style="font-size: 0.85rem; font-weight: 700; color: var(--accent-cyan);"><i class="fa-solid fa-layer-group"></i> إدارة الشرائح</div>
+            <div class="slide-thumbnails-container" id="thumbContainer"></div>
+        </div>
+
+        <!-- Central Workspace -->
+        <div class="main-stage">
+            
+            <!-- Toolbar for Actions -->
+            <div class="floating-toolbar">
+                <button class="btn" onclick="openVideoModal()"><i class="fa-solid fa-video" style="color:var(--accent-pink);"></i> إضافة فيديو</button>
+                <button class="btn" onclick="toggleDrawing()"><i class="fa-solid fa-pen" style="color:var(--accent-cyan);"></i> رسم / توضيح</button>
+                <button class="btn" onclick="clearDraw()"><i class="fa-solid fa-eraser"></i> مسح</button>
+                <button class="btn" style="color:#ef4444;" onclick="deleteSlide()"><i class="fa-solid fa-trash"></i> حذف</button>
+            </div>
+
+            <!-- Main Slide View Canvas -->
+            <div class="slide-canvas-wrapper">
+                <canvas id="drawCanvas"></canvas>
+                <div class="slide-card" id="slideCard">
+                    <input type="text" class="title-in" id="slideTitle" placeholder="عنوان الشريحة..." oninput="saveSlideData()">
+                    <textarea class="body-in" id="slideBody" placeholder="اكتب المحتوى والتعاريف هنا..." oninput="saveSlideData()"></textarea>
+                    
+                    <!-- Media Preview Area -->
+                    <div class="media-preview-container" id="mediaBox"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: AI Workspace Assistance -->
+        <div class="sidebar-right">
+            <div style="font-size: 0.85rem; font-weight: 700; color: var(--primary-neon);"><i class="fa-solid fa-robot"></i> الذكاء الاصطناعي</div>
+            <div class="ai-chat-box" id="aiChat">
+                <div class="msg ai">مرحباً! يمكنني مساعدتك في توليد ملخصات أو صياغة تعاريف علمية وإدراجها فوراً.</div>
+            </div>
+            <div style="display:flex; gap:5px;">
+                <input type="text" id="aiInput" style="flex:1; padding:8px; border-radius:6px; border:1px solid var(--border-glass); background:#0f172a; color:white; font-size:0.8rem;" placeholder="اطلب شرحاً أو مفهوماً...">
+                <button class="btn btn-neon" style="padding:6px 12px;" onclick="askAI()">إرسال</button>
+            </div>
+            <button class="btn" style="width:100%; justify-content:center; background:rgba(99,102,241,0.2);" onclick="insertAIToSlide()">📌 إدراج النص في الشريحة</button>
+        </div>
+    </div>
+
+    <!-- Video Embed Modal -->
+    <div class="modal-bg" id="videoModal">
+        <div class="modal-card">
+            <h3 style="color:var(--accent-cyan); font-size:1rem;"><i class="fa-solid fa-link"></i> إدراج رابط فيديو (YouTube / Embed)</h3>
+            <input type="text" id="videoUrlInput" placeholder="أدخل رابط الفيديو هنا (مثال: https://www.youtube.com/embed/...)">
+            <div style="display:flex; gap:10px; justify-content:flex-end;">
+                <button class="btn" onclick="closeVideoModal()">إلغاء</button>
+                <button class="btn btn-neon" onclick="applyVideo()">إدراج</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3D Cinematic Fullscreen View -->
+    <div class="cinematic-mode" id="cinematicView">
+        <div style="position:absolute; top:20px; right:20px; display:flex; gap:10px;">
+            <button class="btn btn-neon" onclick="prevCinematic()"><i class="fa-solid fa-arrow-right"></i> السابقة</button>
+            <button class="btn btn-neon" onclick="nextCinematic()">التالية <i class="fa-solid fa-arrow-left"></i></button>
+            <button class="btn" style="background:#ef4444; border:none;" onclick="close3DCinematic()">إغلاق (ESC)</button>
+        </div>
+        <div class="cinematic-stage">
+            <div class="cinematic-card" id="cinematicCard">
+                <h1 id="cineTitle" style="font-size:2.2rem; color:var(--accent-cyan);"></h1>
+                <p id="cineBody" style="font-size:1.2rem; line-height:1.8; color:var(--text-main); flex:1;"></p>
+                <div class="media-preview-container" id="cineMediaBox" style="height:220px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Slides Data Engine
+        let slides = [
+            { title: "🔬 مرحلة 1: الملاحظة وطرح المشكلة", body: "📘 التعريف الموضوعي:\nهي الخطوة الأولى في المنهج العلمي، حيث يتم جمع الملاحظات وتحديد الإشكالية بدقة.\n\n📌 الخطوات والمستلزمات:\n• الملاحظة الميدانية.\n• تحديد المتغيرات الأساسية.", video: "" },
+            { title: "💡 مرحلة 2: صياغة الفرضيات العلمية", body: "📘 التعريف الموضوعي:\nالفرضية هي تفسير ذكي ومؤقت للظاهرة يتم اختباره للتأكد من صحته.\n\n📌 الخطوات والمستلزمات:\n• التأكد من منطقية الفرضية.\n• قابليتها للاختبار العملي.", video: "" }
+        ];
+
+        let currentIndex = 0;
+        let lastAIResponse = "";
+
+        // UI Initialization
+        function renderThumbnails() {
+            const container = document.getElementById('thumbContainer');
+            container.innerHTML = '';
+            slides.forEach((slide, idx) => {
+                const card = document.createElement('div');
+                card.className = `thumb-card ${idx === currentIndex ? 'active' : ''}`;
+                card.onclick = () => selectSlide(idx);
+                card.innerHTML = `<strong>شريحة ${idx + 1}</strong><br><span style="color:var(--text-muted); font-size:0.75rem;">${slide.title.substring(0, 18)}...</span>`;
+                container.appendChild(card);
+            });
+        }
+
+        function selectSlide(idx) {
+            currentIndex = idx;
+            loadSlideData();
+            renderThumbnails();
+            clearDraw();
+        }
+
+        function loadSlideData() {
+            const current = slides[currentIndex];
+            document.getElementById('slideTitle').value = current.title;
+            document.getElementById('slideBody').value = current.body;
+
+            const mediaBox = document.getElementById('mediaBox');
+            if (current.video) {
+                mediaBox.style.display = 'block';
+                mediaBox.innerHTML = `<iframe src="${current.video}" allowfullscreen></iframe>`;
+            } else {
+                mediaBox.style.display = 'none';
+                mediaBox.innerHTML = '';
+            }
+        }
+
+        function saveSlideData() {
+            slides[currentIndex].title = document.getElementById('slideTitle').value;
+            slides[currentIndex].body = document.getElementById('slideBody').value;
+            renderThumbnails();
+        }
+
+        function addSlide() {
+            slides.push({ title: "شريحة جديدة", body: "", video: "" });
+            currentIndex = slides.length - 1;
+            loadSlideData();
+            renderThumbnails();
+        }
+
+        function deleteSlide() {
+            if (slides.length <= 1) return alert("لا يمكن حذف الشريحة الأخيرة!");
+            slides.splice(currentIndex, 1);
+            currentIndex = Math.max(0, currentIndex - 1);
+            loadSlideData();
+            renderThumbnails();
+        }
+
+        // Video Embedding Logic
+        function openVideoModal() { document.getElementById('videoModal').style.display = 'flex'; }
+        function closeVideoModal() { document.getElementById('videoModal').style.display = 'none'; }
+        function applyVideo() {
+            const url = document.getElementById('videoUrlInput').value.trim();
+            slides[currentIndex].video = url;
+            loadSlideData();
+            closeVideoModal();
+        }
+
+        // Drawing Layer Logic
+        const canvas = document.getElementById('drawCanvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false, drawMode = false;
+
+        function resizeCanvas() {
+            const wrapper = document.querySelector('.slide-canvas-wrapper');
+            canvas.width = wrapper.clientWidth;
+            canvas.height = wrapper.clientHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        function toggleDrawing() {
+            drawMode = !drawMode;
+            canvas.classList.toggle('active', drawMode);
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            if(!drawMode) return;
+            isDrawing = true; ctx.beginPath(); ctx.moveTo(e.offsetX, e.offsetY);
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if(isDrawing && drawMode) {
+                ctx.lineTo(e.offsetX, e.offsetY);
+                ctx.strokeStyle = '#06b6d4';
+                ctx.lineWidth = 3; ctx.stroke();
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => isDrawing = false);
+        function clearDraw() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
+
+        // AI Logic Simulation
+        async function askAI() {
+            const query = document.getElementById('aiInput').value.trim();
+            if(!query) return;
+
+            const chat = document.getElementById('aiChat');
+            chat.innerHTML += `<div class="msg user">${query}</div>`;
+            document.getElementById('aiInput').value = '';
+
+            const aiMsg = document.createElement('div');
+            aiMsg.className = 'msg ai';
+            aiMsg.innerText = 'جاري المعالجة والصياغة... ⏳';
+            chat.appendChild(aiMsg);
+            chat.scrollTop = chat.scrollHeight;
+
+            try {
+                const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(query)}`);
+                const answer = await res.text();
+                lastAIResponse = answer;
+                aiMsg.innerText = answer;
+            } catch (err) {
+                aiMsg.innerText = 'حدث خطأ في جلب الإجابة.';
+            }
+        }
+
+        function insertAIToSlide() {
+            if(!lastAIResponse) return alert("قم بإجراء استفسار مع الذكاء الاصطناعي أولاً!");
+            slides[currentIndex].body = lastAIResponse;
+            loadSlideData();
+        }
+
+        // 3D Cinematic Presentation Mode
+        let cineIndex = 0;
+        function open3DCinematic() {
+            cineIndex = currentIndex;
+            document.getElementById('cinematicView').style.display = 'flex';
+            updateCinematicView();
+        }
+
+        function close3DCinematic() {
+            document.getElementById('cinematicView').style.display = 'none';
+        }
+
+        function updateCinematicView() {
+            const current = slides[cineIndex];
+            document.getElementById('cineTitle').innerText = current.title;
+            document.getElementById('cineBody').innerText = current.body;
+
+            const cineMedia = document.getElementById('cineMediaBox');
+            if(current.video) {
+                cineMedia.style.display = 'block';
+                cineMedia.innerHTML = `<iframe src="${current.video}" allowfullscreen></iframe>`;
+            } else {
+                cineMedia.style.display = 'none';
+            }
+
+            // 3D Animation effect trigger
+            const card = document.getElementById('cinematicCard');
+            card.style.transform = 'rotateY(0deg) rotateX(0deg) scale(1)';
+        }
+
+        function nextCinematic() {
+            if(cineIndex < slides.length - 1) {
+                cineIndex++;
+                updateCinematicView();
+            }
+        }
+
+        function prevCinematic() {
+            if(cineIndex > 0) {
+                cineIndex--;
+                updateCinematicView();
+            }
+        }
+
+        // ESC Key to Exit Cinematic Mode
+        window.addEventListener('keydown', (e) => {
+            if(e.key === 'Escape') close3DCinematic();
+        });
+
+        // Initialize App
+        loadSlideData();
+        renderThumbnails();
+        setTimeout(resizeCanvas, 300);
+    </script>
+</body>
+</html>
