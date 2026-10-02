@@ -3,272 +3,254 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Slides AI & Office Pro Studio</title>
+    <title>Global Presentation Pro & Research Suite</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #6366f1;
-            --primary-hover: #4f46e5;
-            --bg-light: #f8fafc;
-            --bg-dark: #0f172a;
-            --card-light: rgba(255, 255, 255, 0.85);
-            --card-dark: rgba(30, 41, 59, 0.85);
-            --text-light: #0f172a;
-            --text-dark: #f8fafc;
-            --accent: #ec4899;
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --bg-main: #f1f5f9;
+            --panel-bg: #ffffff;
+            --border-color: #cbd5e1;
+            --text-color: #0f172a;
+            --accent: #7c3aed;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', 'Poppins', sans-serif; transition: background 0.2s, color 0.2s; }
-        body { display: flex; flex-direction: column; min-height: 100vh; background: var(--bg-light); color: var(--text-light); }
-        body.dark-mode { background: var(--bg-dark); color: var(--text-dark); }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', 'Poppins', sans-serif; }
+        body { display: flex; flex-direction: column; height: 100vh; background: var(--bg-main); color: var(--text-color); overflow: hidden; }
 
-        .app-container { display: flex; flex: 1; height: calc(100vh - 60px); }
+        /* Office Ribbon Bar - شريط التبويبات العلوي */
+        .ribbon-header { background: #1e293b; color: white; display: flex; align-items: center; justify-content: space-between; padding: 5px 20px; font-size: 0.9rem; }
+        .ribbon-tabs { display: flex; background: #0f172a; padding: 0 15px; border-bottom: 1px solid var(--border-color); }
+        .tab-btn { background: none; border: none; color: #94a3b8; padding: 10px 18px; cursor: pointer; font-weight: 700; font-size: 0.9rem; border-bottom: 3px solid transparent; }
+        .tab-btn.active { color: white; border-bottom-color: var(--primary); background: rgba(255,255,255,0.05); }
 
-        /* Sidebar - شريط جانبى متطور */
-        .sidebar { width: 320px; background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(15px); border-left: 1px solid rgba(226, 232, 240, 0.8); display: flex; flex-direction: column; padding: 20px; gap: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
-        body.dark-mode .sidebar { background: rgba(30, 41, 59, 0.6); border-color: rgba(51, 65, 85, 0.8); }
-        .sidebar h2 { font-size: 1.1rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; }
+        .ribbon-toolbar { background: var(--panel-bg); border-bottom: 1px solid var(--border-color); padding: 8px 15px; display: none; gap: 15px; align-items: center; flex-wrap: wrap; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .ribbon-toolbar.active { display: flex; }
 
-        .project-manager { display: flex; flex-direction: column; gap: 8px; padding-bottom: 12px; border-bottom: 1px solid #cbd5e1; }
-        .project-manager select, .project-manager input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.85rem; outline: none; background: rgba(255,255,255,0.9); }
-        body.dark-mode .project-manager select, body.dark-mode .project-manager input { background: #334155; color: #fff; border-color: #475569; }
+        .tool-group { display: flex; align-items: center; gap: 6px; border-left: 1px solid #e2e8f0; padding-left: 10px; }
+        .tool-group:last-child { border-left: none; }
+        .tool-group label { font-size: 0.75rem; font-weight: 700; color: #64748b; margin-bottom: 2px; display: block; }
 
-        .slide-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-left: 4px; }
-        .slide-thumb { padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; cursor: pointer; background: rgba(255, 255, 255, 0.5); position: relative; transition: all 0.2s; }
-        .slide-thumb:hover { border-color: var(--primary); transform: translateY(-2px); }
-        .slide-thumb.active { border-color: var(--primary); background: rgba(99, 102, 241, 0.1); box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2); }
-        .slide-thumb .controls { position: absolute; left: 8px; top: 8px; display: flex; gap: 4px; }
-        .slide-thumb button { background: none; border: none; cursor: pointer; font-size: 0.85rem; opacity: 0.7; }
-        .slide-thumb button:hover { opacity: 1; }
+        .btn-tool { padding: 6px 12px; border: 1px solid var(--border-color); border-radius: 6px; background: white; cursor: pointer; font-size: 0.82rem; font-weight: 600; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
+        .btn-tool:hover { background: #f8fafc; border-color: var(--primary); }
+        .btn-tool.primary { background: var(--primary); color: white; border: none; }
+        .btn-tool.ai-btn { background: linear-gradient(135deg, #8b5cf6, #ec4899); color: white; border: none; }
 
-        /* Main Area & Toolbar */
-        .main-content { flex: 1; display: flex; flex-direction: column; }
-        .toolbar { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); border-bottom: 1px solid #e2e8f0; padding: 12px 20px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
-        body.dark-mode .toolbar { background: rgba(30, 41, 59, 0.7); border-color: #334155; }
+        /* App Layout */
+        .app-body { display: flex; flex: 1; height: calc(100vh - 120px); }
+
+        /* Left/Right Sidebar */
+        .sidebar { width: 300px; background: var(--panel-bg); border-left: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 15px; gap: 12px; }
+        .sidebar h3 { font-size: 0.95rem; font-weight: 800; color: var(--primary); }
         
-        .toolbar select, .toolbar button, .toolbar input[type="color"], .toolbar input[type="range"] { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; cursor: pointer; font-size: 0.82rem; font-weight: 600; }
-        body.dark-mode .toolbar select, body.dark-mode .toolbar button { background: #334155; color: #fff; border-color: #475569; }
-        .toolbar button.btn-ai { background: linear-gradient(135deg, #a855f7, #ec4899); color: white; border: none; box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3); }
-        .toolbar button.primary { background: var(--primary); color: white; border: none; }
-        .toolbar button.primary:hover { background: var(--primary-hover); }
-        .toolbar button.success { background: #10b981; color: white; border: none; }
-        .toolbar button.danger { background: #ef4444; color: white; border: none; }
+        .slide-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+        .slide-thumb { padding: 10px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; background: #f8fafc; position: relative; font-size: 0.85rem; }
+        .slide-thumb.active { border-color: var(--primary); background: #eff6ff; font-weight: 700; }
 
-        /* Slide Editor Screen */
-        .editor-area { flex: 1; padding: 30px; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow-y: auto; position: relative; }
-        .slide-card-wrapper { position: relative; width: 100%; max-width: 850px; aspect-ratio: 16/9; }
+        /* Editor Work Area */
+        .workspace { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; position: relative; }
+        .slide-wrapper { position: relative; width: 100%; max-width: 900px; aspect-ratio: 16/9; }
         
-        .slide-card { width: 100%; height: 100%; background: var(--card-light); backdrop-filter: blur(20px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); border: 1px solid rgba(255,255,255,0.4); border-radius: 16px; padding: 40px; display: flex; flex-direction: column; justify-content: center; gap: 15px; position: relative; text-align: right; overflow: hidden; }
-        body.dark-mode .slide-card { background: var(--card-dark); border-color: rgba(255,255,255,0.1); }
-        
-        /* Predefined Gradients */
-        .bg-gradient-blue { background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%) !important; color: white !important; }
-        .bg-gradient-purple { background: linear-gradient(135deg, #a855f7 0%, #6b21a8 100%) !important; color: white !important; }
-        .bg-gradient-neon { background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 50%, #8b5cf6 100%) !important; color: white !important; }
-        .bg-gradient-sunset { background: linear-gradient(135deg, #f97316 0%, #ec4899 100%) !important; color: white !important; }
+        .slide-card { width: 100%; height: 100%; background: white; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); border: 1px solid var(--border-color); padding: 40px; display: flex; flex-direction: column; justify-content: center; gap: 15px; position: relative; text-align: right; overflow: hidden; }
 
-        .slide-card input, .slide-card textarea { width: 100%; border: 1px dashed transparent; padding: 8px; background: transparent; color: inherit; font-family: inherit; border-radius: 6px; }
-        .slide-card input:focus, .slide-card textarea:focus { border-color: var(--primary); outline: none; background: rgba(99, 102, 241, 0.05); }
+        /* Background Presets */
+        .bg-gradient-blue { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%) !important; color: white !important; }
+        .bg-gradient-purple { background: linear-gradient(135deg, #581c87 0%, #a855f7 100%) !important; color: white !important; }
+        .bg-gradient-dark { background: linear-gradient(135deg, #0f172a 0%, #334155 100%) !important; color: white !important; }
+
+        .slide-card input, .slide-card textarea { width: 100%; border: 1px dashed transparent; padding: 6px; background: transparent; color: inherit; font-family: inherit; }
+        .slide-card input:focus, .slide-card textarea:focus { border-color: var(--primary); outline: none; background: rgba(37, 99, 235, 0.05); }
         .slide-card input.title-input { font-size: 2.2rem; font-weight: 900; }
-        .slide-card textarea.body-input { font-size: 1.1rem; resize: none; height: 130px; line-height: 1.6; }
-        .slide-card img.preview-img { max-height: 180px; object-fit: contain; border-radius: 8px; margin: 0 auto; }
+        .slide-card textarea.body-input { font-size: 1.1rem; resize: none; height: 140px; line-height: 1.6; }
+        .slide-card img.preview-img { max-height: 200px; object-fit: contain; margin: 0 auto; border-radius: 8px; }
 
-        /* Shapes Container */
-        .shapes-container { position: absolute; inset: 0; pointer-events: none; z-index: 5; }
-        .added-shape { position: absolute; pointer-events: auto; cursor: move; display: flex; align-items: center; justify-content: center; user-select: none; }
+        /* Shapes & Canvas */
+        .shapes-layer { position: absolute; inset: 0; pointer-events: none; z-index: 5; }
+        .shape-item { position: absolute; pointer-events: auto; cursor: move; user-select: none; display: flex; align-items: center; justify-content: center; }
+        
+        #drawCanvas { position: absolute; inset: 0; z-index: 10; pointer-events: none; border-radius: 12px; }
+        #drawCanvas.active { pointer-events: auto; cursor: crosshair; }
 
-        /* Canvas Drawing */
-        #drawCanvas { position: absolute; inset: 0; z-index: 10; pointer-events: none; border-radius: 16px; }
-        #drawCanvas.drawing-active { pointer-events: auto; cursor: crosshair; }
+        /* Modals & Media Panel */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99; display: none; align-items: center; justify-content: center; }
+        .modal-box { background: white; padding: 25px; border-radius: 12px; width: 90%; max-width: 700px; max-height: 80vh; overflow-y: auto; }
+        .image-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-top: 15px; }
+        .image-grid img { width: 100%; height: 100px; object-fit: cover; border-radius: 6px; cursor: pointer; transition: transform 0.2s; }
+        .image-grid img:hover { transform: scale(1.05); }
 
-        /* Office Pro Course Section */
-        .course-section { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); padding: 50px 20px; border-top: 1px solid #e2e8f0; }
-        body.dark-mode .course-section { background: rgba(30, 41, 59, 0.8); border-color: #334155; }
-        .course-container { max-width: 1000px; margin: 0 auto; }
-        .course-section h2 { text-align: center; margin-bottom: 25px; font-size: 1.6rem; font-weight: 800; color: var(--primary); }
-        .tabs { display: flex; gap: 12px; justify-content: center; margin-bottom: 25px; }
-        .tab-btn { padding: 10px 22px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; color: white; opacity: 0.8; }
-        .tab-btn.active { opacity: 1; transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
-        .btn-word { background-color: #2563eb; }
-        .btn-excel { background-color: #10b981; }
-        .btn-ppt { background-color: #f97316; }
-        .search-box { margin-bottom: 25px; text-align: center; }
-        .search-box input { width: 100%; max-width: 500px; padding: 12px 18px; border: 1px solid #cbd5e1; border-radius: 25px; outline: none; }
-        .course-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .card { background: #f8fafc; border-radius: 12px; padding: 20px; border-top: 4px solid #ccc; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
-        body.dark-mode .card { background: #334155; color: #fff; }
-        .card.word { border-top-color: #2563eb; }
-        .card.excel { border-top-color: #10b981; }
-        .card.ppt { border-top-color: #f97316; }
-        .card h3 { font-size: 1.1rem; margin-bottom: 8px; }
-        .card p { font-size: 0.88rem; opacity: 0.8; margin-bottom: 12px; }
-        .shortcut-badge { background: #e2e8f0; padding: 4px 8px; border-radius: 6px; font-family: monospace; font-size: 0.8rem; font-weight: 700; color: #0f172a; }
-        body.dark-mode .shortcut-badge { background: #475569; color: #fff; }
-        .copy-btn { float: left; background: none; border: none; color: var(--primary); cursor: pointer; font-weight: 700; }
-
-        @media print {
-            .sidebar, .toolbar, .course-section, #drawCanvas { display: none !important; }
-            body { background: white !important; color: black !important; }
-            .editor-area { padding: 0 !important; }
-            .slide-card-wrapper { max-width: 100% !important; height: 100vh !important; }
-            .slide-card { box-shadow: none !important; border-radius: 0 !important; page-break-after: always; }
-        }
+        /* Office Course Bottom Panel */
+        .course-footer { background: white; border-top: 1px solid var(--border-color); padding: 15px 20px; max-height: 180px; overflow-y: auto; }
+        .course-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+        .course-card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
+    <!-- Header / Office Top Ribbon -->
+    <div class="ribbon-header">
+        <span>🌐 Global Office Presentation & Research Suite</span>
+        <select onchange="changeLanguage(this.value)" style="background:#0f172a; color:white; border:none; padding:3px 8px; border-radius:4px;">
+            <option value="ar">العربية 🇲🇦</option>
+            <option value="fr">Français 🇫🇷</option>
+            <option value="en">English 🇬🇧</option>
+        </select>
+    </div>
+
+    <!-- Navigation Tabs (Ribbon) -->
+    <div class="ribbon-tabs">
+        <button class="tab-btn active" onclick="switchRibbonTab('home')">الرئيسية (Accueil)</button>
+        <button class="tab-btn" onclick="switchRibbonTab('insert')">إدراج (Insertion)</button>
+        <button class="tab-btn" onclick="switchRibbonTab('design')">التصميم (Design)</button>
+        <button class="tab-btn" onclick="switchRibbonTab('library')">مكتبة الأبحاث والصور</button>
+        <button class="tab-btn" onclick="switchRibbonTab('ai')">الذكاء الاصطناعي (AI)</button>
+    </div>
+
+    <!-- Toolbar Panels -->
+    <!-- 1. Home Tab -->
+    <div class="ribbon-toolbar active" id="tab-home">
+        <div class="tool-group">
+            <div><label>الشرائح</label></div>
+            <button class="btn-tool primary" onclick="addSlide()">+ شريحة جديدة</button>
+            <button class="btn-tool" onclick="duplicateSlide()">📋 تكرار</button>
+        </div>
+        <div class="tool-group">
+            <div><label>الرسم</label></div>
+            <button class="btn-tool" id="drawBtn" onclick="toggleDrawingMode()">✏️ قلم الرسم</button>
+            <input type="color" id="penColor" value="#ef4444">
+            <button class="btn-tool" onclick="clearCanvas()">🧹 مسح</button>
+        </div>
+        <div class="tool-group">
+            <div><label>العرض والطباعة</label></div>
+            <button class="btn-tool" onclick="window.print()">🖨️ تصدير PDF</button>
+            <button class="btn-tool primary" onclick="toggleFullscreen()">▶️ بدء العرض</button>
+        </div>
+    </div>
+
+    <!-- 2. Insert Tab -->
+    <div class="ribbon-toolbar" id="tab-insert">
+        <div class="tool-group">
+            <div><label>الأشكال الهندسة الشاملة</label></div>
+            <select class="btn-tool" onchange="addShape(this.value); this.value='';">
+                <option value="">-- إدراج شكل هندسي --</option>
+                <option value="square">🟦 مربع (Square)</option>
+                <option value="circle">🟠 دائرة (Circle)</option>
+                <option value="triangle">🔺 مثلث (Triangle)</option>
+                <option value="star">⭐ نجمة (Star)</option>
+                <option value="arrow">➔ سهم (Arrow)</option>
+                <option value="check">✅ صح (Check)</option>
+                <option value="diamond">🔷 معين (Diamond)</option>
+                <option value="cloud">☁️ سحابة (Cloud)</option>
+            </select>
+        </div>
+        <div class="tool-group">
+            <div><label>الوسائط</label></div>
+            <input type="file" id="imageInput" accept="image/*" style="display:none;" onchange="uploadImage(event)">
+            <button class="btn-tool" onclick="document.getElementById('imageInput').click()">🖼️ من الجهاز</button>
+            <button class="btn-tool" onclick="openImageLibrary()">🌐 مكتبة الصور الجاهزة</button>
+        </div>
+    </div>
+
+    <!-- 3. Design Tab -->
+    <div class="ribbon-toolbar" id="tab-design">
+        <div class="tool-group">
+            <div><label>خلفيات وقوالب احترافية</label></div>
+            <button class="btn-tool" onclick="changeBackgroundStyle('')">أبيض هادئ</button>
+            <button class="btn-tool" onclick="changeBackgroundStyle('bg-gradient-blue')">تدرج أزرق ملكي</button>
+            <button class="btn-tool" onclick="changeBackgroundStyle('bg-gradient-purple')">تدرج بنفسجي</button>
+            <button class="btn-tool" onclick="changeBackgroundStyle('bg-gradient-dark')">نمط داكن (Dark)</button>
+        </div>
+    </div>
+
+    <!-- 4. Research & Library Tab -->
+    <div class="ribbon-toolbar" id="tab-library">
+        <div class="tool-group">
+            <div><label>نماذج عروض ومحتوى جاهز (Presentations)</label></div>
+            <button class="btn-tool" onclick="loadResearchPaper('ai_paper')">📄 بحث: الذكاء الاصطناعي</button>
+            <button class="btn-tool" onclick="loadResearchPaper('business_plan')">💼 عرض: خطة عمل شركة</button>
+            <button class="btn-tool" onclick="loadResearchPaper('scientific_method')">🔬 بحث: المنهج العلمي</button>
+        </div>
+    </div>
+
+    <!-- 5. AI Tab -->
+    <div class="ribbon-toolbar" id="tab-ai">
+        <div class="tool-group">
+            <div><label>التوليد الآلي</label></div>
+            <button class="btn-tool ai-btn" onclick="generateAISlides()">🤖 توليد عرض كامل بالذكاء الاصطناعي</button>
+        </div>
+    </div>
+
+    <!-- App Body -->
+    <div class="app-body">
         <!-- Sidebar -->
         <div class="sidebar">
-            <h2 id="txtProjects">📁 المشاريع</h2>
-            <div class="project-manager">
-                <select id="projectSelect" onchange="switchProject(this.value)"></select>
-                <div style="display:flex; gap:5px;">
-                    <input type="text" id="newProjectName" placeholder="مشروع جديد...">
-                    <button class="primary" onclick="createProject()">+</button>
-                </div>
-            </div>
-
-            <h2 id="txtSlides">📜 الشرائح</h2>
+            <h3>📂 إدارة المشاريع</h3>
+            <select id="projectSelect" class="btn-tool" onchange="switchProject(this.value)"></select>
+            
+            <h3>📜 قائمة الشرائح</h3>
             <div class="slide-list" id="slideList"></div>
-            <button class="primary" onclick="addSlide()" id="btnAddSlide">+ شريحة جديدة</button>
         </div>
 
-        <!-- Main Content Area -->
-        <div class="main-content">
-            <div class="toolbar">
-                <!-- AI & Generator -->
-                <button class="btn-ai" onclick="generateAISlides()">🤖 إنشاء بالذكاء الاصطناعي</button>
-
-                <!-- Languages -->
-                <select onchange="changeLanguage(this.value)">
-                    <option value="ar">العربية 🇲🇦</option>
-                    <option value="fr">Français 🇫🇷</option>
-                    <option value="en">English 🇬🇧</option>
-                </select>
-
-                <!-- Preset Models Wajdin -->
-                <select onchange="loadPresetPresentation(this.value); this.value='';">
-                    <option value="">-- نماذج جاهزة Wajdin --</option>
-                    <option value="startup">🚀 مشروع / Startup</option>
-                    <option value="course">🎓 عرض تعليمي</option>
-                    <option value="report">💼 تقرير عمل</option>
-                </select>
-
-                <!-- Shapes -->
-                <select onchange="addShape(this.value); this.value='';">
-                    <option value="">-- إدراج شكل --</option>
-                    <option value="square">🟦 مربع</option>
-                    <option value="circle">🟠 دائرة</option>
-                    <option value="triangle">🔺 مثلث</option>
-                    <option value="star">⭐ نجمة</option>
-                    <option value="arrow">➔ سهم</option>
-                    <option value="check">✅ علامة صح</option>
-                </select>
-
-                <!-- Gradients Backgrounds -->
-                <select onchange="changeBackgroundStyle(this.value)">
-                    <option value="">خلفية هادئة</option>
-                    <option value="bg-gradient-blue">تدرج أزرق ملكي</option>
-                    <option value="bg-gradient-purple">تدرج بنفسجي سحري</option>
-                    <option value="bg-gradient-neon">تدرج نيون عصري</option>
-                    <option value="bg-gradient-sunset">تدرج الغروب</option>
-                </select>
-
-                <!-- Images & Filters -->
-                <input type="file" id="imageInput" accept="image/*" style="display:none;" onchange="uploadImage(event)">
-                <button onclick="document.getElementById('imageInput').click()">🖼️️ صورة</button>
-                <button class="danger" onclick="removeImage()">🗑️ حذف صورة</button>
-
-                <!-- Draw Tool & Colors -->
-                <button id="drawBtn" onclick="toggleDrawingMode()">✏️ رسم</button>
-                <input type="color" id="penColor" value="#ef4444" title="لون القلم">
-                <button onclick="clearCanvas()">🧹 مسح الرسم</button>
-
-                <!-- Effects & Dark Mode -->
-                <button onclick="toggleGlassEffect()">✨ زجاج</button>
-                <button onclick="toggleLaser()">🎯 ليزر</button>
-                <button onclick="toggleTheme()">🎨 المظهر</button>
-
-                <button class="success" onclick="window.print()">🖨️ PDF</button>
-                <button class="primary" onclick="toggleFullscreen()">▶️ عرض كامل</button>
-            </div>
-
-            <div class="editor-area">
-                <div class="slide-card-wrapper">
-                    <canvas id="drawCanvas"></canvas>
-                    <div class="shapes-container" id="shapesContainer"></div>
-                    <div class="slide-card" id="slideCard">
-                        <input type="text" class="title-input" id="slideTitle" placeholder="عنوان الشريحة..." oninput="updateCurrentSlide()">
-                        <textarea class="body-input" id="slideBody" placeholder="اكتب محتوى الشريحة هنا..." oninput="updateCurrentSlide()"></textarea>
-                        <img id="slideImg" class="preview-img" style="display:none;" />
-                    </div>
+        <!-- Editor Workspace -->
+        <div class="workspace">
+            <div class="slide-wrapper">
+                <canvas id="drawCanvas"></canvas>
+                <div class="shapes-layer" id="shapesContainer"></div>
+                <div class="slide-card" id="slideCard">
+                    <input type="text" class="title-input" id="slideTitle" placeholder="عنوان الشريحة..." oninput="updateCurrentSlide()">
+                    <textarea class="body-input" id="slideBody" placeholder="أدخل محتوى الشريحة أو البحث هنا..." oninput="updateCurrentSlide()"></textarea>
+                    <img id="slideImg" class="preview-img" style="display:none;" />
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Office Course Section -->
-    <div class="course-section">
-        <div class="course-container">
-            <h2>🎓 دورة احتراف Office Pro السريعة</h2>
-            <div class="tabs">
-                <button class="tab-btn btn-word active" onclick="filterSoftware('word')">📄 Word</button>
-                <button class="tab-btn btn-excel" onclick="filterSoftware('excel')">📊 Excel</button>
-                <button class="tab-btn btn-ppt" onclick="filterSoftware('ppt')">📙 PowerPoint</button>
+    <!-- Bottom Office Tips Panel -->
+    <div class="course-footer">
+        <h4 style="font-size:0.85rem; margin-bottom:8px; color:var(--primary);">🎓 مكتبة دروس Office Express</h4>
+        <div class="course-grid">
+            <div class="course-card"><strong>Word:</strong> الأنماط والأنماط التلقائية (Accueil > Styles)</div>
+            <div class="course-card"><strong>Excel:</strong> الجداول المنسقة والتحليل (Ctrl + T)</div>
+            <div class="course-card"><strong>PowerPoint:</strong> الانتقال المنساب (Transitions > Morph)</div>
+        </div>
+    </div>
+
+    <!-- Image Library Modal -->
+    <div class="modal-overlay" id="imageModal">
+        <div class="modal-box">
+            <h3>🌐 اختر صورة جاهزة عالية الجودة</h3>
+            <div class="image-grid">
+                <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=500" onclick="selectStockImage(this.src)">
+                <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=500" onclick="selectStockImage(this.src)">
+                <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=500" onclick="selectStockImage(this.src)">
+                <img src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=500" onclick="selectStockImage(this.src)">
             </div>
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="🔎 بحث عن اختصار، صيغة، أو حيلة..." onkeyup="searchCourse()">
-            </div>
-            <div class="course-grid" id="courseGrid"></div>
+            <button class="btn-tool danger" style="margin-top:15px;" onclick="closeImageLibrary()">إغلاق</button>
         </div>
     </div>
 
     <script>
-        /* --- 1. الذكاء الاصطناعي (AI SLIDE GENERATOR - MOCK) --- */
-        function generateAISlides() {
-            const topic = prompt("أدخل موضوع العرض التقديمي (مثال: الذكاء الاصطناعي، التسويق الرقمي، الطاقة النظيفة):");
-            if (!topic) return;
-
-            slides = [
-                { title: `🚀 ${topic}`, body: `عرض تقديمي شامل حول : ${topic}\nتم إنشاؤه بواسطة الذكاء الاصطناعي الخاص بالمنصة.`, image: "", bgClass: "bg-gradient-neon" },
-                { title: "📌 الأهمية والأهداف", body: "1. فهم المفاهيم الأساسية والأهمية.\n2. تحسين الإنتاجية والكفاءة العالية.\n3. تطبيق أفضل الممارسات العالمية.", image: "", bgClass: "" },
-                { title: "💡 الحلول والاستراتيجيات", body: "تطوير أدوات مبتكرة تعتمد على أحدث التقنيات لضمان تحقيق أفضل النتائج الممكنة.", image: "", bgClass: "bg-gradient-blue" },
-                { title: "🎯 الخلاصة والتوصيات", body: "شكراً لمتابعتكم! نوصي بالبدء بالخطوات الأولى فوراً لتحقيق النجاح المطلوب.", image: "", bgClass: "" }
-            ];
-            currentIndex = 0;
-            saveAll();
-            loadCurrentSlide();
-            renderSlideList();
+        /* --- 1. RIBBON TAB SYSTEM --- */
+        function switchRibbonTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.ribbon-toolbar').forEach(panel => panel.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
         }
 
-        /* --- 2. MULTILINGUAL ENGINE (تعدد اللغات) --- */
-        const translations = {
-            ar: { projects: "📁 المشاريع", slides: "📜 الشرائح", addSlide: "+ شريحة جديدة" },
-            fr: { projects: "📁 Projets", slides: "📜 Diapositives", addSlide: "+ Nouvelle Diapo" },
-            en: { projects: "📁 Projects", slides: "📜 Slides", addSlide: "+ New Slide" }
+        /* --- 2. PROJECTS & SLIDE MANAGEMENT --- */
+        let projects = JSON.parse(localStorage.getItem('global_office_projects')) || {
+            "المشروع العلمي 1": [{ title: "مرحباً بك في المنصة المتقدمة", body: "استخدم التبويبات بالفي أعلى لتصفح الأدوات، إضافة الأشكال، والمستندات الجاهزة.", image: "", bgClass: "" }]
         };
-
-        function changeLanguage(lang) {
-            document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-            document.documentElement.lang = lang;
-            document.getElementById('txtProjects').innerText = translations[lang].projects;
-            document.getElementById('txtSlides').innerText = translations[lang].slides;
-            document.getElementById('btnAddSlide').innerText = translations[lang].addSlide;
-        }
-
-        /* --- 3. PROJECT & SLIDE MANAGEMENT --- */
-        let projects = JSON.parse(localStorage.getItem('app_projects')) || {
-            "المشروع الأول": [{ title: "مرحباً بك في المنصة العالمية", body: "استخدم زر الذكاء الاصطناعي أو اختر نموذجاً جاهزاً للبدء!", image: "", bgClass: "" }]
-        };
-        let currentProjectName = localStorage.getItem('current_project') || "المشروع الأول";
+        let currentProjectName = localStorage.getItem('global_current_project') || "المشروع العلمي 1";
         let slides = projects[currentProjectName] || projects[Object.keys(projects)[0]];
         let currentIndex = 0;
 
         function saveAll() {
             projects[currentProjectName] = slides;
-            localStorage.setItem('app_projects', JSON.stringify(projects));
-            localStorage.setItem('current_project', currentProjectName);
+            localStorage.setItem('global_office_projects', JSON.stringify(projects));
+            localStorage.setItem('global_current_project', currentProjectName);
         }
 
         function renderProjectSelect() {
@@ -282,22 +264,6 @@
             });
         }
 
-        function createProject() {
-            const input = document.getElementById('newProjectName');
-            const name = input.value.trim();
-            if(name && !projects[name]) {
-                projects[name] = [{ title: "عرض جديد", body: "محتوى الشريحة...", image: "", bgClass: "" }];
-                currentProjectName = name; slides = projects[name]; currentIndex = 0;
-                input.value = '';
-                saveAll(); renderProjectSelect(); loadCurrentSlide(); renderSlideList();
-            }
-        }
-
-        function switchProject(name) {
-            currentProjectName = name; slides = projects[name]; currentIndex = 0;
-            saveAll(); loadCurrentSlide(); renderSlideList();
-        }
-
         function renderSlideList() {
             const list = document.getElementById('slideList');
             list.innerHTML = '';
@@ -305,12 +271,7 @@
                 const thumb = document.createElement('div');
                 thumb.className = `slide-thumb ${index === currentIndex ? 'active' : ''}`;
                 thumb.onclick = () => selectSlide(index);
-                thumb.innerHTML = `
-                    <strong>شريحة ${index + 1}</strong>: ${slide.title.substring(0, 14) || 'بدون عنوان'}
-                    <div class="controls">
-                        <button onclick="event.stopPropagation(); deleteSlide(${index})">🗑️</button>
-                    </div>
-                `;
+                thumb.innerHTML = `<strong>شريحة ${index + 1}</strong>: ${slide.title.substring(0, 15) || 'بدون عنوان'}`;
                 list.appendChild(thumb);
             });
         }
@@ -326,12 +287,8 @@
             document.getElementById('slideCard').className = `slide-card ${current.bgClass || ''}`;
             
             const imgEl = document.getElementById('slideImg');
-            if (current.image) { 
-                imgEl.src = current.image; 
-                imgEl.style.display = 'block'; 
-            } else { 
-                imgEl.style.display = 'none'; 
-            }
+            if (current.image) { imgEl.src = current.image; imgEl.style.display = 'block'; } 
+            else { imgEl.style.display = 'none'; }
         }
 
         function updateCurrentSlide() {
@@ -346,53 +303,34 @@
             loadCurrentSlide(); renderSlideList(); saveAll();
         }
 
-        function deleteSlide(index) {
-            if (slides.length <= 1) return;
-            slides.splice(index, 1);
-            if (currentIndex >= slides.length) currentIndex = slides.length - 1;
+        function duplicateSlide() {
+            const current = slides[currentIndex];
+            slides.push(JSON.parse(JSON.stringify(current)));
+            currentIndex = slides.length - 1;
             loadCurrentSlide(); renderSlideList(); saveAll();
         }
 
-        /* --- 4. MODEL WAJDIN PRESETS --- */
-        const presetPresentations = {
-            startup: [
-                { title: "🚀 مشروع واعد", body: "الحل الذكي والابتكاري لعالم أفضل.\nإعداد الفريق المطور", image: "", bgClass: "bg-gradient-neon" },
-                { title: "🎯 المشكلة والفرصة", body: "1. تعقيد الممارسات التقليدية.\n2. ارتفاع التكاليف.\n3. الحاجة إلى حلول سريعة وسحابة.", image: "", bgClass: "" },
-                { title: "💡 الحل المبتكر", body: "منصة ذكية وشاملة تتيح للمستخدمين إنجاز أعمالهم بأقل جهد ممكن.", image: "", bgClass: "bg-gradient-blue" }
-            ],
-            course: [
-                { title: "🎓 عنوان العرض التعليمي", body: "مادة البحث العلمي والتكنولوجيا الحديثة\nإعداد الطالب / الباحث", image: "", bgClass: "bg-gradient-purple" },
-                { title: "📌 المقدمة", body: "تحديد الفرضيات ومراجعة المفاهيم العلمية الأساسية للموضوع.", image: "", bgClass: "" }
-            ],
-            report: [
-                { title: "💼 التقرير السنوي", body: "مراجعة الأداء المالي والتشغيلي والمؤشرات الرئيسية.", image: "", bgClass: "bg-gradient-sunset" },
-                { title: "📈 النتائج الإيجابية", body: "• نسبة النمو : +25%\n• الرضا العام : 95%", image: "", bgClass: "" }
-            ]
-        };
-
-        function loadPresetPresentation(type) {
-            if (!type || !presetPresentations[type]) return;
-            if (confirm("هل تريد تحميل هذا النموذج الجاهز؟")) {
-                slides = JSON.parse(JSON.stringify(presetPresentations[type]));
-                currentIndex = 0;
-                saveAll(); loadCurrentSlide(); renderSlideList();
-            }
+        function switchProject(name) {
+            currentProjectName = name; slides = projects[name]; currentIndex = 0;
+            saveAll(); loadCurrentSlide(); renderSlideList();
         }
 
-        /* --- 5. SHAPES & CANVAS DRAWING --- */
+        /* --- 3. SHAPES & MEDIA --- */
         function addShape(type) {
             if(!type) return;
             const container = document.getElementById('shapesContainer');
             const shape = document.createElement('div');
-            shape.className = 'added-shape';
-            shape.style.top = '40%'; shape.style.left = '40%';
+            shape.className = 'shape-item';
+            shape.style.top = '30%'; shape.style.left = '40%';
 
-            if(type === 'square') { shape.style.width = '70px'; shape.style.height = '70px'; shape.style.backgroundColor = '#6366f1'; shape.style.borderRadius = '8px'; } 
-            else if(type === 'circle') { shape.style.width = '70px'; shape.style.height = '70px'; shape.style.backgroundColor = '#ec4899'; shape.style.borderRadius = '50%'; } 
-            else if(type === 'triangle') { shape.innerHTML = '🔺'; shape.style.fontSize = '60px'; } 
-            else if(type === 'star') { shape.innerHTML = '⭐'; shape.style.fontSize = '60px'; } 
-            else if(type === 'arrow') { shape.innerHTML = '➔'; shape.style.fontSize = '60px'; shape.style.color = '#10b981'; } 
-            else if(type === 'check') { shape.innerHTML = '✅'; shape.style.fontSize = '50px'; }
+            if(type === 'square') shape.innerHTML = '<div style="width:70px;height:70px;background:#2563eb;border-radius:6px;"></div>';
+            else if(type === 'circle') shape.innerHTML = '<div style="width:70px;height:70px;background:#ec4899;border-radius:50%;"></div>';
+            else if(type === 'triangle') shape.innerHTML = '🔺';
+            else if(type === 'star') shape.innerHTML = '⭐';
+            else if(type === 'arrow') shape.innerHTML = '➔';
+            else if(type === 'check') shape.innerHTML = '✅';
+            else if(type === 'diamond') shape.innerHTML = '🔷';
+            else if(type === 'cloud') shape.innerHTML = '☁️';
 
             shape.ondblclick = () => shape.remove();
             makeDraggable(shape);
@@ -414,47 +352,13 @@
             };
         }
 
-        function changeBackgroundStyle(className) {
-            document.getElementById('slideCard').className = `slide-card ${className}`;
-            slides[currentIndex].bgClass = className;
-            saveAll();
+        function openImageLibrary() { document.getElementById('imageModal').style.display = 'flex'; }
+        function closeImageLibrary() { document.getElementById('imageModal').style.display = 'none'; }
+        function selectStockImage(url) {
+            slides[currentIndex].image = url;
+            loadCurrentSlide(); saveAll(); closeImageLibrary();
         }
 
-        const canvas = document.getElementById('drawCanvas');
-        const ctx = canvas.getContext('2d');
-        let isDrawing = false, drawingModeActive = false;
-
-        function resizeCanvas() {
-            const wrapper = document.querySelector('.slide-card-wrapper');
-            canvas.width = wrapper.clientWidth; canvas.height = wrapper.clientHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
-
-        function toggleDrawingMode() {
-            drawingModeActive = !drawingModeActive;
-            const btn = document.getElementById('drawBtn');
-            if(drawingModeActive) { canvas.classList.add('drawing-active'); btn.style.background = '#8b5cf6'; btn.style.color = '#fff'; } 
-            else { canvas.classList.remove('drawing-active'); btn.style.background = ''; btn.style.color = ''; }
-        }
-
-        canvas.addEventListener('mousedown', (e) => {
-            if(!drawingModeActive) return;
-            isDrawing = true; ctx.beginPath(); ctx.moveTo(e.offsetX, e.offsetY);
-        });
-
-        canvas.addEventListener('mousemove', (e) => {
-            if (isDrawing && drawingModeActive) {
-                ctx.lineTo(e.offsetX, e.offsetY); 
-                ctx.strokeStyle = document.getElementById('penColor').value; 
-                ctx.lineWidth = 3; 
-                ctx.stroke();
-            }
-        });
-
-        canvas.addEventListener('mouseup', () => isDrawing = false);
-        function clearCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
-
-        /* --- 6. UTILITIES & OFFICE COURSES --- */
         function uploadImage(event) {
             const file = event.target.files[0];
             if (file) {
@@ -464,67 +368,86 @@
             }
         }
 
-        function removeImage() { slides[currentIndex].image = ""; loadCurrentSlide(); saveAll(); }
-        function toggleGlassEffect() {
-            let card = document.getElementById('slideCard');
-            card.style.backdropFilter = card.style.backdropFilter ? "" : "blur(15px)";
+        function changeBackgroundStyle(className) {
+            document.getElementById('slideCard').className = `slide-card ${className}`;
+            slides[currentIndex].bgClass = className;
+            saveAll();
         }
-        function toggleLaser() { document.body.style.cursor = document.body.style.cursor === 'crosshair' ? 'default' : 'crosshair'; }
-        function toggleTheme() { document.body.classList.toggle('dark-mode'); }
+
+        /* --- 4. RESEARCH PAPERS & AI GENERATOR --- */
+        const researchPapers = {
+            ai_paper: [
+                { title: "🔬 بحث: الذكاء الاصطناعي والتطور التكنولوجي", body: "ملخص البحث:\nيقدم هذا البحث دراسة شاملة حول أثر الذكاء الاصطناعي في تحسين أداء التطبيقات الحديثة والتحول الرقمي.", image: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=500", bgClass: "bg-gradient-dark" },
+                { title: "📊 منهجية الدراسة والنتائج", body: "تم اعتماد المنهج التحليلي المقارن لقياس أداء الخوارزميات وتأثيرها على تجربة المستخدم النهائي.", image: "", bgClass: "" }
+            ],
+            business_plan: [
+                { title: "💼 خطة عمل شركة ناشئة (Business Pitch)", body: "الرؤية والرسالة:\nبناء منصة إنتاجية رقمية تقدم حلولاً خافضة للتكاليف وموجهة للسوق العالمي.", image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=500", bgClass: "bg-gradient-blue" }
+            ],
+            scientific_method: [
+                { title: "🔬 خطوات المنهج العلمي الحديث", body: "1. الملاحظة وصياغة المشكلة.\n2. وضع الفرضيات العلمية.\n3. التجربة والتحليل والاستنتاج.", image: "", bgClass: "bg-gradient-purple" }
+            ]
+        };
+
+        function loadResearchPaper(type) {
+            if (confirm("هل تريد تحميل هذا البحث / العرض الجاهز؟")) {
+                slides = JSON.parse(JSON.stringify(researchPapers[type]));
+                currentIndex = 0; saveAll(); loadCurrentSlide(); renderSlideList();
+            }
+        }
+
+        function generateAISlides() {
+            const topic = prompt("أدخل عنوان البحث أو موضوع العرض التقديمي:");
+            if (!topic) return;
+            slides = [
+                { title: `🎓 بحث / عرض: ${topic}`, body: `دراسة تحليلية ومقدمة شاملة موضوع : ${topic}.\nتم الإنشاء تلقائياً عبر المحرك الذكي.`, image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=500", bgClass: "bg-gradient-dark" },
+                { title: "📌 المحاور الرئيسية", body: "• المحور الأول: المفاهيم والأسس.\n• المحور الثاني: التحديات والفرص.\n• المحور الثالث: التوصيات المستقبلية.", image: "", bgClass: "" }
+            ];
+            currentIndex = 0; saveAll(); loadCurrentSlide(); renderSlideList();
+        }
+
+        /* --- 5. CANVAS & FULLSCREEN --- */
+        const canvas = document.getElementById('drawCanvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false, drawingActive = false;
+
+        function resizeCanvas() {
+            const wrapper = document.querySelector('.slide-wrapper');
+            canvas.width = wrapper.clientWidth; canvas.height = wrapper.clientHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        function toggleDrawingMode() {
+            drawingActive = !drawingActive;
+            canvas.classList.toggle('active', drawingActive);
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            if(!drawingActive) return;
+            isDrawing = true; ctx.beginPath(); ctx.moveTo(e.offsetX, e.offsetY);
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (isDrawing && drawingActive) {
+                ctx.lineTo(e.offsetX, e.offsetY);
+                ctx.strokeStyle = document.getElementById('penColor').value;
+                ctx.lineWidth = 3; ctx.stroke();
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => isDrawing = false);
+        function clearCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
+
         function toggleFullscreen() {
-            const elem = document.querySelector('.slide-card-wrapper');
+            const elem = document.querySelector('.slide-wrapper');
             if (elem.requestFullscreen) elem.requestFullscreen();
         }
 
-        const courses = [
-            { id: 1, software: 'word', title: '1. التنسيق التلقائي للأنماط', desc: 'حدد تسلسل العناوين لتأطير المستند وإنشاء فهرس تلقائي.', code: 'الصفحة الرئيسية > الأنماط' },
-            { id: 2, software: 'word', title: '2. جدول المحتويات التلقائي', desc: 'أنشئ فهرساً تفاعلياً يتحدث بضغطة زر واحدة.', code: 'مراجع > جدول المحتويات' },
-            { id: 3, software: 'excel', title: '1. الجداول المنسقة (Structured Table)', desc: 'حول بياناتك إلى جدول تفاعلي ذكي يوسع الفلاتر والدوال تلقائياً.', code: 'Ctrl + T (أو Ctrl + L)' },
-            { id: 4, software: 'excel', title: '2. الجداول المحورية (Pivot Table)', desc: 'حلل ملايين البيانات ودمجها بمرونة دون كتابة معادلة واحدة.', code: 'إدراج > PivotTable' },
-            { id: 5, software: 'ppt', title: '1. الشريحة الرئيسية (Slide Master)', desc: 'خصص تصميم ولوجو الخط لكل الشرايح بضغطة واحدة.', code: 'عرض > الشريحة الرئيسية' },
-            { id: 6, software: 'ppt', title: '2. الانتقال المنساب (Morph)', desc: 'أنشئ تحريكات بصرية وانتقالات احترافية بين الشرائح.', code: 'انتقالات > التحويل التدريجي' }
-        ];
-
-        let currentFilter = 'word';
-
-        function renderCourses() {
-            const grid = document.getElementById('courseGrid');
-            const searchText = document.getElementById('searchInput').value.toLowerCase();
-            grid.innerHTML = '';
-
-            const filtered = courses.filter(item => {
-                const matchesTab = item.software === currentFilter;
-                const matchesSearch = item.title.toLowerCase().includes(searchText) || item.desc.toLowerCase().includes(searchText) || item.code.toLowerCase().includes(searchText);
-                return matchesTab && matchesSearch;
-            });
-
-            filtered.forEach(item => {
-                const card = document.createElement('div');
-                card.className = `card ${item.software}`;
-                card.innerHTML = `
-                    <h3>${item.title}</h3>
-                    <p>${item.desc}</p>
-                    <div>
-                        <span class="shortcut-badge">${item.code}</span>
-                        <button class="copy-btn" onclick="copyToClipboard('${item.code}')">نسخ</button>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
+        function changeLanguage(lang) {
+            document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
         }
 
-        function filterSoftware(software) {
-            currentFilter = software;
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            renderCourses();
-        }
-
-        function searchCourse() { renderCourses(); }
-        function copyToClipboard(text) { navigator.clipboard.writeText(text); alert('تم النسخ: ' + text); }
-
-        /* Initial Setup */
-        renderProjectSelect(); renderSlideList(); loadCurrentSlide(); renderCourses();
+        /* Init */
+        renderProjectSelect(); renderSlideList(); loadCurrentSlide();
         setTimeout(resizeCanvas, 300);
     </script>
 </body>
